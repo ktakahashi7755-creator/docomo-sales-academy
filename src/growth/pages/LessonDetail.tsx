@@ -89,24 +89,26 @@ export function LessonDetail() {
           ))}
         </div>
 
-        <div className="mt-6 rounded-2xl bg-gradient-to-br from-blue-50 to-sky-50 p-5">
-          <div className="flex items-center gap-2">
-            <Sparkles size={16} className="text-blue-600" />
-            <h2 className="text-sm font-bold text-slate-800">この回のポイント</h2>
+        {lesson.keyPoints.length > 0 && (
+          <div className="mt-6 rounded-2xl bg-gradient-to-br from-blue-50 to-sky-50 p-5">
+            <div className="flex items-center gap-2">
+              <Sparkles size={16} className="text-blue-600" />
+              <h2 className="text-sm font-bold text-slate-800">この回のポイント</h2>
+            </div>
+            <ul className="mt-3 space-y-2">
+              {lesson.keyPoints.map((k) => (
+                <li key={k} className="flex items-start gap-2.5">
+                  <CheckCircle2
+                    size={18}
+                    className="mt-0.5 shrink-0 text-emerald-500"
+                    strokeWidth={2}
+                  />
+                  <span className="text-sm text-slate-700">{k}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-          <ul className="mt-3 space-y-2">
-            {lesson.keyPoints.map((k) => (
-              <li key={k} className="flex items-start gap-2.5">
-                <CheckCircle2
-                  size={18}
-                  className="mt-0.5 shrink-0 text-emerald-500"
-                  strokeWidth={2}
-                />
-                <span className="text-sm text-slate-700">{k}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+        )}
       </Card>
 
       {/* 現場のひとこと */}
