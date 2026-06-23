@@ -138,6 +138,33 @@ describe("smoke: デモモードで全9画面が落ちずに描画・遷移で�
     expect(link?.textContent).toContain("復習");
   });
 
+  it("テキストロープレを開始→送信→評価まで一巡できる", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: /研修生として入る/ }));
+    await screen.findByRole("heading", { name: "ダッシュボード" });
+
+    await clickHref(user, "/roleplay");
+    await screen.findByRole("heading", { name: "ロープレ設定" });
+
+    // テキストロープレ開始（デモはモックで動く）→ 顧客の最初の発話が出る
+    await user.click(screen.getByRole("button", { name: /テキストロープレを開始/ }));
+    expect(await screen.findByText("お客様", {}, { timeout: 3000 })).toBeInTheDocument();
+
+    // 研修生の発話を送信 → 顧客が返答する（メッセージが増える）
+    const field = screen.getByLabelText("お客様への発話");
+    await user.type(field, "こんにちは、今お使いのスマホはどちらですか");
+    await user.click(screen.getByRole("button", { name: /送信/ }));
+    await screen.findByText(/今は.*を使っていて/, {}, { timeout: 3000 });
+
+    // 終了して評価 → 結果画面（総合評価・ランク）に遷移
+    await user.click(screen.getByRole("button", { name: /終了して評価する/ }));
+    expect(
+      await screen.findByRole("heading", { name: "ロープレ評価" }, { timeout: 3000 }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("総合評価")).toBeInTheDocument();
+  });
+
   it("コンプラ（合格点100）を全問正解すると合格になる", async () => {
     const user = userEvent.setup();
     render(<App />);

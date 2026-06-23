@@ -34,13 +34,24 @@ export function isPassed(score: number | undefined, passing: number): boolean {
 
 /** ロープレ評価ランク。S:90+ / A:80+ / B:70+ / C:60+ / D:60未満。 */
 export type Grade = "S" | "A" | "B" | "C" | "D";
+
+/** ランク境界の単一の正（gradeOf も表示凡例もここから導出し、二重管理によるズレを防ぐ）。 */
+export const GRADE_THRESHOLDS: readonly { grade: Grade; min: number }[] = [
+  { grade: "S", min: 90 },
+  { grade: "A", min: 80 },
+  { grade: "B", min: 70 },
+  { grade: "C", min: 60 },
+  { grade: "D", min: 0 },
+] as const;
+
 export function gradeOf(score: number): Grade {
-  if (score >= 90) return "S";
-  if (score >= 80) return "A";
-  if (score >= 70) return "B";
-  if (score >= 60) return "C";
-  return "D";
+  return GRADE_THRESHOLDS.find((t) => score >= t.min)?.grade ?? "D";
 }
+
+/** 表示用凡例（例: "S:90+ / A:80+ / B:70+ / C:60+ / D:60未満"）。境界は GRADE_THRESHOLDS 由来。 */
+export const GRADE_LEGEND: string = GRADE_THRESHOLDS.map((t, i) =>
+  t.min > 0 ? `${t.grade}:${t.min}+` : `${t.grade}:${GRADE_THRESHOLDS[i - 1].min}未満`,
+).join(" / ");
 
 export interface ModuleWithPhase extends ModuleItem {
   phase: Phase;

@@ -7,7 +7,16 @@ import prettier from "eslint-config-prettier";
 
 export default tseslint.config(
   {
-    ignores: ["dist", "coverage", "playwright-report", "test-results", "node_modules"],
+    // supabase/functions は Deno ランタイム（URL import・Deno グローバル）。
+    // フロントの ESLint/tsconfig の対象外とし、Supabase CLI 側で検証する。
+    ignores: [
+      "dist",
+      "coverage",
+      "playwright-report",
+      "test-results",
+      "node_modules",
+      "supabase/functions",
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

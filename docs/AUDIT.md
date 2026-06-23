@@ -57,7 +57,7 @@
 - [x] **D-N18 🟡** `ScoreChip` の合否判定を `isPassed` に委譲（重複解消）。
 - [x] **D-N19 🟡** `Products` の `isStale` 二重呼び出しを1回に。
 - [ ] **D-N02 🟢** `isStale` の「90日ちょうど」判定が DST/タイムゾーンでズレうる。Phase 3 で日本時間基準にする際に再確認。
-- [ ] **D-N14 🟢** Roleplay の評価ランク閾値（S/A/B/C/D）が表示文字列にハードコード。Phase 4 で `gradeOf` から導出して単一正典化。
+- [x] **D-N14 🟢** Roleplay の評価ランク閾値（S/A/B/C/D）の表示文字列ハードコードを解消。`progress.ts` の `GRADE_THRESHOLDS` を単一の正とし、`gradeOf` と `GRADE_LEGEND` を同一の正から導出（Phase 4・ADR-0013）。
 
 ## F. Phase 1（Supabase 接続・本認証）
 
@@ -133,3 +133,28 @@
 - [x] **H-R7(code)** UI 結合の100点境界：p1m4（合格点100）を全問正解で合格になる smoke を追加（unit 82件）。
 - [x] **H-R8(code/design)** 採点後に結果へフォーカス＆スクロール、best score 保持の意図をコメント明記。
 - [ ] **H-Q1 🟡(data)** `data/quiz.ts` 解説内の数値（mini 880円・ポイ活MAX 2,948円）が seed と単一ソース化されていない。seed の値更新時に quiz 解説も追従更新する（チェックリスト化）。2026-06-23 時点は正典一致・🔴なし。
+
+## I. Phase 4（ロープレ会話＋AI評価）
+
+- [x] **I-1** プロバイダ差し替え可能なアダプタ（`lib/ai/`）。デモ=`mockProvider`（キー不要）、本番=`edgeProvider`（`functions.invoke`）。切替は `getRoleplayProvider` 1 箇所。
+- [x] **I-2** 純粋ロジック `lib/roleplay.ts`（モック顧客＋ヒューリスティック評価）＋境界/決定性テスト（`roleplay.test.ts` 16 件）。評価は振る舞いのみ採点し事実値を捏造しない。
+- [x] **I-3** `pages/Roleplay.tsx` を setup/chat/result の3フェーズ＋4状態＋A11y で再構築。テキストロープレ→評価の一巡 smoke を追加（unit 99 件）。
+- [x] **I-4** ランク閾値を `GRADE_THRESHOLDS` に単一化（D-N14 解消）。
+- [ ] **I-5 ⚠️(security)** Edge Function `supabase/functions/roleplay` を本番有効化する前に必須対応：(a) CORS を `*` からアプリ origin に限定、(b) `action`/`payload` のスキーマ検証と `transcript` 長上限・基本的なレート制御、(c) JWT 必須でのデプロイ担保（`--no-verify-jwt=false`）、(d) エラーメッセージの一般化（内部情報の素通し防止）。本環境に env が無く未デプロイのため現時点は阻害なし。
+- [ ] **I-6 ⚠️** 評価結果（`roleplay_sessions`）の永続化は未実装。保存はサーバー/RLS 準拠（本人限定）で Phase 5 に実装。フロント直 insert は禁止。
+- [ ] **I-7 🟡(data)** 認定条件 c2/c4–c9・バッジ（GOLD/PLATINUM/セット/難敵）はロープレ評価の蓄積が前提のため、現状 false（捏造しない・ADR-0006）。評価の永続化後に判定を有効化。
+
+### Phase 4 レビューゲート（2026-06-23）— security / design / code
+
+- [x] **I-R1🔴(design)** 総合ランク D の chip が `text-fail`（AA 不足）→ `text-fail-deep` に（soft 背景上は deep の規約に統一）。
+- [x] **I-R2🔴(design)** 結果遷移が支援技術に告知されない → 要約見出し（sr-only h2）へフォーカス移動で告知。
+- [x] **I-R3🔴(code)** 「テキストロープレを開始」に二重起動ガードなし → `disabled={pending}`＋`startChat` 冒頭 `if (pending) return`。
+- [x] **I-R4🔴(code)** `phase=result && evaluation=null` の中間レンダが空画面 → `PageLoading` フォールバックを追加（4状態を担保）。
+- [x] **I-R5🟡(code)** Edge の AI 応答に `res.ok` 検査追加。評価 JSON の `JSON.parse` を try/catch で明示エラー化（0 点黙殺の防止）。
+- [x] **I-R6🟡(code)** Edge 評価の `label` が英語キー → 日本語ラベル対応表（`EVAL_ITEMS`）で返す。
+- [x] **I-R7🟡(code)** 評価中（`evaluating`）は textarea/送信をロック（多重実行防止・loading 主役の明確化）。
+- [x] **I-R8🟡(code)** `getRoleplayProvider` のキャッシュに `resetRoleplayProvider`（テスト用）を追加。
+- [x] **I-R9🟡(code)** `evaluateRoleplay` のランクが `gradeOf` に委譲されることの統合テストを追加。
+- [x] **I-R10🟢(code)** `feedback` の key をインデックス→内容に。`FEEDBACK_TIPS` に `clarity` を追加。`evaluateRoleplay` の未使用 `scenario/difficulty` の保持意図をコメント明記。
+- [x] **I-R11🟢(design)** 会話バブルの話者ラベルを `opacity-70`→トークン色（helper=`text-paper`／customer=`text-ink-muted`）。
+- [x] **security 🔴0** キーのフロント露出なし・`service_role` 不使用・anon invoke のみ・「認証コード/パスワードはお客様ご自身が入力」維持・評価は事実非捏造。🟡（CORS/入力検証/JWT/結果永続化）は I-5/I-6 に集約。

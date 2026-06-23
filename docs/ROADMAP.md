@@ -15,7 +15,7 @@
 | 1     | Supabase 接続と本認証（progress を DB 永続化）                  | supabase          | ✅ Done（実機検証待ち）               |
 | 2     | 管理画面 CRUD（product_versions 履歴・90日鮮度・audit_logs）    | frontend+supabase | ✅ Done（demo完結 / backend統合待ち） |
 | 3     | クイズエンジン（採点純粋関数＋境界値テスト）                    | frontend+qa       | ✅ Done（demo完結 / backend統合待ち） |
-| 4     | ロープレ会話＋AI評価（Edge Function・アダプタ）                 | ai-edge+frontend  | ⏳ Planned                            |
+| 4     | ロープレ会話＋AI評価（Edge Function・アダプタ）                 | ai-edge+frontend  | ✅ Done（demo完結 / backend統合待ち） |
 | 5     | SV ダッシュボード・認定フロー                                   | supabase+frontend | ⏳ Planned                            |
 | 6     | 仕上げ（PWA・性能・E2E・Lighthouse 90+）                        | qa+全レビュー     | ⏳ Planned                            |
 
@@ -83,3 +83,12 @@
 - **判断:** ADR-0012（純粋採点＋進捗反映、バッジは進捗導出、quiz_attempts は backend）。
 - **DoD:** 受験→採点→ロードマップ/ダッシュボード反映が一気通貫。境界値 unit 緑。typecheck0/lint0/**unit 79件**/build/smoke 緑。
 - **残課題:** `quiz_attempts` 永続化と全モジュールへの設問拡充は backend 統合・コンテンツ追補で対応。
+
+### Phase 4 — キックオフ／クローズ（2026-06-23）
+
+- **目的:** テキストロープレ会話＋AI評価を、プロバイダ差し替え可能なアダプタで構築。デモはローカルのモック（APIキー不要）で完結、本番は Supabase Edge Function 経由（キーはサーバー側）。
+- **実装:** `lib/ai/`（`types.ts` の `RoleplayProvider` インターフェース・`mockProvider`・`edgeProvider`・`index.ts` の唯一の切替点 `getRoleplayProvider`）・`lib/roleplay.ts`（純粋：モック顧客 `customerOpening`/`customerReply`＋ヒューリスティック評価 `evaluateRoleplay`）＋ `lib/roleplay.test.ts`（15件）・`pages/Roleplay.tsx`（setup/chat/result の3フェーズ・4状態・A11y）・`supabase/functions/roleplay/index.ts`（Deno Edge Function テンプレート・未デプロイ）・smoke にロープレ一巡を追加。
+- **判断:** ADR-0013（アダプタ＋モック／Edge・キーはサーバー側・評価は振る舞いのみ採点で事実を捏造しない・ランク閾値は GRADE_THRESHOLDS に単一化＝D-N14 解消）。
+- **レビューゲート:** security 🔴0（キーのフロント露出なし・anon invoke のみ・コンプラ文言維持・事実非捏造）／design 🔴2→解消（D ランク chip の deep 化で AA・結果遷移のフォーカス告知）＋🟡（評価中の入力ロック・凡例の単一正典化・ラベル不透明度）対応／code-reviewer 実行。
+- **DoD:** テキストロープレ開始→送信→評価まで一気通貫（smoke 緑）。typecheck0/lint0/prettier/**unit 98件**/build。音声は backend+AI 接続後に有効化（UI は disabled で明示）。
+- **⚠️ backend 有効化前の必須対応（AUDIT 追跡）:** Edge Function の CORS 限定・入力バリデーション/レート制御・JWT 必須のデプロイ担保・評価結果の `roleplay_sessions` 永続化はサーバー/RLS 準拠で実装。

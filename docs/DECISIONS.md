@@ -82,6 +82,17 @@
 - **Decision:** 採点は `lib/quiz.ts` の純粋関数（`gradeQuiz`/`isAnswerCorrect`/`allAnswered`）に分離。合否は `lib/progress.isPassed(score, module.passing_score)`。提出時に `setModuleScore`（best score 保持）で進捗を更新し、Roadmap/Dashboard に反映。`b-first` バッジは進捗から自動導出（ADR-0006）で別ストア不要。設問は `src/data/quiz.ts`（事実は正典準拠）。複数選択は集合一致で採点。
 - **Consequences:** 境界値 79/80/89/90/99/100 を採点パイプライン経由で Vitest 検証。再受験は best score を下げない。クイズ未整備モジュールは受験導線を出さない（ErrorState）。`quiz_attempts` への保存は backend 接続時（AUDIT 追跡）。
 
+## ADR-0013: ロープレはアダプタ＋モック／Edge、評価は振る舞いのみ採点
+
+- **日付:** 2026-06-23（Phase 4）
+- **Context:** ロープレ会話と AI 評価を実装するが、(1) AI プロバイダの API キーをフロントに出せない、(2) デモ（Supabase 未設定）でも体験・検証可能にしたい、(3) 評価で料金・還元などの事実値を捏造させたくない。
+- **Decision:**
+  - `RoleplayProvider`（`opening`/`reply`/`evaluate`）インターフェースの背後を、デモは `mockProvider`（`lib/roleplay.ts` の決定的ロジック・キー不要）、本番は `edgeProvider`（`supabase.functions.invoke("roleplay")` 経由）に差し替える。切替は `lib/ai/index.ts` の `getRoleplayProvider()` 1 箇所のみ（`isBackendEnabled` で分岐）。
+  - AI キーは Edge Function（`supabase/functions/roleplay`）の `Deno.env` だけで扱い、フロントは anon キーで invoke するのみ。プロバイダ・アダプタ（Anthropic/OpenAI）で差し替え可能。
+  - 評価（`evaluateRoleplay`）は**会話の振る舞い**（挨拶・ヒアリング・提案・反論処理・クロージング・コンプラ等）をシグナル語のヒューリスティックで採点し、金額の正誤は判定しない。コンプラ項目は原則満点で「代理入力」等の違反語を大幅減点、本人確認の言及を加点。Edge 側もシステムプロンプトで「数値は断定せず公式確認を促す／事実を創作しない」を固定。
+  - ランク閾値は `lib/progress.ts` の `GRADE_THRESHOLDS` に単一化し、`gradeOf` と表示凡例 `GRADE_LEGEND` を同一の正から導出（旧 D-N14 解消）。
+- **Consequences:** デモでテキストロープレ→評価まで DoD を実検証可能（smoke）。キーはサーバー側のみ。評価は事実を捏造しない。音声と本番 AI は backend 接続後に有効化。Edge Function の CORS 限定・入力検証・レート制御・JWT 必須・結果永続化（`roleplay_sessions`）は有効化前に対応（AUDIT 追跡）。
+
 ## ADR-0004: 検証は「実機ビルド＋ビジュアル」で担保
 
 - **日付:** 2026-06-23
