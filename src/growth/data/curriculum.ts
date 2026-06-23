@@ -38,6 +38,11 @@ export interface NavItem {
   to: string;
 }
 
+export interface LessonExample {
+  ng: string;
+  good: string;
+}
+
 export interface Lesson {
   id: string;
   stepId: string;
@@ -47,6 +52,10 @@ export interface Lesson {
   minutes: number;
   body: string[];
   keyPoints: string[];
+  /** 現場のひとこと（コーチングの一言）。 */
+  tip?: string;
+  /** NG/Good のトーク例。 */
+  examples?: LessonExample;
   /** data/quiz の moduleId（確認テスト）。 */
   quizModuleId?: string;
   /** seed SCENARIOS の id（ロープレ）。 */
@@ -117,6 +126,11 @@ export const CURRICULUM: CurriculumStep[] = [
           "結果は自分のアプローチの結果として振り返る",
           "笑顔・挨拶・身だしなみで「話してよい人」になる",
         ],
+        tip: "断られた数は、伸びしろの数。今日の1件を明日の改善メモに変えましょう。",
+        examples: {
+          ng: "（断られて）この人は買う気がなかった、で終わらせてしまう。",
+          good: "（断られて）どの一言で離れたかを思い出し、次は最初の30秒を変えてみる。",
+        },
         quizModuleId: "p1m5",
       },
       {
@@ -169,6 +183,11 @@ export const CURRICULUM: CurriculumStep[] = [
           "個人情報は本人と権限者のみ・最小限",
           "不確かな数字は断定せず公式情報で確認",
         ],
+        tip: "迷ったら「お客様ご自身に入力していただく」。ここは絶対に近道しません。",
+        examples: {
+          ng: "お急ぎのようなので、こちらでパスワードを入力しておきますね。",
+          good: "セキュリティのため、パスワードはお客様ご自身でご入力をお願いします。",
+        },
         quizModuleId: "p1m4",
       },
     ],
@@ -220,6 +239,11 @@ export const CURRICULUM: CurriculumStep[] = [
           "受け取りやすいフックで足を止める",
           "雑談の流れで現状を確認する",
         ],
+        tip: "最初の一言は「質問」より「気づかい」。売る前に、まず人として話しかけます。",
+        examples: {
+          ng: "今ならキャンペーンで安くなりますよ、いかがですか。",
+          good: "お買い物の途中にすみません。スマホの操作でお困りのことはありませんか。",
+        },
         scenarioId: "sc11",
       },
       {
@@ -238,6 +262,11 @@ export const CURRICULUM: CurriculumStep[] = [
           "不満と自宅Wi-Fiの有無を特定",
           "書類・未納・家族相談は早めに把握",
         ],
+        tip: "話す2割・聞く8割。沈黙を怖がらず、お客様が考える間を待ちましょう。",
+        examples: {
+          ng: "（一方的に）今のプランより絶対こっちがお得です、理由は…。",
+          good: "今は毎月どのくらいギガを使われますか。月末に足りなくなること、ありますか。",
+        },
         quizModuleId: "p6m2",
       },
       {
@@ -289,6 +318,11 @@ export const CURRICULUM: CurriculumStep[] = [
           "ギガ不足=MAX / ポイ活=ポイ活MAX / ライト=mini",
           "実質額は前提条件を添えて正直に",
         ],
+        tip: "プラン名を覚えさせるより、「あなたの使い方だとこれ」を一緒に選ぶ感覚で。",
+        examples: {
+          ng: "一番人気なので無制限にしておきますね。",
+          good: "月末によく速度制限にかかるとのことなので、気にせず使える無制限が合いそうです。",
+        },
         quizModuleId: "p2m1",
         productIds: ["plan-max", "plan-poikatsu-max", "plan-mini"],
       },
@@ -308,6 +342,11 @@ export const CURRICULUM: CurriculumStep[] = [
           "年会費は割引＋ポイントで回収を数字で示す",
           "利用額が大きい/ポイ活はPLATINUMを試算",
         ],
+        tip: "年会費の不安は最初に。回収できる根拠を数字で見せれば、抵抗は小さくなります。",
+        examples: {
+          ng: "年会費はかかりますが、すぐ元が取れるので大丈夫です。",
+          good: "年会費はかかります。ただ毎月の割引とポイントで、ご利用額だと年間でこれだけ戻る計算です。",
+        },
         quizModuleId: "p3m1",
         scenarioId: "sc6",
         productIds: ["dcard-regular", "dcard-gold", "dcard-platinum"],
@@ -347,6 +386,29 @@ export const CURRICULUM: CurriculumStep[] = [
           "着座・合意を最初のゴールに置く",
         ],
       },
+      {
+        id: "l3-5",
+        stepId: "step-3",
+        no: 5,
+        title: "家族まとめとMNP",
+        summary: "世帯でまとめる価値と、乗り換えの不安を解く",
+        minutes: 14,
+        body: [
+          "提案は1人ではなく世帯で考えると効果が大きくなります。家族の台数が増えるほどセット割やまとめの効果が効き、トータルの月額で見せられます。",
+          "MNP（番号そのまま乗り換え）は、初めての方ほど不安です。番号は変わらず、手続きはこちらで伴走する前提を最初に伝えると、ハードルが一気に下がります。",
+        ],
+        keyPoints: [
+          "1人でなく世帯のトータルで試算する",
+          "番号はそのまま・手続きは伴走を最初に伝える",
+          "書類・未納・家族の同意を早めに確認する",
+        ],
+        tip: "「ご家族の分も一緒に見ますか？」の一言で、提案の幅とお得感が広がります。",
+        examples: {
+          ng: "乗り換えは手続きが多くて大変なんですよね。",
+          good: "番号はそのまま、面倒なところは私が一緒に進めます。やることはほぼ確認だけです。",
+        },
+        scenarioId: "sc4",
+      },
     ],
   },
   {
@@ -383,6 +445,11 @@ export const CURRICULUM: CurriculumStep[] = [
           "回収根拠を数字で可視化する",
           "不安を一つずつ具体的に潰す",
         ],
+        tip: "反論は「YES, and」。否定せず受け止めてから、一緒に確かめる方向へ運びます。",
+        examples: {
+          ng: "そんなに高くないですよ、他社よりお得です。",
+          good: "金額だけ見ると高く感じますよね。実際にお得になるか、一緒に計算してみましょう。",
+        },
         quizModuleId: "p8m1",
         scenarioId: "sc9",
       },
@@ -398,6 +465,11 @@ export const CURRICULUM: CurriculumStep[] = [
           "条件や期間は必ず公式で確認し、誇張せずに伝えます。",
         ],
         keyPoints: ["選択式で決めやすくする", "今やる理由を正直に作る", "損失回避の視点で伝える"],
+        tip: "「買ってください」より「どちらにしますか」。決断を小さくするのがクロージング。",
+        examples: {
+          ng: "そろそろ決めていただけますか。",
+          good: "お手続きは今日この場でも、書類をそろえて後日でも大丈夫です。どちらが進めやすいですか。",
+        },
       },
       {
         id: "l4-3",
@@ -416,6 +488,30 @@ export const CURRICULUM: CurriculumStep[] = [
           "未成約でも次につながる宿題を渡す",
         ],
         scenarioId: "sc10",
+      },
+      {
+        id: "l4-4",
+        stepId: "step-4",
+        no: 4,
+        title: "他社経済圏への切り返し",
+        summary: "「○○で十分」への、否定しない比較の作り方",
+        minutes: 13,
+        body: [
+          "「楽天で十分」「PayPayがあるから」など、すでに使っている経済圏への満足は強い反論です。全否定せず、相手の選択を認めた上で、今の使い方で下がる部分だけに土俵を絞ります。",
+          "比較は全項目ではなく、料金・セット割・補償など差が出るポイントだけ。勝てるところで静かに数字を見せます。",
+        ],
+        keyPoints: [
+          "相手の経済圏を否定しない",
+          "差が出るポイントだけに土俵を絞る",
+          "勝てる部分を数字で静かに見せる",
+        ],
+        tip: "相手の正解を否定すると壁ができます。「いいですよね」と認めてから差分の話へ。",
+        examples: {
+          ng: "楽天はつながりにくいですよ、こっちの方がいいです。",
+          good: "楽天さんも良いですよね。その上で、今の使い方だと料金が下がる部分があるので、そこだけ比べましょう。",
+        },
+        quizModuleId: "p8m1",
+        scenarioId: "sc2",
       },
     ],
   },
@@ -536,13 +632,53 @@ export const FAQ: FaqItem[] = [
 export interface VideoContent {
   id: string;
   title: string;
+  description: string;
   duration: string;
   accent: Accent;
 }
 export const RECOMMENDED: VideoContent[] = [
-  { id: "v1", title: "接客の基本マナー", duration: "6:24", accent: "blue" },
-  { id: "v2", title: "効果的なヒアリング方法", duration: "8:10", accent: "teal" },
-  { id: "v3", title: "断られた時の対応方法", duration: "5:47", accent: "orange" },
+  {
+    id: "v1",
+    title: "接客の基本マナー",
+    description: "第一印象を決める挨拶・身だしなみ・声のトーン",
+    duration: "6:24",
+    accent: "blue",
+  },
+  {
+    id: "v2",
+    title: "効果的なヒアリング方法",
+    description: "聞き出す質問の順番と、沈黙の使い方",
+    duration: "8:10",
+    accent: "teal",
+  },
+  {
+    id: "v3",
+    title: "断られた時の対応方法",
+    description: "反論を受け止めてから切り返す型",
+    duration: "5:47",
+    accent: "orange",
+  },
+  {
+    id: "v4",
+    title: "dカード提案のロールプレイ",
+    description: "年会費の不安を数字で解くトーク実演",
+    duration: "7:32",
+    accent: "green",
+  },
+  {
+    id: "v5",
+    title: "家族まとめ提案のコツ",
+    description: "世帯トータルでお得を見せる流れ",
+    duration: "6:58",
+    accent: "blue",
+  },
+  {
+    id: "v6",
+    title: "クロージングの一押し",
+    description: "決断を小さくする選択式の問いかけ",
+    duration: "4:50",
+    accent: "orange",
+  },
 ];
 
 // ===== 成功事例 =====
@@ -550,6 +686,50 @@ export const SUCCESS_CASE = {
   description: "先輩スタッフの対応事例から、現場で効くコツを学べます。",
   members: ["佐藤 健", "鈴木 美咲", "田中 太郎"],
 };
+
+export interface SuccessCase {
+  id: string;
+  name: string;
+  role: string;
+  store: string;
+  tone: Accent;
+  situation: string;
+  approach: string;
+  result: string;
+}
+export const SUCCESS_CASES: SuccessCase[] = [
+  {
+    id: "case-1",
+    name: "佐藤 健",
+    role: "入社3ヶ月",
+    store: "府中店",
+    tone: "blue",
+    situation: "「今ので困っていない」と通り過ぎようとするお客様。",
+    approach:
+      "売り込まず「月末にギガが足りるかだけ一緒に見ませんか」と小さな確認に誘い、不満を可視化。",
+    result: "速度制限のストレスに気づいてもらい、無制限プランとセット割で着座・成約。",
+  },
+  {
+    id: "case-2",
+    name: "鈴木 美咲",
+    role: "入社1年",
+    store: "新宿店",
+    tone: "teal",
+    situation: "「年会費が高い」とdカードに強い抵抗。",
+    approach: "否定せず受け止め、毎月の割引とポイントを実利用額で試算して紙に書いて提示。",
+    result: "「これなら逆にお得」と納得し、GOLDへ切り替え。後日ご家族も来店。",
+  },
+  {
+    id: "case-3",
+    name: "田中 太郎",
+    role: "入社6ヶ月",
+    store: "渋谷店",
+    tone: "orange",
+    situation: "「楽天で十分」と他社経済圏に満足。",
+    approach: "全否定せず「いいですよね」と認め、料金とセット割の差分だけに土俵を絞って比較。",
+    result: "下がる部分に納得し、固定回線セットで乗り換え。紹介にもつながった。",
+  },
+];
 
 // ===== 今後のスケジュール（デモ） =====
 export interface ScheduleItem {

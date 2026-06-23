@@ -8,6 +8,9 @@ import {
   MessagesSquare,
   ExternalLink,
   Sparkles,
+  Lightbulb,
+  X,
+  Check,
 } from "lucide-react";
 import { lessonById, stepOfLesson, ALL_LESSONS } from "@/growth/data/curriculum";
 import { useProvide } from "@/growth/context/ProvideContext";
@@ -105,6 +108,41 @@ export function LessonDetail() {
           </ul>
         </div>
       </Card>
+
+      {/* 現場のひとこと */}
+      {lesson.tip && (
+        <Card className="flex items-start gap-3 border-l-4 border-l-blue-400 p-5">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+            <Lightbulb size={18} strokeWidth={2} />
+          </span>
+          <div>
+            <div className="text-xs font-bold uppercase tracking-wide text-blue-600">
+              現場のひとこと
+            </div>
+            <p className="mt-1 text-sm leading-relaxed text-slate-700">{lesson.tip}</p>
+          </div>
+        </Card>
+      )}
+
+      {/* NG / Good トーク例 */}
+      {lesson.examples && (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <Card className="border-orange-100 p-4">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-orange-600">
+              <X size={14} strokeWidth={2.5} /> NG例
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-slate-700">「{lesson.examples.ng}」</p>
+          </Card>
+          <Card className="border-emerald-100 p-4">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-600">
+              <Check size={14} strokeWidth={2.5} /> Good例
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              「{lesson.examples.good}」
+            </p>
+          </Card>
+        </div>
+      )}
 
       {/* 商材ナレッジ（正典値） */}
       {products.length > 0 && (

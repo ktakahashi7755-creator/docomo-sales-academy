@@ -25,7 +25,9 @@ export function RecommendedContents() {
                 </div>
                 <div className="p-3.5">
                   <div className="text-sm font-bold text-slate-800">{v.title}</div>
-                  <div className="mt-0.5 text-xs text-slate-500">動画で学ぶ</div>
+                  <div className="mt-0.5 text-xs leading-relaxed text-slate-500">
+                    {v.description}
+                  </div>
                 </div>
               </Link>
             </Card>
