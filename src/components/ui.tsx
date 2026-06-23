@@ -36,7 +36,7 @@ export function Skeleton({ className = "" }: { className?: string }) {
   );
 }
 
-/** loading 状態のカード（複数行のスケルトン）。 */
+/** loading 状態のカード（複数行のスケルトン）。`PageLoading` の構成部品かつ単体でも利用可。 */
 export function SkeletonCard({ lines = 3 }: { lines?: number }) {
   return (
     <Card className="space-y-3 p-5" aria-busy="true" aria-label="読み込み中">

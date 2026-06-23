@@ -800,7 +800,10 @@ export const SCENARIOS: Scenario[] = [
   },
 ];
 
-/** ダッシュボード／ロープレ既定で使うおすすめシナリオ（並び順に依存せず意味で選ぶ）。 */
+/**
+ * ダッシュボード／ロープレ既定で使うおすすめシナリオ（並び順に依存せず意味で選ぶ）。
+ * SCENARIOS は常に非空（上で定義）のため `SCENARIOS[0]` フォールバックは必ず存在する。
+ */
 export const RECOMMENDED_SCENARIO: Scenario =
   SCENARIOS.find((s) => s.goal.includes("PLATINUM")) ?? SCENARIOS[0];
 
