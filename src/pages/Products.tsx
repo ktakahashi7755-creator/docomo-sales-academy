@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { PRODUCTS } from "@/data/seed";
+import { useContent } from "@/context/ContentContext";
 import { Card, PageTitle, TierBadge } from "@/components/ui";
 import { isStale } from "@/lib/progress";
 import { ExternalLink, AlertTriangle, ChevronRight } from "lucide-react";
@@ -15,9 +15,10 @@ const ORDER: ProductCategory[] = [
 ];
 
 export function Products() {
+  const { products } = useContent();
   const byCat = ORDER.map((cat) => ({
     cat,
-    items: PRODUCTS.filter((p) => p.category === cat),
+    items: products.filter((p) => p.category === cat),
   })).filter((g) => g.items.length);
 
   return (

@@ -76,6 +76,16 @@
 - [ ] **F-R9 🟢** `progressStore.test.ts` のチェーンモックは `select`/`eq`・テーブル名を個別キャプチャするとより堅牢（実装変更の検出力向上）。
 - [ ] **F-R10 🟢** `signOut` の失敗（ネットワーク断等）が UI に伝わらない（`void`）。将来トースト等で通知。
 
+## G. Phase 2（管理画面 CRUD）
+
+- [x] **G-1** 管理シェル `/admin`（RequireAdmin・admin のみナビ表示）＋ 概要/商材/お知らせ/ユーザー/監査ログ。
+- [x] **G-2** 商材編集 → `product_version`（before/after）記録 ＋ 版インクリメント ＋ 確認日更新 ＋ 監査記録、学習側（Products/ProductDetail）に即時反映（`ContentContext`、smoke テストで検証）。
+- [x] **G-3** お知らせ CRUD（学習者ダッシュボードに反映）／ユーザーの権限・有効無効／監査ログ閲覧。
+- [x] **G-4** 監査のサーバー側書込 RPC `log_audit`（migration 0004）＋ RLS/RPC テスト `rls_admin_audit.sql`。
+- [x] **G-5** 純粋ロジック（`lib/content.ts`：diff/版/お知らせ）＋ Vitest、画面横断 smoke テスト（admin 編集→学習反映、非 admin 遮断）。
+- [ ] **G-6 ⚠️** バックエンド（Supabase）への接続は env が無いため未実施。`ContentContext` を `products`/`product_versions`/`announcements` と `log_audit` に接続する統合が必要。**DB の `products` 列はフロント `Product` 型と形が異なるため写像が必要**（progress と同じギャップ。F-4 と合わせ Phase 2 統合で対応）。
+- [ ] **G-7** お知らせ／ユーザー操作も `log_audit` 経由でサーバー側記録に統一（backend 接続時）。
+
 ## E. 性能・PWA（Phase 6）
 
 - [ ] **E-P1** 初回 JS 予算 ~180KB gzip 目標、Lighthouse 90+ を計測し記録。現状ベースライン: JS 約220KB / gzip 約73KB（2026-06-23 build）。

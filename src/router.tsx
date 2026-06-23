@@ -12,9 +12,16 @@ import { TalkScripts } from "@/pages/TalkScripts";
 import { TalkScriptDetail } from "@/pages/TalkScriptDetail";
 import { Roleplay } from "@/pages/Roleplay";
 import { Certification } from "@/pages/Certification";
+import { AdminLayout } from "@/pages/admin/AdminLayout";
+import { AdminOverview } from "@/pages/admin/AdminOverview";
+import { AdminProducts } from "@/pages/admin/AdminProducts";
+import { AdminProductEdit } from "@/pages/admin/AdminProductEdit";
+import { AdminAnnouncements } from "@/pages/admin/AdminAnnouncements";
+import { AdminUsers } from "@/pages/admin/AdminUsers";
+import { AdminAudit } from "@/pages/admin/AdminAudit";
 
-function RequireAuth({ children }: { children: ReactNode }) {
-  const { profile, loading } = useAuth();
+function AuthGate({ children }: { children: ReactNode }) {
+  const { loading } = useAuth();
   // セッション解決中はリダイレクトせず loading を見せる（ログイン直後のバウンス防止）。
   if (loading) {
     return (
@@ -23,8 +30,28 @@ function RequireAuth({ children }: { children: ReactNode }) {
       </div>
     );
   }
-  if (!profile) return <Navigate to="/login" replace />;
   return <>{children}</>;
+}
+
+function RequireAuth({ children }: { children: ReactNode }) {
+  const { profile } = useAuth();
+  return <AuthGate>{!profile ? <Navigate to="/login" replace /> : <>{children}</>}</AuthGate>;
+}
+
+/** 管理画面ガード：admin 以外はダッシュボードへ戻す（UI 側の防御。書込は RLS でも遮断）。 */
+function RequireAdmin({ children }: { children: ReactNode }) {
+  const { profile } = useAuth();
+  return (
+    <AuthGate>
+      {!profile ? (
+        <Navigate to="/login" replace />
+      ) : profile.role !== "admin" ? (
+        <Navigate to="/" replace />
+      ) : (
+        <>{children}</>
+      )}
+    </AuthGate>
+  );
 }
 
 export function AppRoutes() {
@@ -46,6 +73,21 @@ export function AppRoutes() {
         <Route path="scripts/:id" element={<TalkScriptDetail />} />
         <Route path="roleplay" element={<Roleplay />} />
         <Route path="certification" element={<Certification />} />
+      </Route>
+      <Route
+        path="/admin"
+        element={
+          <RequireAdmin>
+            <AdminLayout />
+          </RequireAdmin>
+        }
+      >
+        <Route index element={<AdminOverview />} />
+        <Route path="products" element={<AdminProducts />} />
+        <Route path="products/:id" element={<AdminProductEdit />} />
+        <Route path="announcements" element={<AdminAnnouncements />} />
+        <Route path="users" element={<AdminUsers />} />
+        <Route path="audit" element={<AdminAudit />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

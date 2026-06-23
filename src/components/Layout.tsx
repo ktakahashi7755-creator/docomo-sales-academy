@@ -1,5 +1,15 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Map, Package, MessageSquareText, Mic, Award, LogOut } from "lucide-react";
+import { NavLink, Outlet, Link, useNavigate } from "react-router-dom";
+import {
+  LayoutDashboard,
+  Map,
+  Package,
+  MessageSquareText,
+  Mic,
+  Award,
+  LogOut,
+  Shield,
+  ChevronRight,
+} from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { ROLE_LABEL } from "@/lib/types";
 import { isBackendEnabled } from "@/lib/supabase";
@@ -46,6 +56,14 @@ export function Layout() {
           ))}
         </nav>
         <div className="border-t border-paper-line p-3">
+          {profile.role === "admin" && (
+            <Link
+              to="/admin"
+              className="mb-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-ink-soft hover:bg-paper-soft"
+            >
+              <Shield size={16} strokeWidth={1.75} /> 管理画面
+            </Link>
+          )}
           <div className="px-2 pb-2">
             <div className="text-sm font-semibold text-ink">{profile.display_name}</div>
             <div className="text-xs text-ink-muted">
@@ -71,6 +89,17 @@ export function Layout() {
           <div className="bg-caution-soft px-4 py-2 text-center text-xs text-caution-deep">
             デモモード：Supabase未接続のためローカルseedで動作中（進捗は保存されません）
           </div>
+        )}
+        {profile.role === "admin" && (
+          <Link
+            to="/admin"
+            className="flex items-center justify-between gap-2 border-b border-paper-line bg-paper px-4 py-2 text-sm font-medium text-ink md:hidden"
+          >
+            <span className="inline-flex items-center gap-2">
+              <Shield size={16} strokeWidth={1.75} /> 管理画面を開く
+            </span>
+            <ChevronRight size={16} className="text-ink-muted" />
+          </Link>
         )}
         <main className="mx-auto w-full max-w-content px-4 py-6 md:px-8 md:py-8">
           <Outlet />

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { useContent } from "@/context/ContentContext";
 import { PHASES, RANKS, RECOMMENDED_SCENARIO } from "@/data/seed";
 import {
   Card,
@@ -13,19 +14,22 @@ import {
 } from "@/components/ui";
 import { LevelLadder } from "@/components/LevelLadder";
 import { flattenModules, summarizeProgress, weakModules } from "@/lib/progress";
-import { ChevronRight } from "lucide-react";
+import { activeAnnouncement } from "@/lib/content";
+import { ChevronRight, Megaphone } from "lucide-react";
 
 // PHASES は定数なので一度だけ平坦化する。
 const ALL_MODULES = flattenModules(PHASES);
 
 export function Dashboard() {
   const { profile, progress } = useAuth();
+  const { announcements } = useContent();
   // loading：認証解決前（Phase 1 で非同期化したときの受け皿）。
   if (!profile) return <PageLoading />;
 
   const { passedCount, completionRate, nextModule } = summarizeProgress(ALL_MODULES, progress);
   const rank = RANKS.find((r) => r.level === profile.level) ?? RANKS[0];
   const weak = weakModules(ALL_MODULES, progress, 3);
+  const notice = activeAnnouncement(announcements);
 
   return (
     <div className="space-y-6">
@@ -34,6 +38,22 @@ export function Dashboard() {
         description={`こんにちは、${profile.display_name} さん`}
         action={<RankPill level={rank.level} label={rank.label} />}
       />
+
+      {notice && (
+        <Card
+          className={`flex items-start gap-3 p-4 ${notice.severity === "caution" ? "bg-caution-soft" : ""}`}
+        >
+          <Megaphone
+            size={18}
+            strokeWidth={1.75}
+            className={`mt-0.5 shrink-0 ${notice.severity === "caution" ? "text-caution-deep" : "text-ink-soft"}`}
+          />
+          <div>
+            <div className="text-sm font-semibold text-ink">{notice.title}</div>
+            <p className="mt-0.5 text-sm text-ink-soft">{notice.body}</p>
+          </div>
+        </Card>
+      )}
 
       {/* 上段：進捗サマリ */}
       <div className="grid gap-4 md:grid-cols-3">

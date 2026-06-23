@@ -9,15 +9,15 @@
 
 ## フェーズ一覧
 
-| Phase | 内容                                                            | 主担当            | 状態                    |
-| ----- | --------------------------------------------------------------- | ----------------- | ----------------------- |
-| 0     | ガバナンス整備（docs 4種・Lint/Prettier/Vitest/Playwright・CI） | qa+全レビュー     | ✅ Done（要承認）       |
-| 1     | Supabase 接続と本認証（progress を DB 永続化）                  | supabase          | ✅ Done（実機検証待ち） |
-| 2     | 管理画面 CRUD（product_versions 履歴・90日鮮度・audit_logs）    | frontend+supabase | ⏳ Planned              |
-| 3     | クイズエンジン（採点純粋関数＋境界値テスト）                    | frontend+qa       | ⏳ Planned              |
-| 4     | ロープレ会話＋AI評価（Edge Function・アダプタ）                 | ai-edge+frontend  | ⏳ Planned              |
-| 5     | SV ダッシュボード・認定フロー                                   | supabase+frontend | ⏳ Planned              |
-| 6     | 仕上げ（PWA・性能・E2E・Lighthouse 90+）                        | qa+全レビュー     | ⏳ Planned              |
+| Phase | 内容                                                            | 主担当            | 状態                                  |
+| ----- | --------------------------------------------------------------- | ----------------- | ------------------------------------- |
+| 0     | ガバナンス整備（docs 4種・Lint/Prettier/Vitest/Playwright・CI） | qa+全レビュー     | ✅ Done（要承認）                     |
+| 1     | Supabase 接続と本認証（progress を DB 永続化）                  | supabase          | ✅ Done（実機検証待ち）               |
+| 2     | 管理画面 CRUD（product_versions 履歴・90日鮮度・audit_logs）    | frontend+supabase | ✅ Done（demo完結 / backend統合待ち） |
+| 3     | クイズエンジン（採点純粋関数＋境界値テスト）                    | frontend+qa       | ⏳ Planned                            |
+| 4     | ロープレ会話＋AI評価（Edge Function・アダプタ）                 | ai-edge+frontend  | ⏳ Planned                            |
+| 5     | SV ダッシュボード・認定フロー                                   | supabase+frontend | ⏳ Planned                            |
+| 6     | 仕上げ（PWA・性能・E2E・Lighthouse 90+）                        | qa+全レビュー     | ⏳ Planned                            |
 
 ---
 
@@ -67,3 +67,11 @@
 - **DoD:** typecheck0 / lint0 / **unit 49件** / build / demo 200・秘密なし。
 - **⚠️ 実機検証待ち（高橋）:** Supabase に migrations 0001→0003 適用、OTP メールテンプレート設定、実ログイン→進捗表示、`rls_module_progress.sql` 実行（AUDIT F-3/F-5）。
 - **残課題:** `module_progress`↔`progress`(uuid) 整合は Phase 2、F-R8（応答バリデーション）等。
+
+### Phase 2 — キックオフ／クローズ（2026-06-23）
+
+- **目的:** 管理画面 CRUD（商材・お知らせ・ユーザー）、版履歴、90日鮮度連動、監査、UI＋RLS 二重防御。
+- **実装:** `ContentContext`（学習側が編集を即時反映）・`/admin` シェル＋5画面・`lib/content.ts` 純粋ロジック・migration 0004（監査 RPC）・RLS/RPC テスト・画面横断 smoke テスト。
+- **判断:** ADR-0009（ContentContext）／ADR-0010（UI＋RLS 二重防御・監査サーバー側）／ADR-0011（人手感・明るさ・絵文字不使用）。
+- **DoD:** 管理者が商材編集→版履歴＋確認日更新＋監査、学習側に反映（smoke で検証）。非管理者は `/admin` 不可（UI＋RLS）。typecheck0/lint0/**unit 64件**/build。
+- **⚠️ backend 統合待ち:** `ContentContext` を Supabase（products/product_versions/announcements/log_audit）へ接続。DB 列とフロント `Product` 型の写像が必要（AUDIT G-6）。

@@ -148,3 +148,45 @@ export interface CertCondition {
   id: string;
   label: string;
 }
+
+// ===== お知らせ =====
+export type AnnouncementSeverity = "info" | "caution";
+
+export interface Announcement {
+  id: string;
+  title: string;
+  body: string;
+  severity: AnnouncementSeverity;
+  isActive: boolean;
+  updatedAt: string; // YYYY-MM-DD
+}
+
+// ===== 変更履歴・監査（管理画面） =====
+export interface ProductVersion {
+  id: string;
+  productId: string;
+  version: number;
+  before: Partial<Product>;
+  after: Partial<Product>;
+  changedBy: string; // display_name
+  reason: string;
+  createdAt: string; // YYYY-MM-DD HH:mm
+}
+
+export type AuditAction =
+  | "product.update"
+  | "announcement.create"
+  | "announcement.update"
+  | "announcement.delete"
+  | "user.role"
+  | "user.active";
+
+export interface AuditEntry {
+  id: string;
+  actor: string; // display_name
+  action: AuditAction;
+  targetType: "product" | "announcement" | "user";
+  targetId: string;
+  summary: string;
+  createdAt: string; // YYYY-MM-DD HH:mm
+}

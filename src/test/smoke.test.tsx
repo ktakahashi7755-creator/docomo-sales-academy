@@ -69,4 +69,46 @@ describe("smoke: デモモードで全9画面が落ちずに描画・遷移で�
     );
     expect(realErrors).toEqual([]);
   });
+
+  it("非管理者は /admin に入れずダッシュボードへ戻される", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: /研修生として入る/ }));
+    await screen.findByRole("heading", { name: "ダッシュボード" });
+    // 研修生に管理画面リンクは出ない
+    expect(document.querySelector('a[href="/admin"]')).toBeNull();
+    // 直接遷移しても弾かれて学習側に戻る
+    window.history.pushState({}, "", "/admin");
+    expect(await screen.findByRole("heading", { name: "ダッシュボード" })).toBeInTheDocument();
+  });
+
+  it("管理者は商材を編集でき、学習側の商材詳細に反映される", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: /管理者として入る/ }));
+    await screen.findByRole("heading", { name: "ダッシュボード" });
+
+    // 管理画面 → 商材 → 最初の商材を編集
+    await user.click(document.querySelector('a[href="/admin"]') as HTMLElement);
+    expect(await screen.findByRole("heading", { name: "概要" })).toBeInTheDocument();
+    await user.click(document.querySelector('a[href="/admin/products"]') as HTMLElement);
+    await screen.findByRole("heading", { name: "商材の管理" });
+    await user.click(document.querySelector('a[href^="/admin/products/"]') as HTMLElement);
+
+    // 「ひとこと説明」（2番目の text input）を書き換えて保存
+    await screen.findByText("変更履歴");
+    const inputs = Array.from(document.querySelectorAll("input")) as HTMLInputElement[];
+    const oneLiner = inputs[1];
+    await user.clear(oneLiner);
+    await user.type(oneLiner, "スモークテスト用の説明");
+    await user.click(screen.getByRole("button", { name: /保存する/ }));
+    expect(await screen.findByText(/保存しました/)).toBeInTheDocument();
+
+    // 学習側の商材一覧→詳細に反映されていること
+    await user.click(document.querySelector('a[href="/"]') as HTMLElement);
+    await screen.findByRole("heading", { name: "ダッシュボード" });
+    await user.click(document.querySelector('a[href="/products"]') as HTMLElement);
+    await screen.findByRole("heading", { name: "商材ナレッジ" });
+    expect(await screen.findByText("スモークテスト用の説明")).toBeInTheDocument();
+  });
 });

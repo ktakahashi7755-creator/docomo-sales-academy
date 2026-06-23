@@ -54,6 +54,27 @@
 - **Decision:** 既存 `progress` を変更せず、`module_progress(user_id, module_key text, score)` を**追加**（migration 0003）。RLS は本人読み書き＋SV/admin 閲覧。フロントの ScoreMap をそのまま保存。
 - **Consequences:** Phase 1 で進捗永続化が成立。Phase 2 でコンテンツを DB 駆動化する際に `progress`(uuid) と整合・移行する（AUDIT に記録）。RLS は `supabase/tests/rls_module_progress.sql` で検証（サービスロール実行）。
 
+## ADR-0009: コンテンツは ContentContext 経由（学習側が編集を即時反映）
+
+- **日付:** 2026-06-23（Phase 2）
+- **Context:** 管理画面の編集が学習側に反映される必要（DoD）。だが学習コンテンツは `src/data/seed.ts`（テキストキー）で、DB の `products` 等とはスキーマが異なり未整合（Phase 1 の progress と同じ構造的ギャップ）。
+- **Decision:** `ContentContext` を導入し、学習側（Products/ProductDetail/Dashboard のお知らせ）はここを読む。デモモードは seed 初期値＋メモリ保持で編集が即時反映。バックエンド接続時は同インターフェースで Supabase の `products`/`product_versions`/`announcements` と監査 RPC に差し替える（DB↔フロントのスキーマ写像は Phase 2 バックエンド統合で実施・AUDIT 追跡）。
+- **Consequences:** デモで DoD（編集→履歴→学習側反映）を完全検証可能（smoke テスト）。事実値は管理者入力をそのまま保存し捏造しない。`applyProductEdit` 等は純粋関数＋Vitest。
+
+## ADR-0010: 管理画面は UI ガード＋RLS の二重防御、監査はサーバー側書込
+
+- **日付:** 2026-06-23（Phase 2）
+- **Context:** 非管理者を `/admin` から排除し、`audit_logs` の書込はサーバー側に限定する必要。
+- **Decision:** UI は `RequireAdmin`（admin 以外は `/` へ）。DB は既存 RLS（`products`/`announcements` は `is_admin()` で書込）。`audit_logs` は insert ポリシーを置かず、`log_audit` SECURITY DEFINER 関数（migration 0004、内部で `is_admin()` 検査・`user_id=auth.uid()` 強制）経由でのみ記録する。
+- **Consequences:** UI と DB の二重防御。監査のクライアント直接 insert は RLS で拒否。検証は `supabase/tests/rls_admin_audit.sql`。
+
+## ADR-0011: プロダクト全体のトーン（人手感・明るさ・絵文字不使用）
+
+- **日付:** 2026-06-23
+- **Context:** 「AI 感を無くし、安っぽくせず明るく、絵文字は使わない」方針。
+- **Decision:** UI コピーは販売現場の能動的で具体的な日本語にし、定型的な AI 文体を避ける。アイコンは lucide の線画のみ（絵文字不使用）。配色は既存トークン（白基調＋ネイビー＋点のアクセント）を保ちつつ、空・成功・お知らせを明るく前向きな文言にする。ドキュメント・コミット・チャット応答でも絵文字を使わない。
+- **Consequences:** 一貫した端正なトーン。重大度表記など内部運用の記号は文字（必須/要修正/提案）で表す。
+
 ## ADR-0004: 検証は「実機ビルド＋ビジュアル」で担保
 
 - **日付:** 2026-06-23

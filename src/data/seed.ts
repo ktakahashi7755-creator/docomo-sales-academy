@@ -1,4 +1,5 @@
 import type {
+  Announcement,
   Badge,
   CertCondition,
   DifficultyDef,
@@ -859,3 +860,15 @@ export const CERT_CONDITIONS: readonly CertCondition[] = [
   { id: "c9", label: "クロージングロープレ合格" },
   { id: "c10", label: "SV承認" },
 ] as const;
+
+// ===== お知らせ（管理画面で編集。学習者ダッシュボードに表示） =====
+export const ANNOUNCEMENTS: Announcement[] = [
+  {
+    id: "an-1",
+    title: "商材情報の確認をお願いします",
+    body: "料金・還元・補償条件は変更されることがあります。提案前に各商材の公式ページと最終確認日を確かめてください。",
+    severity: "info",
+    isActive: true,
+    updatedAt: "2026-06-01",
+  },
+];

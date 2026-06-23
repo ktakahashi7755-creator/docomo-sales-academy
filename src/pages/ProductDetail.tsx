@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
-import { PRODUCTS, TALK_SCRIPTS } from "@/data/seed";
+import { TALK_SCRIPTS } from "@/data/seed";
+import { useContent } from "@/context/ContentContext";
 import { Card, ErrorState, TierBadge } from "@/components/ui";
 import { isStale } from "@/lib/progress";
 import { ArrowLeft, ExternalLink, MessageSquareText, AlertTriangle } from "lucide-react";
@@ -30,7 +31,8 @@ function List({ items, tone }: { items: string[]; tone?: "pass" | "caution" }) {
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
-  const p = PRODUCTS.find((x) => x.id === id);
+  const { getProduct } = useContent();
+  const p = id ? getProduct(id) : undefined;
   const script = TALK_SCRIPTS.find((s) => s.productId === id);
 
   if (!p) {
