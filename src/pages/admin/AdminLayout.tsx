@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import { NavLink, Outlet, Link } from "react-router-dom";
 import { LayoutGrid, Package, Megaphone, Users, ScrollText, ArrowLeft } from "lucide-react";
+import { PageLoading } from "@/components/ui";
 
 const TABS = [
   { to: "/admin", label: "概要", icon: LayoutGrid, end: true },
@@ -54,7 +56,9 @@ export function AdminLayout() {
       </header>
 
       <main className="mx-auto w-full max-w-content px-4 py-6 md:px-8 md:py-8">
-        <Outlet />
+        <Suspense fallback={<PageLoading />}>
+          <Outlet />
+        </Suspense>
       </main>
     </div>
   );

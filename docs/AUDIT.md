@@ -182,3 +182,22 @@
 - [x] **J-R9🟡(code)** `sv.ts` の level と達成フェーズの不整合（t-3）を是正。境界テスト（c1 必須欠落）・二重承認防止 smoke・StatCard/アイコンの aria を追加。
 - [x] **J-R10🟡(security)** RLS テストの例外捕捉を `forbidden`(P0001) に限定し、拒否時の副作用なし（level据置・行なし）を検証。
 - [x] **security/design/code 🔴0（再）** 上記解消後、二層防御・トークン準拠・型安全・4状態を満たす。
+
+## K. Phase 6（仕上げ：PWA・性能・配信）
+
+- [x] **K-1** GitHub Pages デモ配信（`.github/workflows/pages.yml`）。デモモードでビルド（Supabase env を渡さない＝鍵を焼かない）、SPA フォールバック（index→404）。サブパス対応（vite base / BrowserRouter basename）。
+- [x] **K-2** PWA：手書き `public/sw.js`（ナビ network-first・同一オリジン資産 SWR・非GET/クロスオリジン非キャッシュ）＋本番のみ登録（`lib/pwa.ts`）。
+- [x] **K-3** 役割限定の SV/管理画面を `React.lazy` で分割（初期 JS ~101KB→~95.7KB gzip）。
+- [x] **K-4** E2E を Phase 4/5 に追従（テキストロープレ一巡・SV承認を追加、旧「ロープレ無効」アサーション是正）。本環境はブラウザ取得不可のため CI 実行前提。
+- [ ] **K-5 ⚠️** GitHub Pages の有効化（Settings→Pages→Source: GitHub Actions）と環境ブランチ許可は高橋側の操作が必要。Actions 緑で `https://<owner>.github.io/docomo-sales-academy/` が開通。
+- [ ] **K-6 🟡** Lighthouse 90+ の実測は CI/実機で継続（本環境では計測不可）。
+- [ ] **K-7 🟡** `pages.yml` の push トリガに作業ブランチを含む（実機リンクを今出すため）。main マージ後に作業ブランチを外す。
+
+### Phase 6 レビューゲート（2026-06-23）— security / code
+
+- [x] **K-R1🔴(code)** SW ナビゲーションのキャッシュ書込が浮いた Promise → `event.waitUntil` で保持。
+- [x] **K-R2🔴(code)** SW 資産取得の失敗時フォールバック欠如 → SWR 化で `fetch().catch(()=>cached)`（ハードエラー回避）。
+- [x] **K-R3🟡(security)** 同一オリジン資産を cache-first→SWR にし、ハッシュ無し資産（icon/manifest）の陳腐化を回避（CACHE 名の手動更新依存を低減）。
+- [x] **K-R4🟡(code)** SW 登録を `document.readyState` 分岐で load 後実行でも確実に。
+- [x] **K-R5🟡(code)** E2E のシナリオ選択ロケータを `button[aria-pressed="false"]` に限定（誤クリック回避）。
+- [x] **security 🔴0** 鍵非露出・SW はトークン/越境応答を残さない・公開配信は seed のみ（個人情報なし）。

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { lazy, Suspense, type ReactNode } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { PageLoading } from "@/components/ui";
@@ -13,15 +13,40 @@ import { TalkScriptDetail } from "@/pages/TalkScriptDetail";
 import { Roleplay } from "@/pages/Roleplay";
 import { Certification } from "@/pages/Certification";
 import { Quiz } from "@/pages/Quiz";
-import { SvDashboard } from "@/pages/sv/SvDashboard";
-import { SvTraineeDetail } from "@/pages/sv/SvTraineeDetail";
-import { AdminLayout } from "@/pages/admin/AdminLayout";
-import { AdminOverview } from "@/pages/admin/AdminOverview";
-import { AdminProducts } from "@/pages/admin/AdminProducts";
-import { AdminProductEdit } from "@/pages/admin/AdminProductEdit";
-import { AdminAnnouncements } from "@/pages/admin/AdminAnnouncements";
-import { AdminUsers } from "@/pages/admin/AdminUsers";
-import { AdminAudit } from "@/pages/admin/AdminAudit";
+
+// 役割限定で利用頻度の低い SV / 管理画面は遅延読込（初期バンドルから分離）。
+const SvDashboard = lazy(() =>
+  import("@/pages/sv/SvDashboard").then((m) => ({ default: m.SvDashboard })),
+);
+const SvTraineeDetail = lazy(() =>
+  import("@/pages/sv/SvTraineeDetail").then((m) => ({ default: m.SvTraineeDetail })),
+);
+const AdminLayout = lazy(() =>
+  import("@/pages/admin/AdminLayout").then((m) => ({ default: m.AdminLayout })),
+);
+const AdminOverview = lazy(() =>
+  import("@/pages/admin/AdminOverview").then((m) => ({ default: m.AdminOverview })),
+);
+const AdminProducts = lazy(() =>
+  import("@/pages/admin/AdminProducts").then((m) => ({ default: m.AdminProducts })),
+);
+const AdminProductEdit = lazy(() =>
+  import("@/pages/admin/AdminProductEdit").then((m) => ({ default: m.AdminProductEdit })),
+);
+const AdminAnnouncements = lazy(() =>
+  import("@/pages/admin/AdminAnnouncements").then((m) => ({ default: m.AdminAnnouncements })),
+);
+const AdminUsers = lazy(() =>
+  import("@/pages/admin/AdminUsers").then((m) => ({ default: m.AdminUsers })),
+);
+const AdminAudit = lazy(() =>
+  import("@/pages/admin/AdminAudit").then((m) => ({ default: m.AdminAudit })),
+);
+
+/** 遅延ページの Suspense 受け皿。 */
+function Lazy({ children }: { children: ReactNode }) {
+  return <Suspense fallback={<PageLoading />}>{children}</Suspense>;
+}
 
 function AuthGate({ children }: { children: ReactNode }) {
   const { loading } = useAuth();
@@ -97,7 +122,9 @@ export function AppRoutes() {
           path="sv"
           element={
             <RequireSv>
-              <SvDashboard />
+              <Lazy>
+                <SvDashboard />
+              </Lazy>
             </RequireSv>
           }
         />
@@ -105,7 +132,9 @@ export function AppRoutes() {
           path="sv/:traineeId"
           element={
             <RequireSv>
-              <SvTraineeDetail />
+              <Lazy>
+                <SvTraineeDetail />
+              </Lazy>
             </RequireSv>
           }
         />
@@ -114,7 +143,9 @@ export function AppRoutes() {
         path="/admin"
         element={
           <RequireAdmin>
-            <AdminLayout />
+            <Lazy>
+              <AdminLayout />
+            </Lazy>
           </RequireAdmin>
         }
       >

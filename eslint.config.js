@@ -52,5 +52,10 @@ export default tseslint.config(
     files: ["**/*.{test,spec}.{ts,tsx}", "tests/**/*.{ts,tsx}", "src/test/**/*.{ts,tsx}"],
     languageOptions: { globals: { ...globals.node } },
   },
+  // Service Worker（public/sw.js）：self/caches/clients 等の SW グローバル。
+  {
+    files: ["public/sw.js"],
+    languageOptions: { globals: { ...globals.serviceworker } },
+  },
   prettier,
 );

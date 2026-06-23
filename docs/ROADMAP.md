@@ -17,7 +17,7 @@
 | 3     | クイズエンジン（採点純粋関数＋境界値テスト）                    | frontend+qa       | ✅ Done（demo完結 / backend統合待ち） |
 | 4     | ロープレ会話＋AI評価（Edge Function・アダプタ）                 | ai-edge+frontend  | ✅ Done（demo完結 / backend統合待ち） |
 | 5     | SV ダッシュボード・認定フロー                                   | supabase+frontend | ✅ Done（demo完結 / backend統合待ち） |
-| 6     | 仕上げ（PWA・性能・E2E・Lighthouse 90+）                        | qa+全レビュー     | ⏳ Planned                            |
+| 6     | 仕上げ（PWA・性能・E2E・配信）                                  | qa+全レビュー     | 🚧 In progress（実機リンク配信）      |
 
 ---
 
@@ -101,3 +101,12 @@
 - **レビューゲート:** security 初回🔴1（RPC 非冪等／user一意欠如）→ 解消（`on conflict` upsert＋`(user_id,certification_type)` UNIQUE＋`pg_temp`、異常系テスト追加）／design 初回🔴2（和文への `font-num`／行リンク aria）→ 解消＋🟡（承認可能の色を caution・loading・確認フォーカス/告知）対応／code 初回🔴2（4状態 loading 欠落／`AuditAction` 型未追加）→ 解消＋🟡（境界テスト・level整合・二重承認 smoke・aria）対応。
 - **DoD:** SV が承認可能な研修生をクローザー認定→状態反映、認定済みは承認不可、非SVは `/sv` 不可（UI＋RLS）。typecheck0/lint0/prettier/**unit 110件**/build（gzip ~101KB）。
 - **⚠️ backend 統合待ち:** `CertificationContext` を profiles/progress/certifications（SV用 RLS）に接続し、承認を RPC `approve_certification` に置換（AUDIT J 追跡）。
+
+### Phase 6 — キックオフ（2026-06-23 / 進行中）
+
+- **目的:** 仕上げ。実機確認できる公開デモ配信・PWA（インストール可/基本オフライン）・初期バンドルの軽量化・E2E の追従。
+- **実装:** GitHub Pages デプロイ（`.github/workflows/pages.yml`、デモモードで配信・SPA フォールバック）＋ サブパス対応（`vite.config` base / `App` basename）・PWA（`public/sw.js` の network-first ナビ＋stale-while-revalidate 資産、`lib/pwa.ts` は本番のみ登録）・役割限定の SV/管理画面を `React.lazy` で分割（初期 JS を ~101KB→~95.7KB gzip）・E2E を Phase 4/5 に追従（テキストロープレ一巡・SV承認を追加、旧「ロープレ無効」アサーションを是正）。
+- **実機リンク（デモ）:** `https://<owner>.github.io/docomo-sales-academy/`（Pages を「GitHub Actions」ソースで有効化後）。
+- **判断:** ADR-0015（PWA は依存追加なしの手書き SW・同一オリジン資産は SWR・キーを焼かないデモ配信・役割限定ツリーのみ遅延読込）。
+- **残（Phase 6 継続）:** Lighthouse 90+ の実測（CI/実機）、必要なら学習者主要ページの追加分割・画像最適化。backend 接続後に実データ E2E。
+- **検証:** typecheck0/lint0/prettier(format:check)/**unit 110件**/build。E2E はブラウザ取得不可の本環境では未実行（CI 実行前提）。

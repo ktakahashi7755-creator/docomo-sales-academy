@@ -104,6 +104,16 @@
   - デモは `CertificationContext`（メモリ・承認で Lv.10化）で完結し DoD を検証。backend 接続時は同インターフェースで profiles/progress/certifications（SV用 RLS）と RPC に置換。
 - **Consequences:** 二重承認は純粋関数（`canApprove`）・Context（level<10 ガード）・DB（一意制約）の三層で防止。承認は監査に残る。評価永続化（Phase 4/backend）後に c2/c4–c9 を自動判定へ拡張できる。
 
+## ADR-0015: 仕上げ — 公開デモ配信・手書き SW の PWA・役割限定ツリーの遅延読込
+
+- **日付:** 2026-06-23（Phase 6）
+- **Context:** 実機（スマホ）で確認できる公開リンクが必要。セッションは使い捨てコンテナで localhost を外部公開できない。あわせて PWA 化・初期バンドル軽量化を進める。
+- **Decision:**
+  - **配信:** バックエンド不要で動くデモモードを GitHub Pages（`actions/deploy-pages`）へ静的配信。ビルドに Supabase env を渡さず（`supabase=null`＝デモ）、anon/サービス/AI いずれの鍵もバンドルに含めない。SPA 直リンク対策に `index.html`→`404.html` を複製。サブパス配信のため `base`（`PAGES_BASE`）と `BrowserRouter basename`（`BASE_URL` 末尾スラッシュ除去で既定 "/" は ""）を対応。
+  - **PWA:** 依存追加を避け、`public/sw.js` を手書き。ナビゲーションは network-first（更新優先・オフライン時は app shell）、同一オリジン資産は stale-while-revalidate（ハッシュ無し資産も次回反映＝CACHE 名の手動更新に非依存）、非GET・クロスオリジンは非キャッシュ（Supabase API/トークンに触れない）。登録は本番ビルドのみ（dev/テストは無効）。app shell はユーザー非依存・データは実行時取得（クライアントレンダリング）を前提とし、将来 SSR でユーザーデータを HTML へ埋め込む場合は SW のシェルキャッシュを再監査する。
+  - **性能:** 役割限定で利用頻度の低い SV/管理画面のみ `React.lazy` で分割（学習者の初期 JS から除外）。学習者の主要ページと Login/Dashboard は eager。Suspense フォールバックは各レイアウトの Outlet に置き、ナビ chrome を保つ。
+- **Consequences:** スマホで開ける実機リンクを提供。初期 JS が ~95.7KB gzip（予算180KB内）。秘密非露出・SW のキャッシュ安全性は監査済み。Lighthouse 実測は CI/実機で継続。
+
 ## ADR-0004: 検証は「実機ビルド＋ビジュアル」で担保
 
 - **日付:** 2026-06-23
