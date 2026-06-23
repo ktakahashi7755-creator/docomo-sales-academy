@@ -3,11 +3,12 @@
   "short_name": "Sales Academy",
   "description": "未経験からクローザーへ育成する実践型トレーニングシステム",
   "lang": "ja",
-  "start_url": "/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#0B1F3A",
   "theme_color": "#0B1F3A",
   "icons": [
-    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ]
 }
