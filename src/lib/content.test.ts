@@ -72,6 +72,7 @@ describe("applyProductEdit", () => {
     expect(res!.version.after.oneLiner).toBe("改定後の説明");
     expect(res!.version.changedBy).toBe("管理者 デモ");
     expect(res!.version.reason).toBe("料金改定");
+    expect(res!.fields).toEqual(["oneLiner"]);
   });
   it("正典値を勝手に変えない（管理者入力をそのまま保存）", () => {
     const after = { ...base, benefits: ["割引約6,600円", "ポイント約12,000P", "追加特典"] };

@@ -69,8 +69,8 @@ export function AdminProductEdit() {
 
   function handleSave(e: FormEvent) {
     e.preventDefault();
-    if (!draft) return;
-    const res = editProduct(product!.id, draft, reason.trim() || "内容を更新", actor);
+    if (!draft || !product) return;
+    const res = editProduct(product.id, draft, reason.trim() || "内容を更新", actor);
     if (res.changed && res.version != null && res.checkedAt != null) {
       setSaved({ version: res.version, checkedAt: res.checkedAt });
       setReason("");

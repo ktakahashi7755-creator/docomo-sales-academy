@@ -73,7 +73,9 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   const [users, setUsers] = useState<ManagedUser[]>(() => DEMO_USERS.map((u) => ({ ...u })));
   const [audit, setAudit] = useState<AuditEntry[]>([]);
 
-  // 最新値を同期的に参照するための ref（コールバックの依存配列を安定させ、連打時の陳腐化を防ぐ）。
+  // 最新値を同期的に参照するための ref。コールバックの依存配列を [addAudit] に固定し、
+  // 連打時のクロージャ陳腐化を防ぐ。render 中の ref 代入はべき等（同値を書くだけ）で副作用は無く、
+  // Concurrent でも「最新コミット値の読み取り」を保つ。値の更新は state 側（setX）が正本。
   const productsRef = useRef(products);
   productsRef.current = products;
   const announcementsRef = useRef(announcements);

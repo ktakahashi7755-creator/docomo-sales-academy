@@ -99,6 +99,10 @@
 - [ ] **G-10 🟡(security)** backend 化時、`setUserRole`/`setUserActive` はフロント直書きにせず SECURITY DEFINER RPC/Edge Function 経由に（admin 再検査・自己権限の admin 剥奪防止・最後の admin 保護）。
 - [ ] **G-11 🟡(code)** admin 各画面（Overview/Products/Users）に loading スケルトンの受け皿（backend の非同期取得時に必要）。
 - [ ] **G-12 🟢(data)** 「URL のみ修正でも確認日が進む」点（編集＝確認の既定）が鮮度管理の意図とズレないか確認。（→ 高橋確認）
+- [x] **G-R5🔴(code・確認)** AdminUsers の empty 状態欠落 → `EmptyState`＋リスト条件描画を追加（4状態一貫）。
+- [x] **G-R6(code・確認)** `applyProductEdit` の fields 検証テスト追加／`product!` アサーション解消（ガードを handleSave 内に）／render 中 ref 代入の理由コメント明記。
+- [ ] **G-13 🟡(code)** AdminUsers の権限変更・有効無効はワンクリック即時（aria-live 通知あり・可逆）。お知らせ削除との UX 一貫性のため権限変更に確認ステップを入れるか検討。
+- [ ] **G-14 🟢(code)** admin の smoke は商材編集のみ。お知らせ・ユーザー管理のスモークは将来追加。
 
 ## E. 性能・PWA（Phase 6）
 
