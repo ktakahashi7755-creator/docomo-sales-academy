@@ -23,6 +23,9 @@ import {
   BookMarked,
   Users,
   MessageSquare,
+  Shield,
+  Sparkles,
+  Handshake,
 } from "lucide-react";
 import type { Accent, GrowthIcon } from "@/growth/data/curriculum";
 
@@ -50,6 +53,9 @@ const ICON_MAP: Record<GrowthIcon, LucideIcon> = {
   manual: BookMarked,
   users: Users,
   message: MessageSquare,
+  shield: Shield,
+  sparkles: Sparkles,
+  handshake: Handshake,
 };
 
 export function GIcon({
@@ -226,16 +232,108 @@ export function ProgressRing({
 export function PrimaryButton({
   children,
   className = "",
+  onClick,
+  type = "button",
+  disabled = false,
 }: {
   children: ReactNode;
   className?: string;
+  onClick?: () => void;
+  type?: "button" | "submit";
+  disabled?: boolean;
+}) {
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-lift focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 ${className}`}
+    >
+      {children}
+    </button>
+  );
+}
+
+export function GhostButton({
+  children,
+  className = "",
+  onClick,
+}: {
+  children: ReactNode;
+  className?: string;
+  onClick?: () => void;
 }) {
   return (
     <button
       type="button"
-      className={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-lift focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 ${className}`}
+      onClick={onClick}
+      className={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition duration-200 hover:bg-slate-50 ${className}`}
     >
       {children}
     </button>
+  );
+}
+
+/** 内側ページの見出し（任意で戻りリンク・右アクション）。 */
+export function PageHeader({
+  eyebrow,
+  title,
+  description,
+  action,
+}: {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  action?: ReactNode;
+}) {
+  return (
+    <div className="flex flex-wrap items-start justify-between gap-3">
+      <div>
+        {eyebrow && (
+          <div className="font-display text-xs font-semibold uppercase tracking-widest text-blue-500">
+            {eyebrow}
+          </div>
+        )}
+        <h1 className="mt-0.5 text-2xl font-bold text-slate-800">{title}</h1>
+        {description && <p className="mt-1.5 max-w-2xl text-sm text-slate-500">{description}</p>}
+      </div>
+      {action}
+    </div>
+  );
+}
+
+/** 進捗・状態のピル。tone でセマンティック配色。 */
+export function StatusBadge({
+  tone,
+  children,
+}: {
+  tone: "done" | "active" | "todo" | "locked" | "caution";
+  children: ReactNode;
+}) {
+  const cls: Record<string, string> = {
+    done: "bg-emerald-50 text-emerald-700",
+    active: "bg-blue-50 text-blue-700",
+    todo: "bg-slate-100 text-slate-500",
+    locked: "bg-slate-100 text-slate-400",
+    caution: "bg-orange-50 text-orange-700",
+  };
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${cls[tone]}`}
+    >
+      {children}
+    </span>
+  );
+}
+
+/** ステップ／レッスン進捗の細いバー。 */
+export function ProgressBar({ value, className = "" }: { value: number; className?: string }) {
+  return (
+    <div className={`h-2 w-full overflow-hidden rounded-full bg-slate-100 ${className}`}>
+      <div
+        className="h-full rounded-full bg-gradient-to-r from-blue-500 to-sky-400 transition-[width] duration-500"
+        style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
+      />
+    </div>
   );
 }

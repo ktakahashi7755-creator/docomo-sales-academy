@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { ArrowRight, Users } from "lucide-react";
 import { SUCCESS_CASE } from "@/growth/data/curriculum";
 import { Card, SectionTitle, PrimaryButton } from "@/growth/components/ui";
@@ -9,6 +10,7 @@ const AVATAR_TONES = [
 ];
 
 export function SuccessCaseCard() {
+  const navigate = useNavigate();
   const s = SUCCESS_CASE;
   return (
     <Card className="flex h-full flex-col p-6" hover>
@@ -38,7 +40,7 @@ export function SuccessCaseCard() {
         <span className="text-xs text-slate-500">先輩スタッフ {s.members.length} 名の事例</span>
       </div>
 
-      <PrimaryButton className="mt-5 w-full">
+      <PrimaryButton className="mt-5 w-full" onClick={() => navigate("/content")}>
         事例を見る
         <ArrowRight size={16} strokeWidth={2.5} />
       </PrimaryButton>

@@ -1,14 +1,14 @@
 {
-  "name": "ドコモ販売ヘルパー育成アカデミー",
-  "short_name": "Sales Academy",
+  "name": "Provide Growth Academy",
+  "short_name": "Provide Growth",
   "id": "./",
-  "description": "未経験からクローザーへ育成する実践型トレーニングシステム",
+  "description": "未経験・学生・新人でも使える販売育成カリキュラム",
   "lang": "ja",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0B1F3A",
-  "theme_color": "#0B1F3A",
+  "background_color": "#16305a",
+  "theme_color": "#16305a",
   "icons": [
     { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ]

@@ -1,21 +1,25 @@
+import { useNavigate } from "react-router-dom";
 import { ArrowRight, Clock, GraduationCap, ClipboardCheck } from "lucide-react";
-import { CURRENT_CURRICULUM } from "@/growth/data/curriculum";
+import { stepOfLesson, CURRICULUM } from "@/growth/data/curriculum";
+import { useProvide } from "@/growth/context/ProvideContext";
 import { Card, ProgressRing, SectionTitle, PrimaryButton, GIcon } from "@/growth/components/ui";
 
 export function CurrentCurriculumCard() {
-  const c = CURRENT_CURRICULUM;
+  const navigate = useNavigate();
+  const { currentLesson, stepProgress } = useProvide();
+  const step = currentLesson ? stepOfLesson(currentLesson.id) : CURRICULUM[CURRICULUM.length - 1];
+  if (!step) return null;
+
+  const pct = stepProgress(step.id);
+  const tests = step.lessons.filter((l) => l.quizModuleId).length;
   const tiles = [
-    { icon: <Clock size={15} strokeWidth={2} />, label: "期間の目安", value: c.duration },
+    { icon: <Clock size={15} strokeWidth={2} />, label: "期間の目安", value: step.duration },
     {
       icon: <GraduationCap size={15} strokeWidth={2} />,
       label: "学習コンテンツ",
-      value: `${c.contentCount}項目`,
+      value: `${step.lessons.length}項目`,
     },
-    {
-      icon: <ClipboardCheck size={15} strokeWidth={2} />,
-      label: "テスト",
-      value: `${c.testCount}回`,
-    },
+    { icon: <ClipboardCheck size={15} strokeWidth={2} />, label: "テスト", value: `${tests}回` },
   ];
 
   return (
@@ -32,22 +36,22 @@ export function CurrentCurriculumCard() {
       <div className="flex items-start gap-5">
         <div className="min-w-0 flex-1">
           <span className="font-display inline-flex items-center rounded-full bg-gradient-to-r from-blue-500 to-blue-600 px-3 py-1 text-xs font-bold tracking-wider text-white shadow-sm">
-            STEP {String(c.stepNo).padStart(2, "0")}
+            STEP {String(step.no).padStart(2, "0")}
           </span>
-          <h3 className="mt-3 text-xl font-bold text-slate-800">{c.title}</h3>
-          <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{c.description}</p>
+          <h3 className="mt-3 text-xl font-bold text-slate-800">{step.title}</h3>
+          <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{step.goalDescription}</p>
 
           <div className="mt-4">
             <div className="mb-1.5 flex items-center justify-between">
               <span className="text-xs font-medium text-slate-500">進捗</span>
               <span className="font-display text-sm font-bold text-blue-600 tabular-nums">
-                {c.progress}%
+                {pct}%
               </span>
             </div>
             <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-blue-500 to-sky-400 transition-[width] duration-500"
-                style={{ width: `${c.progress}%` }}
+                style={{ width: `${pct}%` }}
               />
             </div>
           </div>
@@ -55,10 +59,10 @@ export function CurrentCurriculumCard() {
 
         <div className="hidden shrink-0 sm:block">
           <ProgressRing
-            value={c.progress}
+            value={pct}
             size={104}
             stroke={9}
-            label={<span className="text-base">{c.progress}%</span>}
+            label={<span className="text-base">{pct}%</span>}
             color="text-blue-600"
           />
         </div>
@@ -76,8 +80,11 @@ export function CurrentCurriculumCard() {
         ))}
       </div>
 
-      <PrimaryButton className="mt-5 w-full sm:w-auto">
-        続きから学習する
+      <PrimaryButton
+        className="mt-5 w-full sm:w-auto"
+        onClick={() => navigate(currentLesson ? `/content/${currentLesson.id}` : "/curriculum")}
+      >
+        {currentLesson ? "続きから学習する" : "カリキュラムを見る"}
         <ArrowRight size={16} strokeWidth={2.5} />
       </PrimaryButton>
     </Card>

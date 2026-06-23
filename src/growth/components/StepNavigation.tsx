@@ -1,31 +1,31 @@
+import { Link } from "react-router-dom";
 import { Check, Lock } from "lucide-react";
-import { STEPS, type StepStatus } from "@/growth/data/curriculum";
+import { CURRICULUM, stepOfLesson } from "@/growth/data/curriculum";
+import { useProvide, stepStatus } from "@/growth/context/ProvideContext";
 import { ACCENT, GIcon } from "@/growth/components/ui";
 
-const STATUS_META: Record<StepStatus, { label: string; cls: string }> = {
-  completed: { label: "完了", cls: "bg-emerald-50 text-emerald-700" },
-  "in-progress": { label: "学習中", cls: "bg-blue-50 text-blue-700" },
-  locked: { label: "ロック", cls: "bg-slate-100 text-slate-400" },
-};
-
 export function StepNavigation() {
+  const { stepProgress, currentLesson } = useProvide();
+  const activeStepId = currentLesson ? stepOfLesson(currentLesson.id)?.id : undefined;
+
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
-      {STEPS.map((step) => {
+      {CURRICULUM.map((step) => {
         const a = ACCENT[step.accent];
-        const locked = step.status === "locked";
-        const active = step.status === "in-progress";
-        const meta = STATUS_META[step.status];
+        const status = stepStatus(step, stepProgress);
+        const locked = status === "locked";
+        const active = step.id === activeStepId;
+        const pct = stepProgress(step.id);
         return (
-          <div
+          <Link
             key={step.id}
+            to="/curriculum"
             className={`group relative overflow-hidden rounded-2xl border bg-white p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-lift ${
               active
                 ? "border-blue-300 shadow-lift ring-1 ring-blue-400/50"
                 : "border-slate-100 shadow-card"
             }`}
           >
-            {/* 上部の細いアクセント帯 */}
             <span
               className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${a.from} ${a.to} ${
                 locked ? "opacity-30" : ""
@@ -40,11 +40,17 @@ export function StepNavigation() {
                 <GIcon name={step.icon} size={20} strokeWidth={2} />
               </span>
               <span
-                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${meta.cls}`}
+                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                  status === "completed"
+                    ? "bg-emerald-50 text-emerald-700"
+                    : status === "in-progress"
+                      ? "bg-blue-50 text-blue-700"
+                      : "bg-slate-100 text-slate-400"
+                }`}
               >
-                {step.status === "completed" && <Check size={12} strokeWidth={3} />}
+                {status === "completed" && <Check size={12} strokeWidth={3} />}
                 {locked && <Lock size={11} strokeWidth={2.5} />}
-                {meta.label}
+                {status === "completed" ? "完了" : status === "in-progress" ? "学習中" : "ロック"}
               </span>
             </div>
             <div
@@ -61,8 +67,10 @@ export function StepNavigation() {
             >
               {step.title}
             </div>
-            <div className="mt-1 text-xs text-slate-400">{step.duration}</div>
-          </div>
+            <div className="mt-1 text-xs text-slate-400">
+              {locked ? `目安 ${step.duration}` : `${pct}% ・ 目安 ${step.duration}`}
+            </div>
+          </Link>
         );
       })}
     </div>

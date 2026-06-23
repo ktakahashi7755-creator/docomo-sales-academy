@@ -1,8 +1,10 @@
+import { Link } from "react-router-dom";
 import { ChevronRight, Check } from "lucide-react";
-import { LESSONS, type LessonStatus } from "@/growth/data/curriculum";
+import { stepOfLesson, CURRICULUM } from "@/growth/data/curriculum";
+import { useProvide, type LessonStatus } from "@/growth/context/ProvideContext";
 import { Card, SectionTitle, ProgressRing, GIcon } from "@/growth/components/ui";
 
-const STATUS_META: Record<LessonStatus, { label: string; pill: string; badge: string }> = {
+const META: Record<LessonStatus, { label: string; pill: string; badge: string }> = {
   completed: {
     label: "完了",
     pill: "bg-emerald-50 text-emerald-700",
@@ -21,6 +23,10 @@ const STATUS_META: Record<LessonStatus, { label: string; pill: string; badge: st
 };
 
 export function LearningStepTable() {
+  const { currentLesson, lessonStatus, lessonProgress } = useProvide();
+  const step = currentLesson ? stepOfLesson(currentLesson.id) : CURRICULUM[CURRICULUM.length - 1];
+  if (!step) return null;
+
   return (
     <Card className="p-5 sm:p-6" hover>
       <SectionTitle
@@ -32,66 +38,58 @@ export function LearningStepTable() {
         }
         action={
           <span className="text-xs font-medium text-slate-400">
-            STEP 02・全{LESSONS.length}項目
+            STEP {String(step.no).padStart(2, "0")}・全{step.lessons.length}項目
           </span>
         }
       />
 
       <ul className="divide-y divide-slate-100">
-        {LESSONS.map((lesson) => {
-          const meta = STATUS_META[lesson.status];
+        {step.lessons.map((lesson) => {
+          const status = lessonStatus(lesson.id);
+          const meta = META[status];
+          const pct = lessonProgress[lesson.id] ?? 0;
           return (
-            <li key={lesson.no}>
-              <button
-                type="button"
+            <li key={lesson.id}>
+              <Link
+                to={`/content/${lesson.id}`}
                 className="group flex w-full items-center gap-3 rounded-xl px-1.5 py-3 text-left transition hover:bg-slate-50 sm:gap-4 sm:px-3"
               >
-                {/* 番号 */}
                 <span
                   className={`font-display flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-bold ${meta.badge}`}
                 >
-                  {lesson.status === "completed" ? (
+                  {status === "completed" ? (
                     <Check size={18} strokeWidth={3} />
                   ) : (
                     String(lesson.no).padStart(2, "0")
                   )}
                 </span>
 
-                {/* タイトル・説明 */}
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-sm font-semibold text-slate-800">
                     {lesson.title}
                   </div>
-                  <div className="truncate text-xs text-slate-500">{lesson.description}</div>
+                  <div className="truncate text-xs text-slate-500">{lesson.summary}</div>
                 </div>
 
-                {/* 進捗（進行中のみリング） */}
-                {lesson.status === "in-progress" && lesson.progress != null && (
-                  <ProgressRing
-                    value={lesson.progress}
-                    size={38}
-                    stroke={4}
-                    label={`${lesson.progress}`}
-                  />
+                {status === "in-progress" && (
+                  <ProgressRing value={pct} size={38} stroke={4} label={`${pct}`} />
                 )}
 
-                {/* 状態 */}
                 <span
                   className={`hidden shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold sm:inline-flex ${meta.pill}`}
                 >
                   {meta.label}
                 </span>
 
-                {/* 最終学習日 */}
-                <span className="hidden w-20 shrink-0 text-right text-xs text-slate-400 lg:inline">
-                  {lesson.lastStudied ?? "—"}
+                <span className="hidden w-12 shrink-0 text-right text-xs text-slate-400 lg:inline">
+                  {lesson.minutes}分
                 </span>
 
                 <ChevronRight
                   size={18}
                   className="shrink-0 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-slate-400"
                 />
-              </button>
+              </Link>
             </li>
           );
         })}
