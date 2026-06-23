@@ -36,11 +36,14 @@ test("レッスンを開いて完了にできる", async ({ page }) => {
 test("AIサポートBotを開ける", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByText("現在のカリキュラム")).toBeVisible();
-  const sidebarBtn = page.getByRole("button", { name: "相談する" });
-  if (await sidebarBtn.isVisible().catch(() => false)) {
-    await sidebarBtn.click();
-  } else {
-    await page.getByRole("button", { name: "AIサポートBotを開く" }).click();
-  }
+  // lg(1024px)以上はサイドバーの「相談する」、未満はフローティングのFABが表示される。
+  // viewport 幅で起動ボタンを決定的に選び、表示を待ってからクリックする。
+  const width = page.viewportSize()?.width ?? 0;
+  const trigger =
+    width >= 1024
+      ? page.getByRole("button", { name: "相談する" })
+      : page.getByRole("button", { name: "AIサポートBotを開く" });
+  await expect(trigger).toBeVisible();
+  await trigger.click();
   await expect(page.getByRole("dialog", { name: "AIサポートBot" })).toBeVisible();
 });
