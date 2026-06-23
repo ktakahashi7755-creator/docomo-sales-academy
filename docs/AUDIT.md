@@ -112,3 +112,12 @@
 ## E. 性能・PWA（Phase 6）
 
 - [ ] **E-P1** 初回 JS 予算 ~180KB gzip 目標、Lighthouse 90+ を計測し記録。現状ベースライン: JS 約220KB / gzip 約73KB（2026-06-23 build）。
+
+## H. Phase 3（クイズエンジン）
+
+- [x] **H-1** 受験UI `pages/Quiz.tsx`（4状態・単一/複数選択・採点・解説・再受験）＋ `/quiz/:moduleId`。
+- [x] **H-2** 採点は純粋関数 `lib/quiz.ts`（gradeQuiz/isAnswerCorrect/allAnswered）。境界値 79/80/89/90/99/100 を採点パイプライン経由で Vitest 検証。
+- [x] **H-3** 提出で `setModuleScore`（best score 保持）→ Roadmap/Dashboard に反映（smoke で受験→合格→反映を担保）。合格で `b-first` は進捗から自動導出。
+- [x] **H-4** 設問 `data/quiz.ts`（p1m4/p1m5/p2m1/p3m1/p6m2/p8m1 各5問）は正典準拠（GOLD18,600/PLATINUM18,700・本人入力・プラン要確認運用）。
+- [ ] **H-5 🟡** `quiz_attempts` への保存は backend 接続時に実装（受験履歴・回数）。現状は best score を progress に反映するのみ。
+- [ ] **H-6 🟢** 設問は6モジュールのみ。残りモジュールへの設問拡充はコンテンツ追補で対応。

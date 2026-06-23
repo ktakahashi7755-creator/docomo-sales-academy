@@ -12,6 +12,7 @@ import { TalkScripts } from "@/pages/TalkScripts";
 import { TalkScriptDetail } from "@/pages/TalkScriptDetail";
 import { Roleplay } from "@/pages/Roleplay";
 import { Certification } from "@/pages/Certification";
+import { Quiz } from "@/pages/Quiz";
 import { AdminLayout } from "@/pages/admin/AdminLayout";
 import { AdminOverview } from "@/pages/admin/AdminOverview";
 import { AdminProducts } from "@/pages/admin/AdminProducts";
@@ -67,6 +68,7 @@ export function AppRoutes() {
       >
         <Route index element={<Dashboard />} />
         <Route path="roadmap" element={<Roadmap />} />
+        <Route path="quiz/:moduleId" element={<Quiz />} />
         <Route path="products" element={<Products />} />
         <Route path="products/:id" element={<ProductDetail />} />
         <Route path="scripts" element={<TalkScripts />} />

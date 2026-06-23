@@ -14,7 +14,7 @@
 | 0     | ガバナンス整備（docs 4種・Lint/Prettier/Vitest/Playwright・CI） | qa+全レビュー     | ✅ Done（要承認）                     |
 | 1     | Supabase 接続と本認証（progress を DB 永続化）                  | supabase          | ✅ Done（実機検証待ち）               |
 | 2     | 管理画面 CRUD（product_versions 履歴・90日鮮度・audit_logs）    | frontend+supabase | ✅ Done（demo完結 / backend統合待ち） |
-| 3     | クイズエンジン（採点純粋関数＋境界値テスト）                    | frontend+qa       | ⏳ Planned                            |
+| 3     | クイズエンジン（採点純粋関数＋境界値テスト）                    | frontend+qa       | ✅ Done（demo完結 / backend統合待ち） |
 | 4     | ロープレ会話＋AI評価（Edge Function・アダプタ）                 | ai-edge+frontend  | ⏳ Planned                            |
 | 5     | SV ダッシュボード・認定フロー                                   | supabase+frontend | ⏳ Planned                            |
 | 6     | 仕上げ（PWA・性能・E2E・Lighthouse 90+）                        | qa+全レビュー     | ⏳ Planned                            |
@@ -75,3 +75,11 @@
 - **判断:** ADR-0009（ContentContext）／ADR-0010（UI＋RLS 二重防御・監査サーバー側）／ADR-0011（人手感・明るさ・絵文字不使用）。
 - **DoD:** 管理者が商材編集→版履歴＋確認日更新＋監査、学習側に反映（smoke で検証）。非管理者は `/admin` 不可（UI＋RLS）。typecheck0/lint0/**unit 64件**/build。
 - **⚠️ backend 統合待ち:** `ContentContext` を Supabase（products/product_versions/announcements/log_audit）へ接続。DB 列とフロント `Product` 型の写像が必要（AUDIT G-6）。
+
+### Phase 3 — キックオフ／クローズ（2026-06-23）
+
+- **目的:** 理解度テスト（受験UI→採点→進捗反映→合格判定）、合格点ロジック（通常80/重要90/コンプラ100）、再受験、純粋関数＋境界値テスト。
+- **実装:** `lib/quiz.ts`（純粋採点）＋ `lib/quiz.test.ts`（境界値 79/80/89/90/99/100）・`data/quiz.ts`（6モジュール30問・正典準拠）・`pages/Quiz.tsx`（4状態・複数選択・解説）・`/quiz/:moduleId`・Roadmap/Dashboard から導線・smoke で受験→合格→反映。
+- **判断:** ADR-0012（純粋採点＋進捗反映、バッジは進捗導出、quiz_attempts は backend）。
+- **DoD:** 受験→採点→ロードマップ/ダッシュボード反映が一気通貫。境界値 unit 緑。typecheck0/lint0/**unit 79件**/build/smoke 緑。
+- **残課題:** `quiz_attempts` 永続化と全モジュールへの設問拡充は backend 統合・コンテンツ追補で対応。

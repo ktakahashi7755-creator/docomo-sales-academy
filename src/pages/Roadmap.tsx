@@ -1,8 +1,10 @@
+import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { PHASES } from "@/data/seed";
+import { QUIZ_MODULE_IDS } from "@/data/quiz";
 import { Card, PageTitle, ScoreChip } from "@/components/ui";
 import { isPassed, phaseProgress } from "@/lib/progress";
-import { CheckCircle2, Circle } from "lucide-react";
+import { CheckCircle2, Circle, ChevronRight } from "lucide-react";
 
 export function Roadmap() {
   const { progress } = useAuth();
@@ -42,6 +44,8 @@ export function Roadmap() {
               <ul className="divide-y divide-paper-line">
                 {phase.modules.map((m) => {
                   const ok = isPassed(progress[m.id], m.passing_score);
+                  const hasQuiz = QUIZ_MODULE_IDS.has(m.id);
+                  const taken = progress[m.id] != null;
                   return (
                     <li key={m.id} className="flex items-center gap-3 px-5 py-3">
                       {ok ? (
@@ -49,7 +53,7 @@ export function Roadmap() {
                       ) : (
                         <Circle size={18} className="shrink-0 text-paper-line" />
                       )}
-                      <div className="flex-1">
+                      <div className="min-w-0 flex-1">
                         <div className="text-sm font-medium text-ink">{m.title}</div>
                         <div className="text-xs text-ink-muted">
                           目安 {m.estimated_minutes} 分・合格 {m.passing_score} 点
@@ -59,6 +63,15 @@ export function Roadmap() {
                         </div>
                       </div>
                       <ScoreChip score={progress[m.id]} passing={m.passing_score} />
+                      {hasQuiz && (
+                        <Link
+                          to={`/quiz/${m.id}`}
+                          className="inline-flex min-h-[44px] shrink-0 items-center gap-0.5 rounded-lg border border-paper-line px-3 text-sm font-medium text-ink hover:bg-paper-soft"
+                        >
+                          {ok ? "復習" : taken ? "再受験" : "受験"}
+                          <ChevronRight size={16} />
+                        </Link>
+                      )}
                     </li>
                   );
                 })}

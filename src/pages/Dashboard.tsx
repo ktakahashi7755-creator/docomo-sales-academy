@@ -13,6 +13,7 @@ import {
   SectionTitle,
 } from "@/components/ui";
 import { LevelLadder } from "@/components/LevelLadder";
+import { QUIZ_MODULE_IDS } from "@/data/quiz";
 import { flattenModules, summarizeProgress, weakModules } from "@/lib/progress";
 import { activeAnnouncement } from "@/lib/content";
 import { ChevronRight, Megaphone } from "lucide-react";
@@ -75,7 +76,7 @@ export function Dashboard() {
 
           {nextModule && (
             <Link
-              to="/roadmap"
+              to={QUIZ_MODULE_IDS.has(nextModule.id) ? `/quiz/${nextModule.id}` : "/roadmap"}
               className="mt-5 flex items-center justify-between rounded-xl2 bg-paper-soft px-4 py-3 transition-colors hover:bg-paper-line/60"
             >
               <div>

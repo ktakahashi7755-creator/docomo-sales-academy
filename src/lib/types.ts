@@ -150,6 +150,17 @@ export interface CertCondition {
   label: string;
 }
 
+// ===== クイズ（理解度テスト） =====
+export interface QuizQuestion {
+  id: string;
+  moduleId: string; // seed のモジュールキー（例 p1m1）
+  prompt: string;
+  choices: string[];
+  /** 正解の選択肢インデックス。複数なら複数選択問題。 */
+  correct: number[];
+  explanation: string;
+}
+
 // ===== 管理：ユーザー =====
 export interface ManagedUser {
   id: string;

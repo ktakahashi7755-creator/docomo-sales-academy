@@ -2,6 +2,7 @@ import { describe, it, expect, afterEach, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "@/App";
+import { quizForModule } from "@/data/quiz";
 
 // デモモード（Supabase 未設定）で全画面が実行時エラーなく描画・遷移できることを担保する。
 // ブラウザ無しの環境でもランタイムクラッシュを検出するためのスモークテスト。
@@ -108,5 +109,32 @@ describe("smoke: デモモードで全9画面が落ちずに描画・遷移で�
     await user.click(document.querySelector('a[href="/products"]') as HTMLElement);
     await screen.findByRole("heading", { name: "商材ナレッジ" });
     expect(await screen.findByText("スモークテスト用の説明")).toBeInTheDocument();
+  });
+
+  it("クイズを全問正解で合格し、進捗がロードマップに反映される", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: /研修生として入る/ }));
+    await screen.findByRole("heading", { name: "ダッシュボード" });
+
+    // ロードマップ → p3m1（dカード）のテストを受験（デモ未受験なので「受験」リンク）
+    await clickHref(user, "/roadmap");
+    await screen.findByRole("heading", { name: "研修ロードマップ" });
+    await user.click(document.querySelector('a[href="/quiz/p3m1"]') as HTMLElement);
+
+    // 全問、正解の選択肢を選ぶ
+    const qs = quizForModule("p3m1");
+    for (const q of qs) {
+      const inputs = document.querySelectorAll(`input[name="${q.id}"]`);
+      await user.click(inputs[q.correct[0]] as HTMLElement);
+    }
+    await user.click(screen.getByRole("button", { name: /採点する/ }));
+    expect(await screen.findByText("合格しました")).toBeInTheDocument();
+
+    // ロードマップに戻ると、p3m1 が「復習」（=合格済み）になっている
+    await user.click(document.querySelector('a[href="/roadmap"]') as HTMLElement);
+    await screen.findByRole("heading", { name: "研修ロードマップ" });
+    const link = document.querySelector('a[href="/quiz/p3m1"]');
+    expect(link?.textContent).toContain("復習");
   });
 });

@@ -75,6 +75,13 @@
 - **Decision:** UI コピーは販売現場の能動的で具体的な日本語にし、定型的な AI 文体を避ける。アイコンは lucide の線画のみ（絵文字不使用）。配色は既存トークン（白基調＋ネイビー＋点のアクセント）を保ちつつ、空・成功・お知らせを明るく前向きな文言にする。ドキュメント・コミット・チャット応答でも絵文字を使わない。
 - **Consequences:** 一貫した端正なトーン。重大度表記など内部運用の記号は文字（必須/要修正/提案）で表す。
 
+## ADR-0012: クイズエンジンは純粋採点＋進捗反映、バッジは進捗から導出
+
+- **日付:** 2026-06-23（Phase 3）
+- **Context:** 受験→採点→進捗反映→合格判定を一気通貫にし、採点ロジックを境界値テスト可能にする必要。
+- **Decision:** 採点は `lib/quiz.ts` の純粋関数（`gradeQuiz`/`isAnswerCorrect`/`allAnswered`）に分離。合否は `lib/progress.isPassed(score, module.passing_score)`。提出時に `setModuleScore`（best score 保持）で進捗を更新し、Roadmap/Dashboard に反映。`b-first` バッジは進捗から自動導出（ADR-0006）で別ストア不要。設問は `src/data/quiz.ts`（事実は正典準拠）。複数選択は集合一致で採点。
+- **Consequences:** 境界値 79/80/89/90/99/100 を採点パイプライン経由で Vitest 検証。再受験は best score を下げない。クイズ未整備モジュールは受験導線を出さない（ErrorState）。`quiz_attempts` への保存は backend 接続時（AUDIT 追跡）。
+
 ## ADR-0004: 検証は「実機ビルド＋ビジュアル」で担保
 
 - **日付:** 2026-06-23
