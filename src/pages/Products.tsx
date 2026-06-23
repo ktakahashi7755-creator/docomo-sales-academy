@@ -1,27 +1,32 @@
 import { Link } from "react-router-dom";
 import { PRODUCTS } from "@/data/seed";
-import { Card, TierBadge } from "@/components/ui";
+import { Card, PageTitle, TierBadge } from "@/components/ui";
+import { isStale } from "@/lib/progress";
 import { ExternalLink, AlertTriangle, ChevronRight } from "lucide-react";
 import type { ProductCategory } from "@/lib/types";
 
-const ORDER: ProductCategory[] = ["dカード", "料金プラン", "ドコモ光", "ドコモでんき", "ドコモガス", "他社比較"];
-
-function isStale(dateStr: string) {
-  const checked = new Date(dateStr).getTime();
-  const days = (Date.now() - checked) / (1000 * 60 * 60 * 24);
-  return days > 90; // 90日超で「公式情報確認」を促す
-}
+const ORDER: ProductCategory[] = [
+  "dカード",
+  "料金プラン",
+  "ドコモ光",
+  "ドコモでんき",
+  "ドコモガス",
+  "他社比較",
+];
 
 export function Products() {
-  const byCat = ORDER.map((cat) => ({ cat, items: PRODUCTS.filter((p) => p.category === cat) })).filter((g) => g.items.length);
+  const byCat = ORDER.map((cat) => ({
+    cat,
+    items: PRODUCTS.filter((p) => p.category === cat),
+  })).filter((g) => g.items.length);
 
   return (
     <div className="space-y-6">
-      <div>
-        <div className="font-num text-xs font-semibold uppercase tracking-widest text-ink-muted">Products</div>
-        <h1 className="text-2xl font-bold text-ink">商材ナレッジ</h1>
-        <p className="mt-1 text-sm text-ink-muted">公式サイトの内容を正とし、料金・条件は管理画面から更新します。</p>
-      </div>
+      <PageTitle
+        eyebrow="Products"
+        title="商材ナレッジ"
+        description="公式サイトの内容を正とし、料金・条件は管理画面から更新します。"
+      />
 
       {byCat.map(({ cat, items }) => (
         <section key={cat}>
@@ -49,12 +54,21 @@ export function Products() {
                       公式ページ <ExternalLink size={12} />
                     </a>
                     <span className="text-ink-muted">·</span>
-                    <span className={isStale(p.officialCheckedAt) ? "inline-flex items-center gap-1 text-caution" : "text-ink-muted"}>
+                    <span
+                      className={
+                        isStale(p.officialCheckedAt)
+                          ? "inline-flex items-center gap-1 text-caution-deep"
+                          : "text-ink-muted"
+                      }
+                    >
                       {isStale(p.officialCheckedAt) && <AlertTriangle size={12} />}
                       確認日 {p.officialCheckedAt}
                     </span>
                   </div>
-                  <Link to={`/products/${p.id}`} className="inline-flex items-center gap-0.5 text-sm font-medium text-ink">
+                  <Link
+                    to={`/products/${p.id}`}
+                    className="inline-flex items-center gap-0.5 text-sm font-medium text-ink"
+                  >
                     詳細 <ChevronRight size={16} />
                   </Link>
                 </div>

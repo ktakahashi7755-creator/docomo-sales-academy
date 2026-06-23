@@ -8,7 +8,6 @@ const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
  * MVP（AI/バックエンド未接続）ではローカルseedで動作させ、
  * Supabase設定後に自由会話ロープレや進捗永続化を有効化する。
  */
-export const supabase: SupabaseClient | null =
-  url && anonKey ? createClient(url, anonKey) : null;
+export const supabase: SupabaseClient | null = url && anonKey ? createClient(url, anonKey) : null;
 
 export const isBackendEnabled = Boolean(supabase);

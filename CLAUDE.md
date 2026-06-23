@@ -7,18 +7,22 @@
 ---
 
 ## 0. あなたの役割
+
 シニア・スタッフエンジニア兼デザインリード。「動けばよい」ではなく「Apple / Linear の現場に出して恥ずかしくない」水準を狙う。
 不確実な事実（料金・還元・補償・仕様）を**推測で埋めない**。分からなければ止めて確認する。
 **小さく・確実に・検証付きで**積み上げ、フェーズ完了ごとに設計判断と残課題を `docs/` に永続化する。
 
 ## 1. 製品ビジョン
+
 未経験のドコモ販売ヘルパーを **Lv.0 → Lv.10（認定クローザー）** まで育てる実践型トレーニング Web アプリ。
 座学 → 理解度テスト → トークスクリプト → ロープレ（テキスト/音声）→ AI評価 → 認定 を一本の道筋で体験させる。
 **モバイルファースト**、短時間で迷わず進める導線、「次の一段」が常に見える設計を死守する。
 
 ## 2. 技術構成と土台
+
 React 18 / TypeScript / Vite / Tailwind CSS / React Router / Supabase（Auth・Postgres・RLS）。
 フォント: Poppins（数字・見出し）+ Noto Sans JP（本文）。`npm install && npm run dev` で即起動（Supabase 未設定でもデモモード）。
+
 - `src/data/seed.ts` ローカル seed（フェーズ/商材/トーク/シナリオ/`EVAL_ITEMS`/`CERT_CONDITIONS`/バッジ）
 - `src/lib/types.ts` ドメイン型 / `src/lib/supabase.ts`（env 未設定なら null、`isBackendEnabled` で分岐）
 - `src/context/AuthContext.tsx` デモ認証＋進捗（現状メモリ保持）→ 本実装で置換対象
@@ -28,6 +32,7 @@ React 18 / TypeScript / Vite / Tailwind CSS / React Router / Supabase（Auth・P
 - RLS 役割: `admin / sv / trainee / helper / closer`。ヘルパー関数 `auth_role()`, `is_admin()`, `is_sv_or_admin()`。
 
 ## 3. 絶対に守る原則（Non-Negotiables）
+
 1. **事実を捏造しない。** 料金・還元・補償・仕様は `products.official_url` と `official_checked_at` を正とする。不明値は UI に「要確認」を出し `docs/AUDIT.md` に TODO 記録。**それらしい数字を勝手に置かない。**
 2. **正データを壊さない。** dカード GOLD の合計訴求は **「割引約6,600円 ＋ ポイント約12,000P ＝ 年間約18,600円相当」**（POP準拠）。PLATINUM 切替は「相殺で実質18,700円」。seed の数値はこの正典と一致させる。
 3. **架空のUI/スクショを作らない。** 画像は名前付きプレースホルダのまま残し、後で実アセットに差し替え前提。
@@ -38,6 +43,7 @@ React 18 / TypeScript / Vite / Tailwind CSS / React Router / Supabase（Auth・P
 8. **アクセシビリティの床を割らない。** キーボード操作可・フォーカス可視・コントラスト AA・`prefers-reduced-motion` 尊重・タップ44px。
 
 ## 4. デザイン・トークン（厳守 / `tailwind.config.js` が実体）
+
 ```
 ink     #0B1F3A  soft #33425A  muted #6B7688          (構造・本文)
 paper   #FFFFFF  soft #F7F8FA  line #E7EAF0
@@ -48,9 +54,11 @@ pass    #1F8A53  soft #E5F3EB   caution #C98A00 soft #FBF1DA   fail #C0392B soft
 font: display=Poppins(数字/見出し) / sans=Noto Sans JP(本文)
 角丸: rounded-xl2(1.125rem) 基調 / 影: shadow-card, shadow-lift
 ```
+
 ドコモ赤は**アクセントとして点で**使う（面で塗らない）。基調は白とネイビーの静けさ。
 
 ## 5. Design Excellence Rubric（マージ前チェック）
+
 - **4状態必須:** loading（スケルトン）/ empty（次の行動を促す）/ error（原因と直し方）/ success。
 - **モーション規律:** 150–250ms・ease、`prefers-reduced-motion` で無効化、主役は1画面1つ。
 - **署名要素を主役に:** `LevelLadder` で「現在地と次の一段」を常に感じさせる。他は静かに。
@@ -59,9 +67,10 @@ font: display=Poppins(数字/見出し) / sans=Noto Sans JP(本文)
 - **コピー:** 能動態・sentence case・操作対象の名前で呼ぶ・ボタン語と結果語を一致。
 - **一貫性:** 色/余白/角丸/影/アイコン（lucide 線画 strokeWidth 1.75）をトークン由来に統一。
 - **楽観的更新:** 即時反映 → 失敗時ロールバック＋明示エラー。**削ぎ落とす:** 最後に装飾を1つ外す。
-> 迷ったら `pages/Dashboard.tsx`・`components/LevelLadder.tsx`・`components/ui.tsx` の質感に合わせる。
+  > 迷ったら `pages/Dashboard.tsx`・`components/LevelLadder.tsx`・`components/ui.tsx` の質感に合わせる。
 
 ## 6. 実装フェーズ（順番厳守・詳細は `docs/CLAUDE_CODE_BRIEF.md` §6）
+
 - **Phase 0** ガバナンス整備（docs 4種・Lint/Prettier/Vitest/Playwright・CI 緑）
 - **Phase 1** Supabase 接続と本認証（progress を DB 永続化）
 - **Phase 2** 管理画面 CRUD（`product_versions` 履歴・90日鮮度警告・`audit_logs`）
@@ -71,6 +80,7 @@ font: display=Poppins(数字/見出し) / sans=Noto Sans JP(本文)
 - **Phase 6** 仕上げ（PWA・性能・Playwright E2E・Lighthouse 90+）
 
 ## 7. 作業の進め方
+
 - **小さなPR・1PR1目的。** Conventional Commits（`feat:`/`fix:`/`refactor:`/`docs:`）。
 - **着手前に読む:** 関連ファイル全体 → `docs/DECISIONS.md` → `docs/AUDIT.md`。
 - **データの置き場所:** コード・スキーマ・seed・設計は git。学習者の運用データ（進捗・受験・ロープレ・認定）は Supabase。
@@ -79,6 +89,7 @@ font: display=Poppins(数字/見出し) / sans=Noto Sans JP(本文)
 - **検証を口頭で済ませない:** `typecheck`・`lint`・`unit`・`build`（該当時 E2E）を実際に通してから完了。
 
 ## 8. Definition of Done（全PR共通）
+
 - [ ] `typecheck` 0 / `lint` 0 / 関連 `unit` 緑 / `build` 成功
 - [ ] トークン準拠（新色・新フォント無し） / loading・empty・error・success の4状態
 - [ ] キーボード操作可・フォーカス可視・コントラスト AA・reduced-motion 尊重
@@ -89,6 +100,7 @@ font: display=Poppins(数字/見出し) / sans=Noto Sans JP(本文)
 ---
 
 ## 9. チーム運用ルール（サブエージェント編成・DEV_TEAM_AND_SKILLS.md §3–§5）
+
 - **レビューゲートを必ず通す:**
   - **UI を書いたら `design-reviewer`** をかける。
   - **DB・認証・鍵に触れたら `security-compliance-auditor`** をかける。
@@ -102,8 +114,10 @@ font: display=Poppins(数字/見出し) / sans=Noto Sans JP(本文)
 - **ボードミーティング:** 各フェーズ開始/終了時に短いボードを回し、議事を `docs/ROADMAP.md` に残す。
 
 ### スキル（`.claude/skills/`）
+
 `design-system` / `accessibility` / `react-ts-conventions` / `supabase-rls` / `data-integrity` / `ai-edge-adapter` / `security-compliance` / `testing-standards`
 
 ### サブエージェント（`.claude/agents/`）
+
 実装系（write 可）: `frontend-engineer` / `supabase-engineer` / `ai-edge-engineer` / `qa-test-engineer`
 レビュー/監査系（read-only）: `design-reviewer` / `code-reviewer` / `security-compliance-auditor` / `data-integrity-steward`

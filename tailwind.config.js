@@ -20,10 +20,10 @@ export default {
         // dカード GOLD / PLATINUM
         gold: { DEFAULT: "#B8893C", soft: "#F6EFE0", deep: "#8C6726" },
         platinum: { DEFAULT: "#737B88", soft: "#EEF0F3", deep: "#4C535E" },
-        // 状態色
-        pass: { DEFAULT: "#1F8A53", soft: "#E5F3EB" },
-        caution: { DEFAULT: "#C98A00", soft: "#FBF1DA" },
-        fail: { DEFAULT: "#C0392B", soft: "#FBE9E7" },
+        // 状態色（deep は soft 背景上のテキスト用＝AAコントラスト確保。gold/platinum と同じ deep 規約）
+        pass: { DEFAULT: "#1F8A53", soft: "#E5F3EB", deep: "#14633B" },
+        caution: { DEFAULT: "#C98A00", soft: "#FBF1DA", deep: "#8A5E00" },
+        fail: { DEFAULT: "#C0392B", soft: "#FBE9E7", deep: "#8E2A1F" },
       },
       fontFamily: {
         display: ["Poppins", "Noto Sans JP", "system-ui", "sans-serif"],

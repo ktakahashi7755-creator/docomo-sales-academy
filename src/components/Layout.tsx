@@ -1,24 +1,16 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import {
-  LayoutDashboard,
-  Map,
-  Package,
-  MessageSquareText,
-  Mic,
-  Award,
-  LogOut,
-} from "lucide-react";
+import { LayoutDashboard, Map, Package, MessageSquareText, Mic, Award, LogOut } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { ROLE_LABEL } from "@/lib/types";
 import { isBackendEnabled } from "@/lib/supabase";
 
 const NAV = [
-  { to: "/", label: "ダッシュボード", icon: LayoutDashboard, end: true },
-  { to: "/roadmap", label: "ロードマップ", icon: Map },
-  { to: "/products", label: "商材", icon: Package },
-  { to: "/scripts", label: "トーク", icon: MessageSquareText },
-  { to: "/roleplay", label: "ロープレ", icon: Mic },
-  { to: "/certification", label: "認定", icon: Award },
+  { to: "/", label: "ダッシュボード", short: "ホーム", icon: LayoutDashboard, end: true },
+  { to: "/roadmap", label: "ロードマップ", short: "研修", icon: Map },
+  { to: "/products", label: "商材", short: "商材", icon: Package },
+  { to: "/scripts", label: "トーク", short: "トーク", icon: MessageSquareText },
+  { to: "/roleplay", label: "ロープレ", short: "ロープレ", icon: Mic },
+  { to: "/certification", label: "認定", short: "認定", icon: Award },
 ];
 
 export function Layout() {
@@ -31,7 +23,9 @@ export function Layout() {
       {/* デスクトップ：サイドバー */}
       <aside className="hidden md:flex md:w-64 md:shrink-0 md:flex-col border-r border-paper-line bg-paper">
         <div className="px-5 py-5">
-          <div className="font-display text-base font-bold leading-tight text-ink">Sales Academy</div>
+          <div className="font-display text-base font-bold leading-tight text-ink">
+            Sales Academy
+          </div>
           <div className="text-xs text-ink-muted">ドコモ販売ヘルパー育成</div>
         </div>
         <nav className="flex-1 px-3">
@@ -74,7 +68,7 @@ export function Layout() {
       {/* メイン */}
       <div className="flex-1 pb-20 md:pb-0">
         {!isBackendEnabled && (
-          <div className="bg-caution-soft px-4 py-2 text-center text-xs text-caution">
+          <div className="bg-caution-soft px-4 py-2 text-center text-xs text-caution-deep">
             デモモード：Supabase未接続のためローカルseedで動作中（進捗は保存されません）
           </div>
         )}
@@ -83,19 +77,24 @@ export function Layout() {
         </main>
       </div>
 
-      {/* モバイル：ボトムナビ */}
-      <nav className="fixed inset-x-0 bottom-0 z-10 grid grid-cols-6 border-t border-paper-line bg-paper/95 backdrop-blur md:hidden">
-        {NAV.map(({ to, label, icon: Icon, end }) => (
+      {/* モバイル：ボトムナビ（最小タップ高 56px ≥ 44px の床） */}
+      <nav
+        className="fixed inset-x-0 bottom-0 z-10 grid grid-cols-6 border-t border-paper-line bg-paper/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
+        aria-label="メインナビゲーション"
+      >
+        {NAV.map(({ to, short, icon: Icon, end }) => (
           <NavLink
             key={to}
             to={to}
             end={end}
             className={({ isActive }) =>
-              `flex flex-col items-center gap-0.5 py-2 text-[10px] ${isActive ? "text-accent" : "text-ink-muted"}`
+              `flex min-h-[56px] flex-col items-center justify-center gap-1 px-0.5 text-[11px] font-medium ${
+                isActive ? "text-accent" : "text-ink-soft"
+              }`
             }
           >
             <Icon size={20} strokeWidth={1.75} />
-            {label}
+            <span className="leading-none whitespace-nowrap">{short}</span>
           </NavLink>
         ))}
       </nav>

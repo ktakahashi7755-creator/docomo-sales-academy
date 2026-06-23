@@ -143,8 +143,8 @@ export interface Badge {
   description: string;
 }
 
+/** 認定条件の「定義」。達成状態(done)は進捗から導出する（lib/progress.ts）。 */
 export interface CertCondition {
   id: string;
   label: string;
-  done: boolean;
 }

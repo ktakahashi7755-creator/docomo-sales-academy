@@ -1,7 +1,8 @@
 import { Link, useParams } from "react-router-dom";
 import { PRODUCTS, TALK_SCRIPTS } from "@/data/seed";
 import { Card, TierBadge } from "@/components/ui";
-import { ArrowLeft, ExternalLink, MessageSquareText } from "lucide-react";
+import { isStale } from "@/lib/progress";
+import { ArrowLeft, ExternalLink, MessageSquareText, AlertTriangle } from "lucide-react";
 
 function Block({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -27,7 +28,7 @@ function List({ items, tone }: { items: string[]; tone?: "pass" | "caution" }) {
 }
 
 export function ProductDetail() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const p = PRODUCTS.find((x) => x.id === id);
   const script = TALK_SCRIPTS.find((s) => s.productId === id);
 
@@ -35,14 +36,21 @@ export function ProductDetail() {
     return (
       <div className="py-12 text-center">
         <p className="text-ink-muted">商材が見つかりませんでした。</p>
-        <Link to="/products" className="mt-3 inline-block text-sm font-medium text-ink underline">商材一覧へ戻る</Link>
+        <Link to="/products" className="mt-3 inline-block text-sm font-medium text-ink underline">
+          商材一覧へ戻る
+        </Link>
       </div>
     );
   }
 
+  const stale = isStale(p.officialCheckedAt);
+
   return (
     <div className="space-y-4">
-      <Link to="/products" className="inline-flex items-center gap-1 text-sm text-ink-muted hover:text-ink">
+      <Link
+        to="/products"
+        className="-ml-2 inline-flex min-h-[44px] items-center gap-1 rounded-lg px-2 text-sm text-ink-soft hover:text-ink"
+      >
         <ArrowLeft size={16} /> 商材一覧
       </Link>
 
@@ -53,12 +61,24 @@ export function ProductDetail() {
       <p className="text-ink-soft">{p.oneLiner}</p>
 
       <div className="grid gap-3 md:grid-cols-2">
-        <Block title="誰に向いているか"><p className="text-sm text-ink">{p.target}</p></Block>
-        <Block title="提案タイミング"><p className="text-sm text-ink">{p.timing}</p></Block>
-        <Block title="主なメリット"><List items={p.benefits} tone="pass" /></Block>
-        <Block title="注意点"><List items={p.warnings} tone="caution" /></Block>
-        <Block title="ヒアリング質問"><List items={p.hearing} /></Block>
-        <Block title="訴求ポイント"><List items={p.pitch} /></Block>
+        <Block title="誰に向いているか">
+          <p className="text-sm text-ink">{p.target}</p>
+        </Block>
+        <Block title="提案タイミング">
+          <p className="text-sm text-ink">{p.timing}</p>
+        </Block>
+        <Block title="主なメリット">
+          <List items={p.benefits} tone="pass" />
+        </Block>
+        <Block title="注意点">
+          <List items={p.warnings} tone="caution" />
+        </Block>
+        <Block title="ヒアリング質問">
+          <List items={p.hearing} />
+        </Block>
+        <Block title="訴求ポイント">
+          <List items={p.pitch} />
+        </Block>
       </div>
 
       <Block title="反論処理">
@@ -72,7 +92,9 @@ export function ProductDetail() {
         </div>
       </Block>
 
-      <Block title="クロージング例"><p className="text-sm text-ink">{p.closing}</p></Block>
+      <Block title="クロージング例">
+        <p className="text-sm text-ink">{p.closing}</p>
+      </Block>
 
       <div className="flex flex-wrap items-center gap-3">
         <a
@@ -91,7 +113,15 @@ export function ProductDetail() {
             <MessageSquareText size={14} /> 訴求トークを見る
           </Link>
         )}
-        <span className="text-xs text-ink-muted">最終確認日 {p.officialCheckedAt}・v{p.version}</span>
+        {stale ? (
+          <span className="inline-flex items-center gap-1 text-xs text-caution-deep">
+            <AlertTriangle size={12} /> 最終確認日 {p.officialCheckedAt}・v{p.version}（要確認）
+          </span>
+        ) : (
+          <span className="text-xs text-ink-muted">
+            最終確認日 {p.officialCheckedAt}・v{p.version}
+          </span>
+        )}
       </div>
     </div>
   );

@@ -18,6 +18,7 @@
    `CLAUDE.md` を正典に、フェーズ計画に沿って各専門職へ委譲し、レビューゲートを通してからマージする。ボードミーティング（§5）を運営する。
 
 ### 必ず守る Claude Code の制約（事実）
+
 - **レビュー/監査役は read-only に限定する。** サブエージェントは権限プロンプトを出せず、承認が要るツール呼び出しは自動拒否される。ゆえに `code-reviewer`・`design-reviewer`・`security-compliance-auditor`・`data-integrity-steward` は `Read, Grep, Glob`（必要なら `WebSearch, WebFetch`）のみとし、**編集・Bash・Write は実装系エージェントか親に委ねる**。
 - **スキルは継承されない →** 各エージェントで `skills:` を明示する。
 - **ファイルで作成したエージェント/スキルはセッション再起動で反映**（`/agents` 経由は即時）。生成後に再起動し、`/agents` で読み込みを確認する。
@@ -30,25 +31,29 @@
 
 各スキルは `.claude/skills/<name>/SKILL.md`。frontmatter は `name` と、いつ使うかを示す `description`（トリガー）。本文に基準を簡潔に。**詳細は既存の `CLAUDE.md` / `docs/CLAUDE_CODE_BRIEF.md` を正典として参照し、重複させない**。
 
-| スキル | 役割（要点） | 主な参照 |
-|---|---|---|
-| `design-system` | トークン（ink/gold/platinum/状態色）、Excellence Rubric（4状態・モーション規律・署名要素 LevelLadder・モバイル人間工学・コピー規範） | ブリーフ §4・§5 |
-| `accessibility` | キーボード操作・フォーカス可視・コントラストAA・reduced-motion・タップ44px の床 | ブリーフ §3-8・§5 |
-| `react-ts-conventions` | ディレクトリ構成、`any`禁止、状態管理、loading/empty/error/success、lucide 線画(strokeWidth1.75)、楽観的更新 | ブリーフ §2・§5 |
-| `supabase-rls` | スキーマ変更は migration 追加のみ、RLS方針（admin/sv/本人）、`auth_role()/is_admin()/is_sv_or_admin()`、`updated_at` トリガ、index 規律 | `supabase/` 実体 |
-| `data-integrity` | 公式URL＋`official_checked_at` を正典、**GOLD=年間約18,600円相当 / PLATINUM切替=実質18,700円**、捏造禁止・不明は「要確認」表示＋AUDIT記録、`product_versions` 履歴 | ブリーフ §3 |
-| `ai-edge-adapter` | AI呼び出しは Supabase Edge Function 経由、**プロバイダ差し替え可能なアダプタ**、キーはサーバー側のみ、`roleplay_sessions` 保存形 | ブリーフ §6 Phase4 |
-| `security-compliance` | service_role/APIキーを露出しない、RLSで本人/権限者限定、**パスワード・認証コードはお客様自身が入力**、`audit_logs` はサーバー側書込 | ブリーフ §3 |
-| `testing-standards` | 採点等のロジックは純粋関数＋Vitest、RLSポリシーのテスト、Playwright E2E（主要フロー）、境界値必須、CI 緑が完了条件 | ブリーフ §6 Phase0/3/6 |
+| スキル                 | 役割（要点）                                                                                                                                                       | 主な参照               |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------- |
+| `design-system`        | トークン（ink/gold/platinum/状態色）、Excellence Rubric（4状態・モーション規律・署名要素 LevelLadder・モバイル人間工学・コピー規範）                               | ブリーフ §4・§5        |
+| `accessibility`        | キーボード操作・フォーカス可視・コントラストAA・reduced-motion・タップ44px の床                                                                                    | ブリーフ §3-8・§5      |
+| `react-ts-conventions` | ディレクトリ構成、`any`禁止、状態管理、loading/empty/error/success、lucide 線画(strokeWidth1.75)、楽観的更新                                                       | ブリーフ §2・§5        |
+| `supabase-rls`         | スキーマ変更は migration 追加のみ、RLS方針（admin/sv/本人）、`auth_role()/is_admin()/is_sv_or_admin()`、`updated_at` トリガ、index 規律                            | `supabase/` 実体       |
+| `data-integrity`       | 公式URL＋`official_checked_at` を正典、**GOLD=年間約18,600円相当 / PLATINUM切替=実質18,700円**、捏造禁止・不明は「要確認」表示＋AUDIT記録、`product_versions` 履歴 | ブリーフ §3            |
+| `ai-edge-adapter`      | AI呼び出しは Supabase Edge Function 経由、**プロバイダ差し替え可能なアダプタ**、キーはサーバー側のみ、`roleplay_sessions` 保存形                                   | ブリーフ §6 Phase4     |
+| `security-compliance`  | service_role/APIキーを露出しない、RLSで本人/権限者限定、**パスワード・認証コードはお客様自身が入力**、`audit_logs` はサーバー側書込                                | ブリーフ §3            |
+| `testing-standards`    | 採点等のロジックは純粋関数＋Vitest、RLSポリシーのテスト、Playwright E2E（主要フロー）、境界値必須、CI 緑が完了条件                                                 | ブリーフ §6 Phase0/3/6 |
 
 ### スキル雛形（この形で各 SKILL.md を作る）
+
 ```markdown
 ---
 name: design-system
 description: UIの実装・レビュー時に必ず使用。配色トークン、タイポ、Excellence Rubric（4状態/モーション/署名要素/モバイル/コピー規範）を提供する。
 ---
+
 # Design System & Excellence Rubric
+
 （CLAUDE.md §4・§5 を正典として要約。新色・新フォントを足さない。迷ったら Dashboard / LevelLadder / ui.tsx の質感に合わせる。）
+
 - 色トークン: ink #0B1F3A … gold #B8893C … platinum #737B88 … pass/caution/fail …
 - 必須4状態: loading(skeleton)/empty(次の行動)/error(原因と直し方)/success
 - モーション: 150–250ms・reduced-motion尊重・主役は1画面1つ
@@ -63,6 +68,7 @@ description: UIの実装・レビュー時に必ず使用。配色トークン�
 `.claude/agents/<name>.md`。`description` は「Use this agent when …. Returns ….」の形でトリガーを明確に。実装系は write 可、レビュー系は read-only。`skills:` で能力を付与する。
 
 ### 2-1. frontend-engineer（実装：UI）
+
 ```markdown
 ---
 name: frontend-engineer
@@ -74,12 +80,14 @@ skills:
   - react-ts-conventions
   - accessibility
 ---
+
 あなたはシニア・フロントエンドエンジニア。CLAUDE.md とプリロード済みスキルを厳守し、
 4状態・アクセシビリティ・トークン準拠で実装する。完了前に typecheck/lint/build を通し、
 変更点と残課題を簡潔に返す。新色・新フォントを足さない。
 ```
 
 ### 2-2. design-reviewer（レビュー：意匠・UX・コピー / read-only）
+
 ```markdown
 ---
 name: design-reviewer
@@ -90,11 +98,13 @@ skills:
   - design-system
   - accessibility
 ---
+
 あなたはデザインリード。実装はせず、Rubricに照らして🔴必須/🟡要修正/🟢提案 で具体的に指摘する
 （ファイル・行・該当トークン）。「世界最高峰として恥ずかしくないか」を基準に妥協しない。
 ```
 
 ### 2-3. supabase-engineer（実装：DB/RLS/クエリ）
+
 ```markdown
 ---
 name: supabase-engineer
@@ -106,11 +116,13 @@ skills:
   - data-integrity
   - security-compliance
 ---
+
 あなたはバックエンド/Supabaseエンジニア。既存スキーマを壊さず migration を追加し、
 RLSは admin/sv/本人 の原則を守る。秘密情報を露出しない。索引と updated_at トリガを忘れない。
 ```
 
 ### 2-4. ai-edge-engineer（実装：Edge Function / ロープレAI・評価）
+
 ```markdown
 ---
 name: ai-edge-engineer
@@ -122,12 +134,14 @@ skills:
   - security-compliance
   - data-integrity
 ---
+
 あなたはAI/エッジ機能エンジニア。AI呼び出しは必ずEdge Function経由、キーはサーバー側のみ。
 LLM/STT/TTSはアダプタで差し替え可能にし、評価結果は roleplay_sessions に保存する。
 顧客発話の事実値（料金等）を捏造しない。
 ```
 
 ### 2-5. qa-test-engineer（実装：テスト）
+
 ```markdown
 ---
 name: qa-test-engineer
@@ -138,11 +152,13 @@ skills:
   - testing-standards
   - supabase-rls
 ---
+
 あなたはQA/テストエンジニア。採点ロジックの境界値、RLSの越権不可、主要フローE2Eを担保する。
 大量出力はこの文脈に閉じ込め、親には失敗点と再現手順だけを返す。
 ```
 
 ### 2-6. code-reviewer（レビュー：実装品質 / read-only）
+
 ```markdown
 ---
 name: code-reviewer
@@ -153,11 +169,13 @@ skills:
   - react-ts-conventions
   - testing-standards
 ---
+
 あなたは厳格なコードレビュアー。anyの濫用・状態欠落・命名・重複・テスト不足・DoD未達を、
 ファイル/行つきで指摘する。実装はしない。
 ```
 
 ### 2-7. security-compliance-auditor（監査：安全・規約 / read-only）
+
 ```markdown
 ---
 name: security-compliance-auditor
@@ -169,12 +187,14 @@ skills:
   - supabase-rls
   - data-integrity
 ---
+
 あなたはセキュリティ＆コンプライアンス監査役。service_role/APIキーのフロント露出、
 RLSの抜け、「パスワードはお客様自身が入力」の逸脱、audit_logsの欠落を必ず指摘する。
 1件でも🔴があればマージ不可と明言する。
 ```
 
 ### 2-8. data-integrity-steward（監査：事実の番人 / read-only + 検索可）
+
 ```markdown
 ---
 name: data-integrity-steward
@@ -184,6 +204,7 @@ model: opus
 skills:
   - data-integrity
 ---
+
 あなたはデータ正典の番人。GOLD=約18,600円相当 等の正典との一致、official_checked_atの妥当性を確認し、
 推測値を見つけたら「要確認」表示とAUDIT記録を要求する。不確かなら止めて高橋に質問するよう促す。
 ```
@@ -217,6 +238,7 @@ skills:
 ## 4. CLAUDE.md への追記（チーム運用ルール）
 
 `CLAUDE.md` に次を追記する：
+
 - 「UIを書いたら design-reviewer、DBに触れたら security-compliance-auditor、料金/商材に触れたら data-integrity-steward を必ず通す」
 - 「実装系サブエージェントを使う前に、関連スキルが `skills:` に入っているか確認する（スキルは継承されない）」
 - 「レビュー系は read-only。指摘の反映＝編集は実装系または親が行う」

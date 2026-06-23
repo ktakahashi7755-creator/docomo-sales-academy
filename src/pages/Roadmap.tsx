@@ -1,6 +1,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { PHASES } from "@/data/seed";
-import { Card, ScoreChip } from "@/components/ui";
+import { Card, PageTitle, ScoreChip } from "@/components/ui";
+import { isPassed, phaseProgress } from "@/lib/progress";
 import { CheckCircle2, Circle } from "lucide-react";
 
 export function Roadmap() {
@@ -8,16 +9,15 @@ export function Roadmap() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <div className="font-num text-xs font-semibold uppercase tracking-widest text-ink-muted">Roadmap</div>
-        <h1 className="text-2xl font-bold text-ink">研修ロードマップ</h1>
-        <p className="mt-1 text-sm text-ink-muted">現場基礎からクローザー認定まで、10フェーズで段階的に育成します。</p>
-      </div>
+      <PageTitle
+        eyebrow="Roadmap"
+        title="研修ロードマップ"
+        description="現場基礎からクローザー認定まで、10フェーズで段階的に育成します。"
+      />
 
       <div className="space-y-4">
         {PHASES.map((phase) => {
-          const passed = phase.modules.filter((m) => (progress[m.id] ?? 0) >= m.passing_score).length;
-          const complete = passed === phase.modules.length;
+          const { passed, complete } = phaseProgress(phase, progress);
           return (
             <Card key={phase.id} className="overflow-hidden">
               <div className="flex items-start gap-4 border-b border-paper-line px-5 py-4">
@@ -41,7 +41,7 @@ export function Roadmap() {
               </div>
               <ul className="divide-y divide-paper-line">
                 {phase.modules.map((m) => {
-                  const ok = (progress[m.id] ?? 0) >= m.passing_score;
+                  const ok = isPassed(progress[m.id], m.passing_score);
                   return (
                     <li key={m.id} className="flex items-center gap-3 px-5 py-3">
                       {ok ? (
@@ -53,7 +53,9 @@ export function Roadmap() {
                         <div className="text-sm font-medium text-ink">{m.title}</div>
                         <div className="text-xs text-ink-muted">
                           目安 {m.estimated_minutes} 分・合格 {m.passing_score} 点
-                          {m.passing_score === 100 && <span className="ml-1 text-accent">必須100点</span>}
+                          {m.passing_score === 100 && (
+                            <span className="ml-1 text-accent">必須100点</span>
+                          )}
                         </div>
                       </div>
                       <ScoreChip score={progress[m.id]} passing={m.passing_score} />

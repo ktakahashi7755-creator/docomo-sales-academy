@@ -13,18 +13,58 @@ interface AuthState {
 const AuthContext = createContext<AuthState | null>(null);
 
 const DEMO_PROFILE: Record<Role, Profile> = {
-  trainee: { id: "demo-trainee", display_name: "研修生 デモ", role: "trainee", store_name: "府中店", team_name: "Aチーム", level: 3, is_active: true },
-  helper: { id: "demo-helper", display_name: "ヘルパー デモ", role: "helper", store_name: "府中店", level: 5, is_active: true },
-  closer: { id: "demo-closer", display_name: "クローザー デモ", role: "closer", store_name: "府中店", level: 9, is_active: true },
-  sv: { id: "demo-sv", display_name: "SV デモ", role: "sv", store_name: "府中店", level: 10, is_active: true },
-  admin: { id: "demo-admin", display_name: "管理者 デモ", role: "admin", level: 10, is_active: true },
+  trainee: {
+    id: "demo-trainee",
+    display_name: "研修生 デモ",
+    role: "trainee",
+    store_name: "府中店",
+    team_name: "Aチーム",
+    level: 3,
+    is_active: true,
+  },
+  helper: {
+    id: "demo-helper",
+    display_name: "ヘルパー デモ",
+    role: "helper",
+    store_name: "府中店",
+    level: 5,
+    is_active: true,
+  },
+  closer: {
+    id: "demo-closer",
+    display_name: "クローザー デモ",
+    role: "closer",
+    store_name: "府中店",
+    level: 9,
+    is_active: true,
+  },
+  sv: {
+    id: "demo-sv",
+    display_name: "SV デモ",
+    role: "sv",
+    store_name: "府中店",
+    level: 10,
+    is_active: true,
+  },
+  admin: {
+    id: "demo-admin",
+    display_name: "管理者 デモ",
+    role: "admin",
+    level: 10,
+    is_active: true,
+  },
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [progress, setProgress] = useState<Record<string, number>>({
     // デモ用の初期進捗（一部モジュール合格済み）
-    p1m1: 92, p1m2: 88, p1m3: 90, p1m4: 100, p2m1: 84, p2m2: 80,
+    p1m1: 92,
+    p1m2: 88,
+    p1m3: 90,
+    p1m4: 100,
+    p2m1: 84,
+    p2m2: 80,
   });
 
   const value = useMemo<AuthState>(

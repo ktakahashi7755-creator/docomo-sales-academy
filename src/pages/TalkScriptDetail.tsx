@@ -4,21 +4,26 @@ import { Card } from "@/components/ui";
 import { ArrowLeft, Mic, AlertCircle, CheckCircle2 } from "lucide-react";
 
 export function TalkScriptDetail() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const s = TALK_SCRIPTS.find((x) => x.id === id);
 
   if (!s) {
     return (
       <div className="py-12 text-center">
         <p className="text-ink-muted">スクリプトが見つかりませんでした。</p>
-        <Link to="/scripts" className="mt-3 inline-block text-sm font-medium text-ink underline">トーク一覧へ戻る</Link>
+        <Link to="/scripts" className="mt-3 inline-block text-sm font-medium text-ink underline">
+          トーク一覧へ戻る
+        </Link>
       </div>
     );
   }
 
   return (
     <div className="space-y-5">
-      <Link to="/scripts" className="inline-flex items-center gap-1 text-sm text-ink-muted hover:text-ink">
+      <Link
+        to="/scripts"
+        className="-ml-2 inline-flex min-h-[44px] items-center gap-1 rounded-lg px-2 text-sm text-ink-soft hover:text-ink"
+      >
         <ArrowLeft size={16} /> トーク一覧
       </Link>
 
@@ -40,7 +45,9 @@ export function TalkScriptDetail() {
             <h2 className="mb-2 font-bold text-ink">{sec.heading}</h2>
             <div className="space-y-2">
               {sec.lines.map((line, j) => (
-                <p key={j} className="text-sm leading-relaxed text-ink">{line}</p>
+                <p key={j} className="text-sm leading-relaxed text-ink">
+                  {line}
+                </p>
               ))}
             </div>
             {sec.note && (
@@ -60,7 +67,9 @@ export function TalkScriptDetail() {
           </h3>
           <ul className="space-y-1.5">
             {s.ngExamples.map((t, i) => (
-              <li key={i} className="text-sm text-ink-soft">{t}</li>
+              <li key={i} className="text-sm text-ink-soft">
+                {t}
+              </li>
             ))}
           </ul>
         </Card>
@@ -70,14 +79,16 @@ export function TalkScriptDetail() {
           </h3>
           <ul className="space-y-1.5">
             {s.goodExamples.map((t, i) => (
-              <li key={i} className="text-sm text-ink-soft">{t}</li>
+              <li key={i} className="text-sm text-ink-soft">
+                {t}
+              </li>
             ))}
           </ul>
         </Card>
       </div>
 
       {s.note && (
-        <div className="rounded-lg bg-caution-soft px-4 py-3 text-sm text-caution">
+        <div className="rounded-lg bg-caution-soft px-4 py-3 text-sm text-caution-deep">
           {s.note}
         </div>
       )}

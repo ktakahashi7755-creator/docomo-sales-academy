@@ -6,6 +6,7 @@
 > 本リポジトリは「動く土台（雛形 + DB SQL + seed + 主要画面）」です。管理画面・クイズ受験UI・自由会話ロープレ・PWA Service Worker などは Claude Code での実装を想定したスタブ状態です（詳細は末尾「次工程」）。
 
 ## 技術構成
+
 - React 18 / TypeScript / Vite
 - Tailwind CSS（デザイントークン定義済み）
 - React Router
@@ -13,6 +14,7 @@
 - フォント: Poppins（数字・見出し）+ Noto Sans JP（本文）
 
 ## クイックスタート（デモモード）
+
 Supabase 未設定でも、ローカル seed データで動作します。
 
 ```bash
@@ -23,6 +25,7 @@ npm run dev
 ログイン画面で役割（研修生／ヘルパー／クローザー／SV／管理者）を選ぶと、デモプロフィールで入れます。
 
 ## ビルド / 型チェック
+
 ```bash
 npm run build      # tsc --noEmit && vite build
 npm run typecheck  # 型チェックのみ
@@ -30,6 +33,7 @@ npm run preview    # ビルド成果物のプレビュー
 ```
 
 ## 環境変数（`.env`）
+
 `.env.example` をコピーして `.env` を作成します。未設定の場合はデモモードになります。
 
 ```
@@ -41,23 +45,27 @@ VITE_AI_PROVIDER=        # 自由会話・音声ロープレ・AI評価で使用
 > service_role キーはフロントに置かないこと。AI 呼び出しや採点は Supabase Edge Function 等のサーバー側に置く前提です。
 
 ## Supabase 適用
+
 Supabase プロジェクト作成後、SQL Editor で順に実行します。
 
 1. `supabase/migrations/0001_schema.sql` … 全テーブル + `updated_at` トリガ
-2. `supabase/migrations/0002_rls.sql`   … RLS ポリシー + 新規ユーザー時の profiles 自動生成
-3. `supabase/seed.sql`                  … コース/モジュール/商材/トーク/シナリオ/バッジ/お知らせ
+2. `supabase/migrations/0002_rls.sql` … RLS ポリシー + 新規ユーザー時の profiles 自動生成
+3. `supabase/seed.sql` … コース/モジュール/商材/トーク/シナリオ/バッジ/お知らせ
 
 権限モデル（RLS）:
+
 - **admin**: 公開コンテンツ（コース・商材・トーク等）の編集、全データ閲覧
 - **sv**: 研修生の進捗・ロープレ・認定の閲覧、認定承認
 - **trainee / helper / closer**: 公開コンテンツ閲覧 + 自分のデータのみ
 
 ## 商材情報の更新フロー
+
 料金・還元・補償は変更されます。`products.official_url` と `official_checked_at` を正とし、商材一覧では確認日が90日を超えると警告表示します。更新時は `product_versions` に履歴を残す設計です。
 
 > seed の数値は POP（dカード GOLD / PLATINUM 訴求）と整合済みです。GOLD は「割引約6,600円 + ポイント約12,000P = 年間約18,600円相当」。
 
 ## ディレクトリ
+
 ```
 src/
   data/seed.ts          # ローカルseed（フェーズ/商材/トーク/シナリオ/評価/バッジ）
@@ -74,6 +82,7 @@ docs/
 ```
 
 ## 次工程（Claude Code での実装を想定）
+
 - 管理画面（商材・トーク・クイズ・お知らせの CRUD、product_versions 履歴、ユーザー/権限管理）
 - クイズ受験UI（quiz_questions → 採点 → quiz_attempts/progress 反映、合格判定）
 - ロープレ会話UI（テキスト/音声の自由会話、AI評価で roleplay_sessions に保存）

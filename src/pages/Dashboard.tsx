@@ -1,25 +1,19 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { PHASES, RANKS } from "@/data/seed";
-import { Card, ProgressBar, RankPill, ScoreChip, SectionTitle } from "@/components/ui";
+import { Card, EmptyState, ProgressBar, RankPill, ScoreChip, SectionTitle } from "@/components/ui";
 import { LevelLadder } from "@/components/LevelLadder";
+import { flattenModules, summarizeProgress, weakModules } from "@/lib/progress";
 import { ChevronRight } from "lucide-react";
 
 export function Dashboard() {
   const { profile, progress } = useAuth();
   if (!profile) return null;
 
-  const allModules = PHASES.flatMap((p) => p.modules.map((m) => ({ ...m, phase: p })));
-  const passedCount = allModules.filter((m) => (progress[m.id] ?? 0) >= m.passing_score).length;
-  const completionRate = Math.round((passedCount / allModules.length) * 100);
-  const nextModule = allModules.find((m) => (progress[m.id] ?? 0) < m.passing_score);
+  const allModules = flattenModules(PHASES);
+  const { passedCount, completionRate, nextModule } = summarizeProgress(allModules, progress);
   const rank = RANKS.find((r) => r.level === profile.level) ?? RANKS[0];
-
-  // 苦手分野＝受講済みだが点が低い順
-  const weak = allModules
-    .filter((m) => progress[m.id] != null && (progress[m.id] ?? 0) < m.passing_score)
-    .sort((a, b) => (progress[a.id] ?? 0) - (progress[b.id] ?? 0))
-    .slice(0, 3);
+  const weak = weakModules(allModules, progress, 3);
 
   return (
     <div className="space-y-6">
@@ -41,7 +35,8 @@ export function Dashboard() {
               <span className="text-lg text-ink-muted">%</span>
             </div>
             <div className="text-sm text-ink-muted">
-              合格 <span className="font-num font-semibold text-ink">{passedCount}</span> / {allModules.length} モジュール
+              合格 <span className="font-num font-semibold text-ink">{passedCount}</span> /{" "}
+              {allModules.length} モジュール
             </div>
           </div>
           <div className="mt-3">
@@ -54,10 +49,13 @@ export function Dashboard() {
               className="mt-5 flex items-center justify-between rounded-xl2 bg-paper-soft px-4 py-3 transition-colors hover:bg-paper-line/60"
             >
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wider text-ink-muted">次にやるべき研修</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-ink-muted">
+                  次にやるべき研修
+                </div>
                 <div className="font-medium text-ink">{nextModule.title}</div>
                 <div className="text-xs text-ink-muted">
-                  Phase {nextModule.phase.no}・{nextModule.phase.title}・合格{nextModule.passing_score}点
+                  Phase {nextModule.phase.no}・{nextModule.phase.title}・合格
+                  {nextModule.passing_score}点
                 </div>
               </div>
               <ChevronRight size={20} className="text-ink-muted" />
@@ -84,7 +82,18 @@ export function Dashboard() {
         <Card className="p-5 md:col-span-1">
           <SectionTitle eyebrow="Focus" title="苦手分野" />
           {weak.length === 0 ? (
-            <p className="text-sm text-ink-muted">未達のモジュールはありません。次の研修へ進みましょう。</p>
+            <EmptyState
+              title="未達のモジュールはありません"
+              description="この調子で、次の研修へ進みましょう。"
+              action={
+                <Link
+                  to="/roadmap"
+                  className="inline-flex items-center gap-1 rounded-lg bg-ink px-3 py-2 text-sm font-medium text-paper"
+                >
+                  ロードマップへ <ChevronRight size={16} />
+                </Link>
+              }
+            />
           ) : (
             <ul className="space-y-3">
               {weak.map((m) => (
