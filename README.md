@@ -24,13 +24,20 @@ npm run dev
 
 ログイン画面で役割（研修生／ヘルパー／クローザー／SV／管理者）を選ぶと、デモプロフィールで入れます。
 
-## ビルド / 型チェック
+## ビルド / 検証（品質ゲート）
 
 ```bash
-npm run build      # tsc --noEmit && vite build
-npm run typecheck  # 型チェックのみ
-npm run preview    # ビルド成果物のプレビュー
+npm run typecheck     # 型チェック（any 禁止・strict）
+npm run lint          # ESLint（flat config）
+npm run format:check  # Prettier 整形チェック（format で自動修正）
+npm run test          # Vitest 単体（採点・進捗・認定の純粋関数。境界値網羅）
+npm run build         # tsc --noEmit && vite build
+npm run preview       # ビルド成果物をローカル配信（実機確認用）
+npm run e2e           # Playwright E2E（主要フロー＋9画面ビジュアル。要ブラウザ）
 ```
+
+CI（`.github/workflows/ci.yml`）が push/PR ごとに `typecheck → lint → format:check → test → build` と E2E を実行します。
+**実機確認:** `npm run preview` を起動し、表示された URL（既定 `http://localhost:4173`）をスマホ等のブラウザで開いてください。
 
 ## 環境変数（`.env`）
 
