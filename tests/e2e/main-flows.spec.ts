@@ -52,7 +52,8 @@ test("商材詳細で dカード GOLD の正典値が表示される", async ({ 
   await navigate(page, "/products");
   // 商材一覧はカテゴリ順（料金プランが先頭）。dカード GOLD を href で直接開く。
   await page.locator('a[href="/products/dcard-gold"]').click();
-  await expect(page.getByText(/約18,600円相当/)).toBeVisible();
+  // 「約18,600円相当」はメリットと訴求ポイントの2箇所に出るため first() で一意化。
+  await expect(page.getByText(/約18,600円相当/).first()).toBeVisible();
 });
 
 test("デモモードでもテキストロープレは開始でき、音声は AI 設定待ち", async ({ page }) => {

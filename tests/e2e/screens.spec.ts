@@ -40,7 +40,10 @@ test("9画面のスクリーンショット", async ({ page }, testInfo) => {
 
   // 5. ProductDetail（一覧はカテゴリ順なので dカード GOLD を href で直接開く）
   await page.locator('a[href="/products/dcard-gold"]').click();
-  await page.getByText(/約18,600円相当/).waitFor();
+  await page
+    .getByText(/約18,600円相当/)
+    .first()
+    .waitFor();
   await shot("05-product-detail");
 
   // 6. TalkScripts

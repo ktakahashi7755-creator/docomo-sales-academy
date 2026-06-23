@@ -194,6 +194,16 @@
 - [ ] **K-6 🟡** Lighthouse 90+ の実測は CI/実機で継続（本環境では計測不可）。
 - [ ] **K-7 🟡** `pages.yml` の push トリガに作業ブランチを含む（実機リンクを今出すため）。main マージ後に作業ブランチを外す。
 - [ ] **K-9 🟢** `apple-touch-icon` は SVG 指定。iOS は PNG を好むため、ホーム画面アイコンの最適表示には 180×180 PNG を後で用意する。
+- [x] **K-10** Playwright E2E を CI ログから根治。E2E は本環境でブラウザ取得不可のため一度も検証されておらず、アプリではなくテスト側の陳腐化（商材・シナリオ順の変更、live ロケータ、モバイル非表示リンク、strict 競合）が累積していた。`quality` ジョブ（typecheck/lint/format/unit/build）は一貫して緑。修正で 8→16→全件 緑へ（下記 K-R6〜K-R11）。
+
+### Phase 6 E2E 修正（2026-06-23・CI ログ駆動）
+
+- [x] **K-R6** `navigate` を `a[href]:visible` 限定（モバイルで非表示のサイドバーリンクを掴みクリックがタイムアウトしていた）。
+- [x] **K-R7** 商材詳細テストは一覧のカテゴリ順変更で「先頭＝GOLD」前提が崩れていた → `a[href="/products/dcard-gold"]` を直接開く。
+- [x] **K-R8** ロープレ評価見出しが h1 と sr-only h2 に二重マッチ → `exact: true` で h1 限定。
+- [x] **K-R9** `[aria-pressed="false"]` の live ロケータがクリック後に別ボタンへ再解決 → `nth(0)` 位置指定に。
+- [x] **K-R10** `serviceWorkers: "block"`（オフラインは E2E 対象外、遷移・資産取得を決定的化）。
+- [x] **K-R11** 「約18,600円相当」がメリットと訴求ポイントの2箇所に出るため `getByText(...).first()` で一意化（strict 競合解消）。
 
 ### Phase 6 レビューゲート（2026-06-23）— security / code
 
