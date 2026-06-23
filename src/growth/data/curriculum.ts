@@ -599,6 +599,7 @@ export const CURRICULUM: CurriculumStep[] = [
       { text: "難しい相手にも落ち着いて対応できる", lessonId: "l5-1" },
       { text: "コンプライアンスを守れている", lessonId: "l1-4" },
       { text: "次アクションを必ず提示できる", lessonId: "l4-3" },
+      { text: "認定前の総合確認に合格できる", lessonId: "l5-2" },
     ],
     recap:
       "通しのロープレとAI評価で弱点を埋め、認定へ。認定はゴールではなくスタートラインです。現場でも振り返りを続けて伸ばしていきましょう。",
@@ -645,6 +646,7 @@ export const CURRICULUM: CurriculumStep[] = [
           ng: "認定が取れたら、もう勉強しなくて大丈夫。",
           good: "認定はスタート。現場でも、断られた1件を明日の改善メモに変えていきます。",
         },
+        quizModuleId: "p10m1",
       },
     ],
   },
@@ -1007,6 +1009,14 @@ export const QUIZ_MODULES: QuizModuleMeta[] = [
     passing: 80,
     accent: "green",
     icon: "handshake",
+  },
+  {
+    moduleId: "p10m1",
+    title: "認定前 総合確認",
+    description: "STEP1〜4を横断する認定前の総まとめ",
+    passing: 80,
+    accent: "orange",
+    icon: "rocket",
   },
 ];
 export function quizModuleMeta(moduleId: string): QuizModuleMeta | undefined {
