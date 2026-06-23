@@ -166,7 +166,7 @@ export function LessonDetail() {
                   <div className="flex max-w-[88%] flex-col">
                     <span
                       className={`mb-1 text-[11px] font-semibold ${
-                        isStaff ? "text-right text-blue-600" : "text-slate-400"
+                        isStaff ? "text-right text-blue-600" : "text-slate-500"
                       }`}
                     >
                       {isStaff ? "あなた（スタッフ）" : "お客様"}
@@ -181,15 +181,11 @@ export function LessonDetail() {
                       {line.text}
                     </p>
                     {line.note && (
-                      <span
-                        className={`mt-1 flex items-start gap-1 text-[11px] leading-relaxed text-slate-500 ${
-                          isStaff ? "justify-end text-right" : ""
-                        }`}
-                      >
+                      <span className="mt-1 flex items-start gap-1 text-xs leading-relaxed text-slate-600">
                         <Lightbulb
-                          size={11}
+                          size={12}
                           strokeWidth={2}
-                          className="mt-0.5 shrink-0 text-amber-500"
+                          className="mt-0.5 shrink-0 text-amber-600"
                         />
                         {line.note}
                       </span>
@@ -215,14 +211,14 @@ export function LessonDetail() {
             {lesson.mistakes.map((m, i) => (
               <li key={i} className="rounded-xl border border-slate-100 p-4">
                 <div className="flex items-start gap-2">
-                  <X size={15} strokeWidth={2.5} className="mt-0.5 shrink-0 text-orange-500" />
+                  <X size={15} strokeWidth={2} className="mt-0.5 shrink-0 text-orange-600" />
                   <p className="text-sm font-semibold text-slate-700">{m.mistake}</p>
                 </div>
                 <div className="mt-2 flex items-start gap-2 pl-[1.45rem]">
                   <ArrowRight
                     size={14}
-                    strokeWidth={2.5}
-                    className="mt-1 shrink-0 text-emerald-500"
+                    strokeWidth={2}
+                    className="mt-1 shrink-0 text-emerald-600"
                   />
                   <p className="text-sm leading-relaxed text-slate-600">{m.fix}</p>
                 </div>
