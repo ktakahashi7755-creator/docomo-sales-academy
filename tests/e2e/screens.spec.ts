@@ -10,7 +10,8 @@ async function loginAs(page: Page, label: string) {
 }
 
 async function navigate(page: Page, href: string) {
-  await page.locator(`a[href="${href}"]`).first().click();
+  // 表示中（:visible）のリンクのみ（モバイルで非表示のサイドバーを掴まない）。
+  await page.locator(`a[href="${href}"]:visible`).first().click();
 }
 
 test("9画面のスクリーンショット", async ({ page }, testInfo) => {
@@ -37,8 +38,8 @@ test("9画面のスクリーンショット", async ({ page }, testInfo) => {
   await page.getByRole("heading", { name: "商材ナレッジ" }).waitFor();
   await shot("04-products");
 
-  // 5. ProductDetail
-  await page.locator('a[href^="/products/"]').first().click();
+  // 5. ProductDetail（一覧はカテゴリ順なので dカード GOLD を href で直接開く）
+  await page.locator('a[href="/products/dcard-gold"]').click();
   await page.getByText(/約18,600円相当/).waitFor();
   await shot("05-product-detail");
 
@@ -47,9 +48,9 @@ test("9画面のスクリーンショット", async ({ page }, testInfo) => {
   await page.getByRole("heading", { name: "トークスクリプト集" }).waitFor();
   await shot("06-scripts");
 
-  // 7. TalkScriptDetail
+  // 7. TalkScriptDetail（「トーク一覧」を含む戻りリンクが2つあるため戻る側に限定）
   await page.locator('a[href^="/scripts/"]').first().click();
-  await page.getByRole("link", { name: "トーク一覧" }).waitFor();
+  await page.getByRole("link", { name: "トーク一覧へ戻る" }).waitFor();
   await shot("07-script-detail");
 
   // 8. Roleplay

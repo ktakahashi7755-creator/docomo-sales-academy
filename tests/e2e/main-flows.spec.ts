@@ -10,8 +10,9 @@ async function loginAs(page: Page, label: string) {
 }
 
 async function navigate(page: Page, href: string) {
-  // デスクトップはサイドバー、モバイルはボトムナビ。どちらも href で辿れる。
-  await page.locator(`a[href="${href}"]`).first().click();
+  // デスクトップはサイドバー、モバイルはボトムナビ。同じ href が両方の DOM にあるため、
+  // 表示中（:visible）の要素だけを対象にする（モバイルで非表示のサイドバーを掴まない）。
+  await page.locator(`a[href="${href}"]:visible`).first().click();
 }
 
 test("ログイン → ダッシュボードに進捗が表示される", async ({ page }) => {
@@ -49,8 +50,8 @@ test("主要6画面をナビゲートできる", async ({ page }) => {
 test("商材詳細で dカード GOLD の正典値が表示される", async ({ page }) => {
   await loginAs(page, "研修生");
   await navigate(page, "/products");
-  // dカード GOLD カードの詳細へ
-  await page.locator('a[href^="/products/"]').first().click();
+  // 商材一覧はカテゴリ順（料金プランが先頭）。dカード GOLD を href で直接開く。
+  await page.locator('a[href="/products/dcard-gold"]').click();
   await expect(page.getByText(/約18,600円相当/)).toBeVisible();
 });
 
@@ -73,9 +74,9 @@ test("テキストロープレを開始 → 送信 → 評価まで進める", a
   await page.getByLabel("お客様への発話").fill("こんにちは、今お使いのスマホはどちらですか");
   await page.getByRole("button", { name: "送信" }).click();
   await expect(page.getByText(/今は.*を使っていて/)).toBeVisible();
-  // 終了して評価 → 結果画面
+  // 終了して評価 → 結果画面（h1 と sr-only 見出しが両方あるため exact で h1 に限定）
   await page.getByRole("button", { name: "終了して評価する" }).click();
-  await expect(page.getByRole("heading", { name: "ロープレ評価" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "ロープレ評価", exact: true })).toBeVisible();
   await expect(page.getByText("総合評価")).toBeVisible();
 });
 
@@ -95,10 +96,11 @@ test("SVは承認可能な研修生をクローザー認定できる", async ({ 
 test("ロープレのシナリオ選択が aria-pressed に反映される", async ({ page }) => {
   await loginAs(page, "研修生");
   await navigate(page, "/roleplay");
-  // シナリオ選択ボタンに限定（aria-pressed を持つのはシナリオのみ）。
-  const firstScenario = page.locator('button[aria-pressed="false"]').first();
-  await firstScenario.click();
-  await expect(firstScenario).toHaveAttribute("aria-pressed", "true");
+  // 位置で固定（`[aria-pressed="false"]` は live 再評価で別ボタンに移るため不可）。
+  // aria-pressed を持つのはシナリオのみ。どれでもクリックすれば選択され true になる。
+  const scenario = page.locator("button[aria-pressed]").nth(0);
+  await scenario.click();
+  await expect(scenario).toHaveAttribute("aria-pressed", "true");
 });
 
 test("認定クローザー(closer)は SV承認以外の導出条件が一部達成になる", async ({ page }) => {
