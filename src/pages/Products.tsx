@@ -32,48 +32,51 @@ export function Products() {
         <section key={cat}>
           <h2 className="mb-3 text-sm font-bold text-ink-soft">{cat}</h2>
           <div className="grid gap-3 md:grid-cols-2">
-            {items.map((p) => (
-              <Card key={p.id} className="p-4">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-ink">{p.name}</h3>
-                      <TierBadge tier={p.tier} />
+            {items.map((p) => {
+              const stale = isStale(p.officialCheckedAt);
+              return (
+                <Card key={p.id} className="p-4">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-bold text-ink">{p.name}</h3>
+                        <TierBadge tier={p.tier} />
+                      </div>
+                      <p className="mt-1 text-sm text-ink-soft">{p.oneLiner}</p>
                     </div>
-                    <p className="mt-1 text-sm text-ink-soft">{p.oneLiner}</p>
                   </div>
-                </div>
-                <div className="mt-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs">
-                    <a
-                      href={p.officialUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1 text-ink-muted hover:text-ink"
+                  <div className="mt-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs">
+                      <a
+                        href={p.officialUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-ink-muted hover:text-ink"
+                      >
+                        公式ページ <ExternalLink size={12} />
+                      </a>
+                      <span className="text-ink-muted">·</span>
+                      <span
+                        className={
+                          stale
+                            ? "inline-flex items-center gap-1 text-caution-deep"
+                            : "text-ink-muted"
+                        }
+                      >
+                        {stale && <AlertTriangle size={12} />}
+                        確認日 {p.officialCheckedAt}
+                      </span>
+                    </div>
+                    <Link
+                      to={`/products/${p.id}`}
+                      className="inline-flex items-center gap-0.5 text-sm font-medium text-ink"
                     >
-                      公式ページ <ExternalLink size={12} />
-                    </a>
-                    <span className="text-ink-muted">·</span>
-                    <span
-                      className={
-                        isStale(p.officialCheckedAt)
-                          ? "inline-flex items-center gap-1 text-caution-deep"
-                          : "text-ink-muted"
-                      }
-                    >
-                      {isStale(p.officialCheckedAt) && <AlertTriangle size={12} />}
-                      確認日 {p.officialCheckedAt}
-                    </span>
+                      詳細 <ChevronRight size={16} />
+                    </Link>
                   </div>
-                  <Link
-                    to={`/products/${p.id}`}
-                    className="inline-flex items-center gap-0.5 text-sm font-medium text-ink"
-                  >
-                    詳細 <ChevronRight size={16} />
-                  </Link>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              );
+            })}
           </div>
         </section>
       ))}

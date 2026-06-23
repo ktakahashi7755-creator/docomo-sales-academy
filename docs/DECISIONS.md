@@ -26,6 +26,20 @@
 - **Decision:** ESLint 9 flat config（typescript-eslint + react-hooks + react-refresh、`no-explicit-any: error`、`consistent-type-imports`）。Prettier は eslint-config-prettier で競合無効化。単体は Vitest(jsdom)、E2E/ビジュアルは Playwright（mobile=Pixel7 / desktop=Chrome、preview ビルドに対して実行）。
 - **Consequences:** `npm run lint/format:check/test/e2e` で再現可能。CI が typecheck+lint+format+unit+build と e2e を緑にしてマージ条件化。
 
+## ADR-0005: 状態色に deep 変種を追加（アクセシビリティ駆動のトークン拡張）
+
+- **日付:** 2026-06-23
+- **Context:** `pass`/`caution`/`fail` の DEFAULT 色を soft 背景上の小さめテキストに使うと WCAG AA（4.5:1）を満たさない（caution は約2.6:1）。アクセシビリティは Non-Negotiable の床。
+- **Decision:** `gold`/`platinum` が既に持つ `deep` 規約に揃え、`pass.deep #14633B` / `caution.deep #8A5E00` / `fail.deep #8E2A1F` を追加。**色相は変えず輝度のみ深める**（新色相の持ち込みではない）。ScoreChip・鮮度警告・デモバナー等の soft 背景テキストに適用。
+- **Consequences:** AA を満たしつつトークン規律内に収まる。design-reviewer も「一貫拡張として許容」と確認。新トークンは `tailwind.config.js` に集約。
+
+## ADR-0006: 認定条件・バッジは「未追跡＝未達」で導出（捏造しない）
+
+- **日付:** 2026-06-23
+- **Context:** 認定条件 `CertCondition` が seed に `done` をハードコードしており、定義と状態が混在。ロープレ評価系の条件はデモ段階で追跡データが無い。
+- **Decision:** 型から `done` を除去し、`lib/progress.ts` の純粋関数で進捗から導出。確実に導出できる条件（必須モジュール全合格 c1 / コンプラ100 c3 / Lv.10 c10、バッジ b-first）のみ判定し、追跡できない条件は **false（未達）** とする。推測で達成にしない（data-integrity 準拠）。
+- **Consequences:** 表示が事実に一致。Phase 4/5 で評価が蓄積されたら導出条件を拡張。境界値は Vitest で固定。`CERT_CONDITIONS` は `readonly` 化。
+
 ## ADR-0004: 検証は「実機ビルド＋ビジュアル」で担保
 
 - **日付:** 2026-06-23

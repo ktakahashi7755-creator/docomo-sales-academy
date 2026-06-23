@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { TALK_SCRIPTS } from "@/data/seed";
-import { Card } from "@/components/ui";
+import { Card, ErrorState } from "@/components/ui";
 import { ArrowLeft, Mic, AlertCircle, CheckCircle2 } from "lucide-react";
 
 export function TalkScriptDetail() {
@@ -9,12 +9,18 @@ export function TalkScriptDetail() {
 
   if (!s) {
     return (
-      <div className="py-12 text-center">
-        <p className="text-ink-muted">スクリプトが見つかりませんでした。</p>
-        <Link to="/scripts" className="mt-3 inline-block text-sm font-medium text-ink underline">
-          トーク一覧へ戻る
-        </Link>
-      </div>
+      <ErrorState
+        title="スクリプトが見つかりませんでした"
+        description="URL が変わったか、削除された可能性があります。一覧から選び直してください。"
+        action={
+          <Link
+            to="/scripts"
+            className="inline-flex items-center gap-1 rounded-lg bg-ink px-3 py-2 text-sm font-medium text-paper"
+          >
+            <ArrowLeft size={16} /> トーク一覧へ戻る
+          </Link>
+        }
+      />
     );
   }
 

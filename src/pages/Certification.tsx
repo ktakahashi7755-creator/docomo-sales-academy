@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { CERT_CONDITIONS, BADGES, PHASES } from "@/data/seed";
-import { Card, PageTitle, ProgressBar } from "@/components/ui";
+import { Card, PageLoading, PageTitle, ProgressBar } from "@/components/ui";
 import { evaluateCertConditions, flattenModules, isBadgeEarned } from "@/lib/progress";
 import { CheckCircle2, Circle, Award, Lock, ChevronRight } from "lucide-react";
+
+// PHASES は定数なので一度だけ平坦化する。
+const ALL_MODULES = flattenModules(PHASES);
 
 // 未達条件から「次の一段」へ誘導するルート。c10 は SV 承認待ちのためリンク無し。
 const CONDITION_LINK: Record<string, { to: string; label: string } | undefined> = {
@@ -21,10 +24,10 @@ const CONDITION_LINK: Record<string, { to: string; label: string } | undefined> 
 
 export function Certification() {
   const { profile, progress } = useAuth();
-  if (!profile) return null;
+  // loading：認証解決前（Phase 1 で非同期化したときの受け皿）。
+  if (!profile) return <PageLoading />;
 
-  const modules = flattenModules(PHASES);
-  const ctx = { modules, progress, level: profile.level };
+  const ctx = { modules: ALL_MODULES, progress, level: profile.level };
   const { conditions, doneCount, total, rate } = evaluateCertConditions(CERT_CONDITIONS, ctx);
   const earnedBadges = BADGES.filter((b) => isBadgeEarned(b.id, ctx));
 

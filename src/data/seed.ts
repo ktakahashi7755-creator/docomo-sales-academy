@@ -800,6 +800,10 @@ export const SCENARIOS: Scenario[] = [
   },
 ];
 
+/** ダッシュボード／ロープレ既定で使うおすすめシナリオ（並び順に依存せず意味で選ぶ）。 */
+export const RECOMMENDED_SCENARIO: Scenario =
+  SCENARIOS.find((s) => s.goal.includes("PLATINUM")) ?? SCENARIOS[0];
+
 // ===== 難易度定義 1..10 =====
 export const DIFFICULTY: DifficultyDef[] = [
   { level: 1, desc: "非常に協力的。質問に素直に答える。" },

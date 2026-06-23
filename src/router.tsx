@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Layout } from "@/components/Layout";
@@ -11,7 +12,7 @@ import { TalkScriptDetail } from "@/pages/TalkScriptDetail";
 import { Roleplay } from "@/pages/Roleplay";
 import { Certification } from "@/pages/Certification";
 
-function RequireAuth({ children }: { children: React.ReactNode }) {
+function RequireAuth({ children }: { children: ReactNode }) {
   const { profile } = useAuth();
   if (!profile) return <Navigate to="/login" replace />;
   return <>{children}</>;

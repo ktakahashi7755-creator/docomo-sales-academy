@@ -43,6 +43,9 @@ describe("isPassed — 境界値", () => {
   it("0点でも合格点0なら合格", () => {
     expect(isPassed(0, 0)).toBe(true);
   });
+  it("負数スコアは不合格（異常系）", () => {
+    expect(isPassed(-1, 0)).toBe(false);
+  });
 });
 
 describe("gradeOf — 評価ランク境界", () => {
@@ -122,6 +125,10 @@ describe("weakModules", () => {
     const weak = weakModules(modules, { a: 70 });
     expect(weak.map((m) => m.id)).toEqual(["a"]);
   });
+
+  it("limit=0 は空配列（境界）", () => {
+    expect(weakModules(modules, { a: 70, b: 50 }, 0)).toEqual([]);
+  });
 });
 
 describe("phaseProgress", () => {
@@ -137,6 +144,10 @@ describe("phaseProgress", () => {
   });
   it("一部のみで complete=false", () => {
     expect(phaseProgress(phase, { a: 80 })).toEqual({ passed: 1, total: 2, complete: false });
+  });
+  it("モジュール0件のフェーズは complete=false（境界）", () => {
+    const empty: Phase = { id: "p0", no: 0, title: "P0", summary: "", modules: [] };
+    expect(phaseProgress(empty, {})).toEqual({ passed: 0, total: 0, complete: false });
   });
 });
 
@@ -169,6 +180,18 @@ describe("認定条件の導出", () => {
   });
   it("c1: 必須に1つでも未達があれば false", () => {
     expect(isCertConditionDone("c1", { modules, progress: { r1: 80 }, level: 3 })).toBe(false);
+  });
+  it("c1: 必須モジュールが0件なら false（空配列境界・安全側）", () => {
+    const noRequired: ModuleItem[] = [mod("opt", 80, false)];
+    expect(
+      isCertConditionDone("c1", { modules: noRequired, progress: { opt: 80 }, level: 3 }),
+    ).toBe(false);
+  });
+  it("c3: 合格点100のモジュールが0件なら false（空配列境界・安全側）", () => {
+    const noCompliance: ModuleItem[] = [mod("r1", 80, true)];
+    expect(
+      isCertConditionDone("c3", { modules: noCompliance, progress: { r1: 80 }, level: 3 }),
+    ).toBe(false);
   });
   it("c3: 合格点100のモジュールが合格なら done", () => {
     expect(isCertConditionDone("c3", { modules, progress: { compliance: 100 }, level: 0 })).toBe(

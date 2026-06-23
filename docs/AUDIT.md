@@ -6,6 +6,8 @@
 ## A. データ整合（data-integrity）
 
 - [ ] **A-D1 🟡** seed の各商材 `official_url` / `official_checked_at` が実在URL・実確認日かを精査。デモ用の仮値が混じる可能性。実値確定まで「要確認」運用。（→ 高橋確認）
+- [ ] **A-D2 🟡** Certification の c2「商材テスト90点以上」は導出可能な seed モジュール（`p10m1` / passing_score:90）が存在するが、`isCertConditionDone` は default で false 固定。捏造ではなく安全側の過少報告だが、合格済でも未達表示になる。c2 を導出対象に含めるか Phase 3/4 まで保留かを判断要。（→ 高橋確認）
+- [x] **A-D3 🟢** `docs/DATA_INTEGRITY.md` の根拠行番号が seed.ts とズレていた → 行番号依存をやめ、定数名（`PRODUCTS`/トーク）参照に変更。（2026-06-23 解消）
 
 ## B. セキュリティ／コンプライアンス（後続フェーズで実装）
 
@@ -14,40 +16,44 @@
 - [ ] **B-S3** Phase 4: AI/STT/TTS キーはクライアントバンドルに含めない（dist で検証）。
 - [ ] **B-S4** パスワード・認証コードは「お客様自身が入力」のフロー/文言を維持。
 
-## C. デザイン／UX レビュー指摘（design-reviewer 2026-06-23）
+## C. デザイン／UX レビュー指摘（design-reviewer 2026-06-23 / 再レビュー同日）
 
-### 🔴 Phase 0 で対応
+すべて解消（コミット f0b1d99 + 96453d5 系で対応・再レビューで確認）。
 
-- [ ] **C-R1 🔴** ボトムナビのタップ領域 44px 未満（`Layout.tsx`）。`min-h` で床を確保。
-- [ ] **C-R2 🔴** ボトムナビのラベル `text-[10px]`＋`ink-muted` がトークン外＆コントラスト/可読性不足。`text-xs`＋`ink-soft` 以上へ。
-- [ ] **C-R3 🔴** 4状態（loading/error）が全画面で欠落。`ui.tsx` に Skeleton/ErrorState/EmptyState を追加し receiver を用意（本格運用は Phase 1）。
-- [ ] **C-R4 🔴** Roleplay「テキスト開始」が死にボタン（`Roleplay.tsx`）。遷移 or disabled＋理由表示へ。
-- [ ] **C-R5 🔴** Login に loading/error/二重遷移ガードが無い（`Login.tsx`）。pending UI とエラー領域を用意。
+- [x] **C-R1 🔴** ボトムナビ 44px → `min-h-[56px]`。
+- [x] **C-R2 🔴** ラベル `text-[11px]`＋`text-ink-soft`／active `text-accent`（短ラベル化で〜360px も崩れず）。
+- [x] **C-R3 🔴** 4状態 receiver：`ui.tsx` に Skeleton/SkeletonCard/PageLoading/EmptyState/ErrorState。loading=`PageLoading`（Dashboard/Certification の認証前）、empty=一覧/苦手、error=詳細 not-found に配線。
+- [x] **C-R4 🔴** Roleplay の両開始ボタンを AI 未設定時 `disabled`＋理由表示。
+- [x] **C-R5 🔴** Login に pending/error(`role="alert"`)/二重遷移ガード。
+- [x] **C-Y1〜Y3 🟡** LevelLadder：次の一段強調・コネクタ進捗・`ol/li`＋`aria-current`。
+- [x] **C-Y4 🟡** 難易度 range：`aria-valuetext`・目盛り・フォーカス可視＋`h-11` でタップ44px。
+- [x] **C-Y5 🟡** シナリオ選択に `aria-pressed`。
+- [x] **C-Y6 🟡** カードリンクの角丸フォーカス／`hover:shadow-lift` を Link 側に。
+- [x] **C-Y7 🟡** 全9画面 `PageTitle` 統一（Dashboard 含む）。
+- [x] **C-Y8/Y9 🟡** Certification：獲得/未獲得バッジ・未達条件の導線。
+- [x] **C-Y10 🟡** Roleplay 既定シナリオを意味ベース（`RECOMMENDED_SCENARIO`）へ。
+- [x] **C-Y11 🟡** 詳細画面の戻りリンク `min-h-[44px]`。
+- [x] **C-Y12 🟡** 状態色に `deep` 追加（gold/platinum と同規約）で soft 背景テキストの AA を確保。
+- [x] **C-G1 🟢** Dashboard おすすめロープレをデータ駆動（`RECOMMENDED_SCENARIO`）。
+- [x] **C-G3 🟢** `ProgressBar` を `duration-200`（150–250ms 準拠）。
 
-### 🟡 Phase 0〜1 で対応
+## D. コード品質（code-reviewer 2026-06-23 / 再レビュー同日）
 
-- [ ] **C-Y1 🟡** LevelLadder「次の一段」(`current+1`)が未強調。署名要素の核心。
-- [ ] **C-Y2 🟡** LevelLadder コネクタ線に進捗が乗らない（done区間も灰色）。
-- [ ] **C-Y3 🟡** LevelLadder を `ol/li`＋`aria-current="step"` で意味付け。
-- [ ] **C-Y4 🟡** 難易度 range のフォーカス可視・つまみ44px・目盛り（`Roleplay.tsx`）。
-- [ ] **C-Y5 🟡** シナリオ選択トグルに `aria-pressed`（`Roleplay.tsx`）。
-- [ ] **C-Y6 🟡** カード全体リンクのフォーカス輪郭を `rounded-xl2` に合わせる／`hover:shadow-lift` 抑制（`TalkScripts.tsx`）。
-- [ ] **C-Y7 🟡** ページ見出しを `PageTitle` に統一（手書き eyebrow の重複解消）。
-- [ ] **C-Y8 🟡** Certification 獲得/未獲得バッジを区別（gold 点灯 / ロック）。
-- [ ] **C-Y9 🟡** Certification 未達条件に該当画面への導線（次の一段）。
-- [ ] **C-Y10 🟡** Roleplay 既定シナリオの添字マジックナンバーを意味ベース指定へ。
-- [ ] **C-Y11 🟡** 詳細画面の戻りリンクが44px未満（`ProductDetail.tsx`/`TalkScriptDetail.tsx`）。
-- [ ] **C-Y12 🟡** ScoreChip/TierBadge/デモバナーの小文字コントラスト AA 実測。
-
-### 🟢 提案
-
-- [ ] **C-G3 🟢** `ProgressBar` の `duration-500` が 250ms 上限超過。300ms 以内へ。
-- [ ] **C-G1 🟢** Dashboard「おすすめロープレ」難易度のハードコード二重管理をデータ駆動に。
-
-## D. コード品質（code-reviewer 2026-06-23）
-
-- （code-reviewer の指摘を反映予定）
+- [x] **D-N10 🔴** 4状態 primitive が未配線 → `PageLoading`（Dashboard/Certification）・`ErrorState`（詳細 not-found）・`EmptyState`（一覧/苦手）に配線。
+- [x] **D-N17 🔴** AUDIT D 欄が空 → 本節に記録（DoD 充足）。
+- [x] **D-N03/N04 🟡** `c1` 空必須・`c3` 空コンプラの境界テスト追加。
+- [x] **D-N05 🟡** `weakModules(limit=0)` 境界テスト追加。
+- [x] **D-N01 🟡** 負数スコアの異常系テスト追加。
+- [x] **D-N06 🟢** `phaseProgress(total=0)` 境界テスト追加。
+- [x] **D-N07 🟡** `React.ReactNode` 暗黙参照を `import type { ReactNode }` に統一（router/ProductDetail）。
+- [x] **D-N11/N12 🟡** `Certification`/`Dashboard` の `return null` を `PageLoading` に。
+- [x] **D-N15 🟡** Dashboard おすすめロープレのハードコード二重管理を解消（C-G1 と同件）。
+- [x] **D-N16 🟢** `flattenModules(PHASES)` をモジュールスコープ定数に（再計算回避）。
+- [x] **D-N18 🟡** `ScoreChip` の合否判定を `isPassed` に委譲（重複解消）。
+- [x] **D-N19 🟡** `Products` の `isStale` 二重呼び出しを1回に。
+- [ ] **D-N02 🟢** `isStale` の「90日ちょうど」判定が DST/タイムゾーンでズレうる。Phase 3 で日本時間基準にする際に再確認。
+- [ ] **D-N14 🟢** Roleplay の評価ランク閾値（S/A/B/C/D）が表示文字列にハードコード。Phase 4 で `gradeOf` から導出して単一正典化。
 
 ## E. 性能・PWA（Phase 6）
 
-- [ ] **E-P1** 初回 JS 予算 ~180KB gzip 目標、Lighthouse 90+ を計測し記録。現状ベースライン: JS 215.55KB / gzip 71.13KB（2026-06-23 build）。
+- [ ] **E-P1** 初回 JS 予算 ~180KB gzip 目標、Lighthouse 90+ を計測し記録。現状ベースライン: JS 約220KB / gzip 約73KB（2026-06-23 build）。

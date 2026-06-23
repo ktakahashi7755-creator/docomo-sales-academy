@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { isPassed } from "@/lib/progress";
 
 /** ページ見出し（eyebrow + 大見出し + 補足）。全画面で余白・字間を統一する。 */
 export function PageTitle({
@@ -44,6 +45,20 @@ export function SkeletonCard({ lines = 3 }: { lines?: number }) {
         <Skeleton key={i} className={`h-4 ${i === lines - 1 ? "w-2/3" : "w-full"}`} />
       ))}
     </Card>
+  );
+}
+
+/** ページ全体の loading 状態（見出し＋カード群のスケルトン）。 */
+export function PageLoading() {
+  return (
+    <div className="space-y-6" aria-busy="true" aria-label="読み込み中">
+      <Skeleton className="h-8 w-48" />
+      <div className="grid gap-4 md:grid-cols-3">
+        <SkeletonCard lines={3} />
+        <SkeletonCard lines={3} />
+        <SkeletonCard lines={3} />
+      </div>
+    </div>
   );
 }
 
@@ -137,7 +152,7 @@ export function ProgressBar({
       aria-valuemax={100}
     >
       <div
-        className={`h-full rounded-full ${bar} transition-[width] duration-300`}
+        className={`h-full rounded-full ${bar} transition-[width] duration-200`}
         style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
       />
     </div>
@@ -172,7 +187,7 @@ export function TierBadge({ tier }: { tier?: "regular" | "gold" | "platinum" }) 
 
 export function ScoreChip({ score, passing }: { score?: number; passing: number }) {
   if (score == null) return <span className="text-xs text-ink-muted">未受講</span>;
-  const passed = score >= passing;
+  const passed = isPassed(score, passing);
   return (
     <span
       className={`font-num inline-flex items-center rounded px-2 py-0.5 text-xs font-semibold ${passed ? "bg-pass-soft text-pass-deep" : "bg-caution-soft text-caution-deep"}`}

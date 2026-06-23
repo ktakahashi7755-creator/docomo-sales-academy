@@ -1,29 +1,39 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { PHASES, RANKS } from "@/data/seed";
-import { Card, EmptyState, ProgressBar, RankPill, ScoreChip, SectionTitle } from "@/components/ui";
+import { PHASES, RANKS, RECOMMENDED_SCENARIO } from "@/data/seed";
+import {
+  Card,
+  EmptyState,
+  PageLoading,
+  PageTitle,
+  ProgressBar,
+  RankPill,
+  ScoreChip,
+  SectionTitle,
+} from "@/components/ui";
 import { LevelLadder } from "@/components/LevelLadder";
 import { flattenModules, summarizeProgress, weakModules } from "@/lib/progress";
 import { ChevronRight } from "lucide-react";
 
+// PHASES は定数なので一度だけ平坦化する。
+const ALL_MODULES = flattenModules(PHASES);
+
 export function Dashboard() {
   const { profile, progress } = useAuth();
-  if (!profile) return null;
+  // loading：認証解決前（Phase 1 で非同期化したときの受け皿）。
+  if (!profile) return <PageLoading />;
 
-  const allModules = flattenModules(PHASES);
-  const { passedCount, completionRate, nextModule } = summarizeProgress(allModules, progress);
+  const { passedCount, completionRate, nextModule } = summarizeProgress(ALL_MODULES, progress);
   const rank = RANKS.find((r) => r.level === profile.level) ?? RANKS[0];
-  const weak = weakModules(allModules, progress, 3);
+  const weak = weakModules(ALL_MODULES, progress, 3);
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <div className="text-sm text-ink-muted">こんにちは、{profile.display_name} さん</div>
-          <h1 className="text-2xl font-bold text-ink">ダッシュボード</h1>
-        </div>
-        <RankPill level={rank.level} label={rank.label} />
-      </div>
+      <PageTitle
+        title="ダッシュボード"
+        description={`こんにちは、${profile.display_name} さん`}
+        action={<RankPill level={rank.level} label={rank.label} />}
+      />
 
       {/* 上段：進捗サマリ */}
       <div className="grid gap-4 md:grid-cols-3">
@@ -36,7 +46,7 @@ export function Dashboard() {
             </div>
             <div className="text-sm text-ink-muted">
               合格 <span className="font-num font-semibold text-ink">{passedCount}</span> /{" "}
-              {allModules.length} モジュール
+              {ALL_MODULES.length} モジュール
             </div>
           </div>
           <div className="mt-3">
@@ -66,7 +76,8 @@ export function Dashboard() {
         <Card className="p-5">
           <SectionTitle eyebrow="Today" title="おすすめロープレ" />
           <p className="text-sm text-ink-soft">
-            ドコモ既存・GOLD利用のお客様へ、PLATINUM提案（難易度7）。
+            {RECOMMENDED_SCENARIO.title}（{RECOMMENDED_SCENARIO.goal}・難易度
+            <span className="font-num">{RECOMMENDED_SCENARIO.difficulty}</span>）。
           </p>
           <Link
             to="/roleplay"

@@ -9,15 +9,15 @@
 
 ## フェーズ一覧
 
-| Phase | 内容                                                            | 主担当            | 状態           |
-| ----- | --------------------------------------------------------------- | ----------------- | -------------- |
-| 0     | ガバナンス整備（docs 4種・Lint/Prettier/Vitest/Playwright・CI） | qa+全レビュー     | 🚧 In progress |
-| 1     | Supabase 接続と本認証（progress を DB 永続化）                  | supabase          | ⏳ Planned     |
-| 2     | 管理画面 CRUD（product_versions 履歴・90日鮮度・audit_logs）    | frontend+supabase | ⏳ Planned     |
-| 3     | クイズエンジン（採点純粋関数＋境界値テスト）                    | frontend+qa       | ⏳ Planned     |
-| 4     | ロープレ会話＋AI評価（Edge Function・アダプタ）                 | ai-edge+frontend  | ⏳ Planned     |
-| 5     | SV ダッシュボード・認定フロー                                   | supabase+frontend | ⏳ Planned     |
-| 6     | 仕上げ（PWA・性能・E2E・Lighthouse 90+）                        | qa+全レビュー     | ⏳ Planned     |
+| Phase | 内容                                                            | 主担当            | 状態              |
+| ----- | --------------------------------------------------------------- | ----------------- | ----------------- |
+| 0     | ガバナンス整備（docs 4種・Lint/Prettier/Vitest/Playwright・CI） | qa+全レビュー     | ✅ Done（要承認） |
+| 1     | Supabase 接続と本認証（progress を DB 永続化）                  | supabase          | ⏳ Planned        |
+| 2     | 管理画面 CRUD（product_versions 履歴・90日鮮度・audit_logs）    | frontend+supabase | ⏳ Planned        |
+| 3     | クイズエンジン（採点純粋関数＋境界値テスト）                    | frontend+qa       | ⏳ Planned        |
+| 4     | ロープレ会話＋AI評価（Edge Function・アダプタ）                 | ai-edge+frontend  | ⏳ Planned        |
+| 5     | SV ダッシュボード・認定フロー                                   | supabase+frontend | ⏳ Planned        |
+| 6     | 仕上げ（PWA・性能・E2E・Lighthouse 90+）                        | qa+全レビュー     | ⏳ Planned        |
 
 ---
 
@@ -37,6 +37,16 @@
 - ✅ プロジェクトを zip から展開しリポジトリ直下へ。
 - ✅ ESLint(flat)/Prettier/Vitest/Playwright 導入、`lint`/`format`/`test`/`e2e` script 追加。
 - ✅ GitHub Actions CI（typecheck+lint+format+unit+build / e2e）追加。
-- 🚧 docs 4種（ROADMAP/AUDIT/DECISIONS/DATA_INTEGRITY）整備中。
-- 🚧 既存画面の品質・デザイン磨き（design/code レビュー指摘の反映）。
-- 🚧 検証5周（typecheck/lint/unit/build + Playwright ビジュアル）。
+- ✅ docs 4種（ROADMAP/AUDIT/DECISIONS/DATA_INTEGRITY）整備。
+- ✅ 既存9画面の品質・デザイン磨き（design/code/security/data-integrity レビュー指摘を反映）。
+- ✅ 純粋ロジック切り出し（`lib/progress.ts`）＋境界値 Vitest 37件。
+- ✅ 検証ゲート緑（typecheck0 / lint0 / prettier / unit37 / build / preview 200・秘密なし）。
+- ⚠️ Playwright E2E はコミット済みだが、本環境はブラウザDL不可のため CI 実行。
+
+### Phase 0 — レビューゲート結果（2026-06-23）
+
+- **design-reviewer:** 🔴ゼロ・マージ可（初回 R1–R5 / Y1–Y12 解消、再指摘も解消）。
+- **code-reviewer:** 初回 🔴2件 → 解消（4状態配線・AUDIT D 記録）、境界テスト追加。
+- **security-compliance-auditor:** 🔴ゼロ・マージ可（秘密露出なし・anon のみ・コンプラ逸脱なし）。
+- **data-integrity-steward:** 🔴ゼロ・マージ可（正典値維持・未追跡は false で捏造なし）。残 🟡 A-D1/A-D2 は高橋確認。
+- **結論:** 🔴ゼロ・DoD 充足。Phase 1 着手は高橋の承認待ち。

@@ -1,16 +1,13 @@
 import { useState } from "react";
-import { SCENARIOS, DIFFICULTY, EVAL_ITEMS } from "@/data/seed";
+import { SCENARIOS, DIFFICULTY, EVAL_ITEMS, RECOMMENDED_SCENARIO } from "@/data/seed";
 import { Card, PageTitle, SectionTitle } from "@/components/ui";
 import { isBackendEnabled } from "@/lib/supabase";
 import { Mic, Keyboard, Sparkles } from "lucide-react";
 
-// 既定はPLATINUM提案シナリオ（並び順に依存しないよう意味で選ぶ）。
-const DEFAULT_SCENARIO = SCENARIOS.find((s) => s.goal.includes("PLATINUM")) ?? SCENARIOS[0];
-
 export function Roleplay() {
-  const [scenarioId, setScenarioId] = useState(DEFAULT_SCENARIO.id);
-  const [difficulty, setDifficulty] = useState(DEFAULT_SCENARIO.difficulty);
-  const scenario = SCENARIOS.find((s) => s.id === scenarioId) ?? DEFAULT_SCENARIO;
+  const [scenarioId, setScenarioId] = useState(RECOMMENDED_SCENARIO.id);
+  const [difficulty, setDifficulty] = useState(RECOMMENDED_SCENARIO.difficulty);
+  const scenario = SCENARIOS.find((s) => s.id === scenarioId) ?? RECOMMENDED_SCENARIO;
   const diff = DIFFICULTY.find((d) => d.level === difficulty);
 
   return (
@@ -72,7 +69,7 @@ export function Roleplay() {
               step={1}
               value={difficulty}
               onChange={(e) => setDifficulty(Number(e.target.value))}
-              className="h-6 w-full cursor-pointer accent-ink"
+              className="h-11 w-full cursor-pointer accent-ink"
               aria-label="難易度（1〜10）"
               aria-valuetext={`難易度 ${difficulty}：${diff?.desc ?? ""}`}
             />

@@ -1,10 +1,11 @@
+import type { ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 import { PRODUCTS, TALK_SCRIPTS } from "@/data/seed";
-import { Card, TierBadge } from "@/components/ui";
+import { Card, ErrorState, TierBadge } from "@/components/ui";
 import { isStale } from "@/lib/progress";
 import { ArrowLeft, ExternalLink, MessageSquareText, AlertTriangle } from "lucide-react";
 
-function Block({ title, children }: { title: string; children: React.ReactNode }) {
+function Block({ title, children }: { title: string; children: ReactNode }) {
   return (
     <Card className="p-5">
       <h2 className="mb-2 text-sm font-bold text-ink-soft">{title}</h2>
@@ -34,12 +35,18 @@ export function ProductDetail() {
 
   if (!p) {
     return (
-      <div className="py-12 text-center">
-        <p className="text-ink-muted">商材が見つかりませんでした。</p>
-        <Link to="/products" className="mt-3 inline-block text-sm font-medium text-ink underline">
-          商材一覧へ戻る
-        </Link>
-      </div>
+      <ErrorState
+        title="商材が見つかりませんでした"
+        description="URL が変わったか、削除された可能性があります。一覧から選び直してください。"
+        action={
+          <Link
+            to="/products"
+            className="inline-flex items-center gap-1 rounded-lg bg-ink px-3 py-2 text-sm font-medium text-paper"
+          >
+            <ArrowLeft size={16} /> 商材一覧へ戻る
+          </Link>
+        }
+      />
     );
   }
 
