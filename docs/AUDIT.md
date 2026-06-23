@@ -190,7 +190,7 @@
 - [x] **K-3** 役割限定の SV/管理画面を `React.lazy` で分割（初期 JS ~101KB→~95.7KB gzip）。
 - [x] **K-4** E2E を Phase 4/5 に追従（テキストロープレ一巡・SV承認を追加、旧「ロープレ無効」アサーション是正）。本環境はブラウザ取得不可のため CI 実行前提。
 - [x] **K-5** GitHub Pages 開通（Source: GitHub Actions・github-pages 環境のブランチ制限を解除）。`https://ktakahashi7755-creator.github.io/docomo-sales-academy/` が実機で閲覧可（2026-06-23・高橋確認済み）。
-- [x] **K-8** インストール/SEO ポリッシュ：`description`・iOS PWA メタ（apple-mobile-web-app-*）・`format-detection: telephone=no`（料金数字の電話リンク化防止）・`apple-touch-icon`／`icon`・manifest `id`。Pages サブパスでも head の各リンクが base 付きに書き換わることを build で確認。
+- [x] **K-8** インストール/SEO ポリッシュ：`description`・iOS PWA メタ（apple-mobile-web-app-\*）・`format-detection: telephone=no`（料金数字の電話リンク化防止）・`apple-touch-icon`／`icon`・manifest `id`。Pages サブパスでも head の各リンクが base 付きに書き換わることを build で確認。
 - [ ] **K-6 🟡** Lighthouse 90+ の実測は CI/実機で継続（本環境では計測不可）。
 - [ ] **K-7 🟡** `pages.yml` の push トリガに作業ブランチを含む（実機リンクを今出すため）。main マージ後に作業ブランチを外す。
 - [ ] **K-9 🟢** `apple-touch-icon` は SVG 指定。iOS は PNG を好むため、ホーム画面アイコンの最適表示には 180×180 PNG を後で用意する。
