@@ -62,6 +62,16 @@
 - [ ] **F-4 🟡** `module_progress`(text key) と既存 `progress`(uuid) の整合は Phase 2（コンテンツ DB 駆動化）で実施。
 - [ ] **F-5** Supabase Auth の OTP メールテンプレート設定（6桁コードが届くよう Email テンプレートを確認）。
 
+### Phase 1 レビューゲート（2026-06-23）— security / code / design
+
+- [x] **F-R🔴** code: `setModuleScore` の `prevScore` が古い progress を参照（連続更新でロールバック誤動作）→ `progressRef` で同期追跡＋純粋ヘルパー（`nextScore/withScore/rolledBack`）に分離しテスト（unit 49件）。
+- [x] **F-R1 🟡** `client()` 重複 → `supabase.requireClient()` に集約。
+- [x] **F-R2 🟡** Login：検証エラー時に info(成功色) を消す／コード入力 autoFocus／再送（30秒クールダウン）／`role="status"`／枠線を可視化（`border-*/30`）／エラー時にコード欄へ再フォーカス。
+- [x] **F-R3 🟡** RLS テスト：例外を `check_violation` に限定＋SV 閲覧可・書込不可ケース追加。
+- [x] **F-R4 🟡** `progressStore` の `updated_at` をペイロードから除去（trigger/default に委譲）＋ fetch/save の単体テスト（モック）追加。
+- [ ] **F-R5 🟡** supabase-js のレスポンス型を `as ProfileRow/ProgressRow` でキャスト中。将来 `createClient<Database>` の生成型導入で解消（Phase 2 で DB 型を生成時）。
+- [ ] **F-R6 🟢** StrictMode の dev 二重購読（`active` フラグで実害なし）。`score=0` と未受講の区別は Phase 3 採点実装で確定。
+
 ## E. 性能・PWA（Phase 6）
 
 - [ ] **E-P1** 初回 JS 予算 ~180KB gzip 目標、Lighthouse 90+ を計測し記録。現状ベースライン: JS 約220KB / gzip 約73KB（2026-06-23 build）。

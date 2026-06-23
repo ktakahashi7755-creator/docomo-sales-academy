@@ -1,6 +1,6 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loader2, Mail, ArrowLeft } from "lucide-react";
+import { Loader2, Mail, ArrowLeft, RotateCw } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { ROLE_LABEL, type Role } from "@/lib/types";
 
@@ -97,6 +97,28 @@ function OtpLogin() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(0);
+  const codeRef = useRef<HTMLInputElement>(null);
+
+  // コード入力ステップに来たら入力欄へフォーカス（導線を迷わせない）。
+  useEffect(() => {
+    if (step === "code") codeRef.current?.focus();
+  }, [step]);
+
+  // 再送クールダウン（秒）。
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cooldown]);
+
+  async function requestCode(target: string) {
+    await sendOtp(target);
+    setStep("code");
+    setError(null);
+    setInfo(`${target} に確認コードを送りました。メールをご確認ください。`);
+    setCooldown(30);
+  }
 
   async function handleSendOtp(e: FormEvent) {
     e.preventDefault();
@@ -104,11 +126,22 @@ function OtpLogin() {
     setPending(true);
     setError(null);
     try {
-      await sendOtp(email.trim());
-      setStep("code");
-      setInfo(`${email.trim()} に確認コードを送りました。メールをご確認ください。`);
+      await requestCode(email.trim());
     } catch {
       setError("コードの送信に失敗しました。メールアドレスをご確認ください。");
+    } finally {
+      setPending(false);
+    }
+  }
+
+  async function handleResend() {
+    if (pending || cooldown > 0) return;
+    setPending(true);
+    setError(null);
+    try {
+      await requestCode(email.trim());
+    } catch {
+      setError("コードの再送に失敗しました。時間をおいてお試しください。");
     } finally {
       setPending(false);
     }
@@ -123,7 +156,9 @@ function OtpLogin() {
       await verifyOtp(email.trim(), code.trim());
       navigate("/");
     } catch {
+      setInfo(null); // 成功色のメッセージを消し、状態の主役を1つにする
       setError("コードが正しくないか、期限切れです。もう一度お試しください。");
+      codeRef.current?.focus();
     } finally {
       setPending(false);
     }
@@ -139,15 +174,16 @@ function OtpLogin() {
       {error && (
         <div
           role="alert"
-          className="mt-4 rounded-lg border border-fail-soft bg-fail-soft px-3 py-2 text-sm text-fail-deep"
+          className="mt-4 rounded-lg border border-fail/30 bg-fail-soft px-3 py-2 text-sm text-fail-deep"
         >
           {error}
         </div>
       )}
-      {info && (
+      {info && !error && (
         <div
+          role="status"
           aria-live="polite"
-          className="mt-4 rounded-lg border border-pass-soft bg-pass-soft px-3 py-2 text-sm text-pass-deep"
+          className="mt-4 rounded-lg border border-pass/30 bg-pass-soft px-3 py-2 text-sm text-pass-deep"
         >
           {info}
         </div>
@@ -190,6 +226,7 @@ function OtpLogin() {
           </label>
           <input
             id="code"
+            ref={codeRef}
             type="text"
             inputMode="numeric"
             autoComplete="one-time-code"
@@ -210,18 +247,29 @@ function OtpLogin() {
             {pending && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}
             ログイン
           </button>
-          <button
-            type="button"
-            onClick={() => {
-              setStep("email");
-              setCode("");
-              setError(null);
-              setInfo(null);
-            }}
-            className="flex min-h-[44px] w-full items-center justify-center gap-1 text-sm text-ink-soft hover:text-ink"
-          >
-            <ArrowLeft size={14} /> メールアドレスを変更
-          </button>
+          <div className="flex items-center justify-between gap-2 pt-1">
+            <button
+              type="button"
+              onClick={() => {
+                setStep("email");
+                setCode("");
+                setError(null);
+                setInfo(null);
+              }}
+              className="flex min-h-[44px] items-center gap-1 text-sm text-ink-soft hover:text-ink"
+            >
+              <ArrowLeft size={14} /> メールを変更
+            </button>
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={pending || cooldown > 0}
+              className="flex min-h-[44px] items-center gap-1 text-sm text-ink-soft hover:text-ink disabled:opacity-50"
+            >
+              <RotateCw size={14} />
+              {cooldown > 0 ? `再送（${cooldown}秒）` : "コードを再送"}
+            </button>
+          </div>
         </form>
       )}
     </div>

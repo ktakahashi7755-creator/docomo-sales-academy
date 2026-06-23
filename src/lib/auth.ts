@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { requireClient as client } from "@/lib/supabase";
 import type { Profile, Role } from "@/lib/types";
 
 /**
@@ -7,10 +7,6 @@ import type { Profile, Role } from "@/lib/types";
  * - これらは backend モード（env 設定済み）でのみ呼ばれる。client() は未設定なら投げる。
  * - 秘密はフロントに無い（anon キーのみ）。service_role/AIキーはサーバー側。
  */
-function client() {
-  if (!supabase) throw new Error("Supabase is not configured");
-  return supabase;
-}
 
 /** メールに 6 桁の OTP コードを送る（メール未登録なら自動作成）。 */
 export async function sendOtp(email: string): Promise<void> {

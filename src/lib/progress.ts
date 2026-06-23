@@ -8,6 +8,24 @@ import type { ModuleItem, Phase, CertCondition } from "@/lib/types";
 
 export type ScoreMap = Record<string, number>;
 
+/** 既存スコアと新スコアの高い方（合格実績は下げない）。 */
+export function nextScore(prev: number | undefined, score: number): number {
+  return Math.max(prev ?? 0, score);
+}
+
+/** 楽観的更新：key を nextScore で更新した新しい ScoreMap を返す（非破壊）。 */
+export function withScore(map: ScoreMap, key: string, score: number): ScoreMap {
+  return { ...map, [key]: score };
+}
+
+/** ロールバック：key を prev に戻す（prev が undefined なら削除）。非破壊。 */
+export function rolledBack(map: ScoreMap, key: string, prev: number | undefined): ScoreMap {
+  const next = { ...map };
+  if (prev == null) delete next[key];
+  else next[key] = prev;
+  return next;
+}
+
 /** モジュール合否。未受講(undefined)は不合格扱い。境界は「合格点以上」で合格。 */
 export function isPassed(score: number | undefined, passing: number): boolean {
   if (score == null) return false;

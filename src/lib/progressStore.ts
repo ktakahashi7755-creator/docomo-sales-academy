@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { requireClient as client } from "@/lib/supabase";
 import type { ScoreMap } from "@/lib/progress";
 
 /**
@@ -6,10 +6,6 @@ import type { ScoreMap } from "@/lib/progress";
  * フロントの seed モジュールキー（例 p1m1）をそのまま module_key に保存する。
  * RLS により本人の行のみ読み書き可。backend モードでのみ呼ばれる。
  */
-function client() {
-  if (!supabase) throw new Error("Supabase is not configured");
-  return supabase;
-}
 
 interface ProgressRow {
   module_key: string;
@@ -36,10 +32,11 @@ export async function saveModuleScore(
   moduleKey: string,
   score: number,
 ): Promise<void> {
+  // updated_at は INSERT は default now()、UPDATE は trg_module_progress_updated が設定する。
   const { error } = await client()
     .from("module_progress")
     .upsert(
-      { user_id: userId, module_key: moduleKey, score, updated_at: new Date().toISOString() },
+      { user_id: userId, module_key: moduleKey, score },
       { onConflict: "user_id,module_key" },
     );
   if (error) throw error;

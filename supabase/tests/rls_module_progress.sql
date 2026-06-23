@@ -14,12 +14,14 @@ begin;
 -- --- セットアップ（この時点ではまだ所有者ロール＝RLSバイパス） ---
 insert into auth.users (id, email) values
   ('00000000-0000-0000-0000-00000000000a', 'a@test.local'),
-  ('00000000-0000-0000-0000-00000000000b', 'b@test.local')
+  ('00000000-0000-0000-0000-00000000000b', 'b@test.local'),
+  ('00000000-0000-0000-0000-00000000000c', 'sv@test.local')
 on conflict (id) do nothing;
 
 insert into profiles (id, display_name, role) values
   ('00000000-0000-0000-0000-00000000000a', 'User A', 'trainee'),
-  ('00000000-0000-0000-0000-00000000000b', 'User B', 'trainee')
+  ('00000000-0000-0000-0000-00000000000b', 'User B', 'trainee'),
+  ('00000000-0000-0000-0000-00000000000c', 'User C', 'sv')
 on conflict (id) do nothing;
 
 insert into module_progress (user_id, module_key, score) values
@@ -54,17 +56,39 @@ begin
   assert (select count(*) from module_progress) = 2,
     'FAIL: A は自分の行を追加できるはず';
 
-  -- A は他人の user_id では書き込めない（with check 違反）
+  -- A は他人の user_id では書き込めない（with check 違反＝check_violation に限定）
   begin
     insert into module_progress (user_id, module_key, score)
       values ('00000000-0000-0000-0000-00000000000b', 'p9m9', 100);
     assert false, 'FAIL: A は B の user_id で書き込めてはいけない';
   exception
-    when insufficient_privilege or check_violation then
-      null; -- 期待どおり拒否
+    when check_violation then
+      null; -- 期待どおり with check で拒否
   end;
 
-  raise notice 'PASS: module_progress RLS isolation OK';
+  raise notice 'PASS: module_progress owner isolation OK';
+end $$;
+
+-- --- SV として検証：閲覧可・書込不可 ---
+select set_config(
+  'request.jwt.claims',
+  '{"sub":"00000000-0000-0000-0000-00000000000c","role":"authenticated"}',
+  true
+);
+
+do $$
+begin
+  -- SV(User C) は全員の進捗を閲覧できる（A の p1m1 + p1m2 = 2行）
+  assert (select count(*) from module_progress) = 2,
+    'FAIL: SV は研修生の進捗を閲覧できるべき';
+
+  -- SV は他人の行を更新できない（sv read は select のみ。update は対象0行）
+  update module_progress set score = 0 where user_id = '00000000-0000-0000-0000-00000000000a';
+  assert (select score from module_progress
+          where user_id = '00000000-0000-0000-0000-00000000000a' and module_key = 'p1m1') = 80,
+    'FAIL: SV は研修生の行を変更できてはいけない';
+
+  raise notice 'PASS: module_progress SV read-only OK';
 end $$;
 
 reset role;

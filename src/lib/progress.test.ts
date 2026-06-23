@@ -9,6 +9,9 @@ import {
   isStale,
   isCertConditionDone,
   evaluateCertConditions,
+  nextScore,
+  withScore,
+  rolledBack,
   type ScoreMap,
 } from "@/lib/progress";
 import type { ModuleItem, Phase, CertCondition } from "@/lib/types";
@@ -45,6 +48,39 @@ describe("isPassed — 境界値", () => {
   });
   it("負数スコアは不合格（異常系）", () => {
     expect(isPassed(-1, 0)).toBe(false);
+  });
+});
+
+describe("楽観的更新ヘルパー（nextScore / withScore / rolledBack）", () => {
+  it("nextScore: 未受講(undefined)なら新スコア", () => {
+    expect(nextScore(undefined, 80)).toBe(80);
+  });
+  it("nextScore: 既存が高ければ下げない", () => {
+    expect(nextScore(90, 80)).toBe(90);
+  });
+  it("nextScore: 新スコアが高ければ更新", () => {
+    expect(nextScore(80, 90)).toBe(90);
+  });
+  it("withScore: 非破壊で key を更新", () => {
+    const base: ScoreMap = { a: 1 };
+    const next = withScore(base, "b", 2);
+    expect(next).toEqual({ a: 1, b: 2 });
+    expect(base).toEqual({ a: 1 }); // 元は不変
+  });
+  it("rolledBack: prev が undefined なら key を削除", () => {
+    expect(rolledBack({ a: 1, b: 2 }, "b", undefined)).toEqual({ a: 1 });
+  });
+  it("rolledBack: prev があれば key を元に戻す", () => {
+    expect(rolledBack({ a: 1, b: 2 }, "b", 5)).toEqual({ a: 1, b: 5 });
+  });
+  it("連続更新→片方ロールバックの整合（B失敗でも A は残る）", () => {
+    // A=80 を反映 → B=90 を反映 → B の保存が失敗してロールバック
+    let map: ScoreMap = {};
+    map = withScore(map, "a", nextScore(map.a, 80));
+    const prevB = map.b;
+    map = withScore(map, "b", nextScore(map.b, 90));
+    map = rolledBack(map, "b", prevB);
+    expect(map).toEqual({ a: 80 }); // A は残り、B だけ取り消し
   });
 });
 

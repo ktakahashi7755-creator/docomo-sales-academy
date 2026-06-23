@@ -11,3 +11,9 @@ const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 export const supabase: SupabaseClient | null = url && anonKey ? createClient(url, anonKey) : null;
 
 export const isBackendEnabled = Boolean(supabase);
+
+/** backend モードで Supabase クライアントを必須として取得（未設定なら投げる）。 */
+export function requireClient(): SupabaseClient {
+  if (!supabase) throw new Error("Supabase is not configured");
+  return supabase;
+}

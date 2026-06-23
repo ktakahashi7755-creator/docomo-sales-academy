@@ -1,5 +1,6 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -8,7 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import type { Profile, Role } from "@/lib/types";
-import type { ScoreMap } from "@/lib/progress";
+import { nextScore, rolledBack, withScore, type ScoreMap } from "@/lib/progress";
 import { isBackendEnabled } from "@/lib/supabase";
 import * as auth from "@/lib/auth";
 import { fetchProgress, saveModuleScore } from "@/lib/progressStore";
@@ -88,6 +89,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // backend は初期セッション解決まで loading。demo は即時。
   const [loading, setLoading] = useState<boolean>(mode === "backend");
   const userIdRef = useRef<string | null>(null);
+  // progress の最新値を同期的に追跡（連続呼び出し時の楽観更新・ロールバックを正確にする）。
+  const progressRef = useRef<ScoreMap>(progress);
+  const commitProgress = useCallback((next: ScoreMap) => {
+    progressRef.current = next;
+    setProgress(next);
+  }, []);
 
   useEffect(() => {
     if (mode !== "backend") return;
@@ -99,12 +106,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const [p, prog] = await Promise.all([auth.fetchProfile(userId), fetchProgress(userId)]);
         if (!active) return;
         setProfile(p);
-        setProgress(prog);
+        commitProgress(prog);
       } catch {
         // プロフィール取得失敗時は未ログイン扱い（RLS/未作成など）。
         if (!active) return;
         setProfile(null);
-        setProgress({});
+        commitProgress({});
       } finally {
         if (active) setLoading(false);
       }
@@ -131,7 +138,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         userIdRef.current = null;
         setProfile(null);
-        setProgress({});
+        commitProgress({});
         setLoading(false);
       }
     });
@@ -140,7 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       active = false;
       unsubscribe();
     };
-  }, [mode]);
+  }, [mode, commitProgress]);
 
   const value = useMemo<AuthState>(
     () => ({
@@ -161,26 +168,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       },
       setModuleScore: (moduleId, score) => {
-        const prevScore = progress[moduleId];
-        const nextScore = Math.max(prevScore ?? 0, score);
-        if (nextScore === prevScore) return; // 変化なし
-        // 楽観的更新：即時反映
-        setProgress((p) => ({ ...p, [moduleId]: nextScore }));
+        // 最新値を ref から取得し、連続呼び出しでも prevScore がズレないようにする。
+        const prevScore = progressRef.current[moduleId];
+        const target = nextScore(prevScore, score);
+        if (target === prevScore) return; // 変化なし
+        // 楽観的更新：即時反映（ref も同期）
+        commitProgress(withScore(progressRef.current, moduleId, target));
         // backend は永続化。失敗時はロールバック。
         const uid = userIdRef.current;
         if (mode === "backend" && uid) {
-          saveModuleScore(uid, moduleId, nextScore).catch(() => {
-            setProgress((p) => {
-              const rolled = { ...p };
-              if (prevScore == null) delete rolled[moduleId];
-              else rolled[moduleId] = prevScore;
-              return rolled;
-            });
+          saveModuleScore(uid, moduleId, target).catch(() => {
+            commitProgress(rolledBack(progressRef.current, moduleId, prevScore));
           });
         }
       },
     }),
-    [mode, loading, profile, progress],
+    [mode, loading, profile, progress, commitProgress],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
