@@ -37,7 +37,15 @@ interface AuthState {
 const AuthContext = createContext<AuthState | null>(null);
 
 // デモ用の初期進捗（一部モジュール合格済み）。
-const DEMO_PROGRESS: ScoreMap = { p1m1: 92, p1m2: 88, p1m3: 90, p1m4: 100, p2m1: 84, p2m2: 80 };
+const DEMO_PROGRESS: ScoreMap = {
+  p1m1: 92,
+  p1m2: 88,
+  p1m3: 90,
+  p1m4: 100,
+  p1m5: 86,
+  p2m1: 84,
+  p2m2: 80,
+};
 
 const DEMO_PROFILE: Record<Role, Profile> = {
   trainee: {

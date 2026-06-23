@@ -45,13 +45,6 @@ export const PHASES: Phase[] = [
         estimated_minutes: 15,
       },
       {
-        id: "p1m5",
-        title: "接客の標準5ステップと自責思考のマインドセット",
-        passing_score: 80,
-        required: true,
-        estimated_minutes: 20,
-      },
-      {
         id: "p1m2",
         title: "店内・イベント・外販の動き方",
         passing_score: 80,
@@ -69,6 +62,13 @@ export const PHASES: Phase[] = [
         id: "p1m4",
         title: "個人情報・コンプライアンス／やってはいけないこと",
         passing_score: 100,
+        required: true,
+        estimated_minutes: 20,
+      },
+      {
+        id: "p1m5",
+        title: "接客の標準5ステップと自責思考のマインドセット",
+        passing_score: 80,
         required: true,
         estimated_minutes: 20,
       },
@@ -561,7 +561,7 @@ export const PRODUCTS: Product[] = [
     id: "plan-poikatsu-max",
     name: "ポイ活MAX",
     category: "料金プラン",
-    oneLiner: "ポイント還元を含めた実質2,948円で、無制限とポイ活を両立。",
+    oneLiner: "実質2,948円で無制限とポイ活を両立（ポイント還元前提）。",
     target: "d払い・dカードを日常使いしていて、ポイントを取りこぼしたくない方。",
     benefits: [
       "ポイント還元を含めた実質2,948円（ポイ活・対象利用が前提）",
