@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ChevronDown, Bot } from "lucide-react";
-import { FAQ } from "@/growth/data/curriculum";
+import { ChevronDown, Bot, BookOpen } from "lucide-react";
+import { FAQ, GLOSSARY } from "@/growth/data/curriculum";
 import { useProvide } from "@/growth/context/ProvideContext";
 import { Card, PageHeader } from "@/growth/components/ui";
 
@@ -46,6 +46,27 @@ export function Help() {
             );
           })}
         </ul>
+      </Card>
+
+      {/* 用語集 */}
+      <Card className="p-6">
+        <div className="mb-4 flex items-center gap-2">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-50 text-teal-600">
+            <BookOpen size={16} strokeWidth={2} />
+          </span>
+          <h2 className="text-base font-bold text-slate-800">用語集</h2>
+        </div>
+        <dl className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+          {GLOSSARY.map((g) => (
+            <div key={g.term}>
+              <dt className="flex items-baseline gap-2">
+                <span className="text-sm font-bold text-slate-800">{g.term}</span>
+                {g.reading && <span className="text-[11px] text-slate-400">{g.reading}</span>}
+              </dt>
+              <dd className="mt-0.5 text-xs leading-relaxed text-slate-600">{g.definition}</dd>
+            </div>
+          ))}
+        </dl>
       </Card>
 
       <Card className="flex flex-col items-center gap-3 bg-gradient-to-br from-blue-600 to-blue-500 p-7 text-center text-white">

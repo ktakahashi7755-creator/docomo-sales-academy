@@ -105,6 +105,13 @@ export function Curriculum() {
               })}
             </ul>
 
+            <div className="border-t border-slate-100 bg-slate-50/60 px-5 py-4">
+              <div className="text-[11px] font-bold uppercase tracking-wide text-slate-400">
+                章末まとめ
+              </div>
+              <p className="mt-1 text-sm leading-relaxed text-slate-600">{step.recap}</p>
+            </div>
+
             {locked && (
               <div className="flex items-center gap-2 bg-slate-50 px-5 py-2.5 text-xs text-slate-400">
                 <Lock size={13} strokeWidth={2} />
