@@ -71,6 +71,10 @@
 - [x] **F-R4 🟡** `progressStore` の `updated_at` をペイロードから除去（trigger/default に委譲）＋ fetch/save の単体テスト（モック）追加。
 - [ ] **F-R5 🟡** supabase-js のレスポンス型を `as ProfileRow/ProgressRow` でキャスト中。将来 `createClient<Database>` の生成型導入で解消（Phase 2 で DB 型を生成時）。
 - [ ] **F-R6 🟢** StrictMode の dev 二重購読（`active` フラグで実害なし）。`score=0` と未受講の区別は Phase 3 採点実装で確定。
+- [x] **F-R7 🟡** `sendOtp`/`verifyOtp` の inline ラッパを `auth.sendOtp`/`auth.verifyOtp` 直接参照に（明示性）。
+- [ ] **F-R8 🟡** Supabase 応答の `as` キャスト（`fetchProfile`/`fetchProgress`）に typeof/Zod の実行時バリデーションが無い。Phase 2 で DB 生成型＋軽量バリデーションを導入して堅牢化。
+- [ ] **F-R9 🟢** `progressStore.test.ts` のチェーンモックは `select`/`eq`・テーブル名を個別キャプチャするとより堅牢（実装変更の検出力向上）。
+- [ ] **F-R10 🟢** `signOut` の失敗（ネットワーク断等）が UI に伝わらない（`void`）。将来トースト等で通知。
 
 ## E. 性能・PWA（Phase 6）
 

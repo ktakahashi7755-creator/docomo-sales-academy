@@ -9,15 +9,15 @@
 
 ## フェーズ一覧
 
-| Phase | 内容                                                            | 主担当            | 状態              |
-| ----- | --------------------------------------------------------------- | ----------------- | ----------------- |
-| 0     | ガバナンス整備（docs 4種・Lint/Prettier/Vitest/Playwright・CI） | qa+全レビュー     | ✅ Done（要承認） |
-| 1     | Supabase 接続と本認証（progress を DB 永続化）                  | supabase          | ⏳ Planned        |
-| 2     | 管理画面 CRUD（product_versions 履歴・90日鮮度・audit_logs）    | frontend+supabase | ⏳ Planned        |
-| 3     | クイズエンジン（採点純粋関数＋境界値テスト）                    | frontend+qa       | ⏳ Planned        |
-| 4     | ロープレ会話＋AI評価（Edge Function・アダプタ）                 | ai-edge+frontend  | ⏳ Planned        |
-| 5     | SV ダッシュボード・認定フロー                                   | supabase+frontend | ⏳ Planned        |
-| 6     | 仕上げ（PWA・性能・E2E・Lighthouse 90+）                        | qa+全レビュー     | ⏳ Planned        |
+| Phase | 内容                                                            | 主担当            | 状態                    |
+| ----- | --------------------------------------------------------------- | ----------------- | ----------------------- |
+| 0     | ガバナンス整備（docs 4種・Lint/Prettier/Vitest/Playwright・CI） | qa+全レビュー     | ✅ Done（要承認）       |
+| 1     | Supabase 接続と本認証（progress を DB 永続化）                  | supabase          | ✅ Done（実機検証待ち） |
+| 2     | 管理画面 CRUD（product_versions 履歴・90日鮮度・audit_logs）    | frontend+supabase | ⏳ Planned              |
+| 3     | クイズエンジン（採点純粋関数＋境界値テスト）                    | frontend+qa       | ⏳ Planned              |
+| 4     | ロープレ会話＋AI評価（Edge Function・アダプタ）                 | ai-edge+frontend  | ⏳ Planned              |
+| 5     | SV ダッシュボード・認定フロー                                   | supabase+frontend | ⏳ Planned              |
+| 6     | 仕上げ（PWA・性能・E2E・Lighthouse 90+）                        | qa+全レビュー     | ⏳ Planned              |
 
 ---
 
@@ -57,3 +57,13 @@
 - **得た判断:** ADR-0005（状態色 deep 拡張＝A11y駆動）／ADR-0006（未追跡＝未達で捏造しない）。
 - **残課題（次フェーズ持ち越し）:** A-D1/A-D2（事実値・c2 導出は高橋確認）、D-N02（isStaleのTZ）、D-N14（評価閾値の単一正典化）、Playwright をブラウザのある環境/CIで実走。
 - **メトリクス:** JS 約71KB gzip（予算180KB内）、unit 37件、9画面 PageTitle 統一・4状態配線・タップ44px床。
+
+### Phase 1 — キックオフ／クローズ（2026-06-23）
+
+- **目的:** Supabase 本認証（メール OTP）と進捗の DB 永続化。デモモードは維持。
+- **実装:** `lib/auth.ts`（OTP/セッション/profile）・`lib/progressStore.ts`・`AuthContext` デュアルモード・`Login` OTP フロー・migration `0003_module_progress`（RLS）・RLS テスト。
+- **判断:** ADR-0007（メール OTP）／ADR-0008（追加テーブル module_progress・テキストキー）。
+- **レビューゲート:** security 🔴0・design 🔴0・code 初回🔴1（楽観更新レース）→ 解消、確認レビューで🔴0。
+- **DoD:** typecheck0 / lint0 / **unit 49件** / build / demo 200・秘密なし。
+- **⚠️ 実機検証待ち（高橋）:** Supabase に migrations 0001→0003 適用、OTP メールテンプレート設定、実ログイン→進捗表示、`rls_module_progress.sql` 実行（AUDIT F-3/F-5）。
+- **残課題:** `module_progress`↔`progress`(uuid) 整合は Phase 2、F-R8（応答バリデーション）等。

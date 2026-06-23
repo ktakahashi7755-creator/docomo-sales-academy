@@ -158,8 +158,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signInDemo: (role) => {
         if (mode === "demo") setProfile(DEMO_PROFILE[role]);
       },
-      sendOtp: (email) => auth.sendOtp(email),
-      verifyOtp: (email, token) => auth.verifyOtp(email, token),
+      sendOtp: auth.sendOtp,
+      verifyOtp: auth.verifyOtp,
       signOut: () => {
         if (mode === "backend") {
           void auth.signOut(); // 状態のクリアは onAuthChange(null) で行う
