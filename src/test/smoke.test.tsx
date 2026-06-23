@@ -1,0 +1,72 @@
+import { describe, it, expect, afterEach, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import App from "@/App";
+
+// デモモード（Supabase 未設定）で全画面が実行時エラーなく描画・遷移できることを担保する。
+// ブラウザ無しの環境でもランタイムクラッシュを検出するためのスモークテスト。
+
+async function clickHref(user: ReturnType<typeof userEvent.setup>, href: string) {
+  const link = document.querySelector(`a[href="${href}"]`);
+  expect(link, `link ${href} should exist`).not.toBeNull();
+  await user.click(link as HTMLElement);
+}
+
+async function clickFirst(user: ReturnType<typeof userEvent.setup>, selector: string) {
+  const el = document.querySelector(selector);
+  expect(el, `element ${selector} should exist`).not.toBeNull();
+  await user.click(el as HTMLElement);
+}
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
+describe("smoke: デモモードで全9画面が落ちずに描画・遷移できる", () => {
+  it("ログイン → 9画面を一巡しても実行時エラーが出ない", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const user = userEvent.setup();
+    render(<App />);
+
+    // Login（デモ）
+    expect(await screen.findByRole("heading", { name: "ログイン" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /研修生として入る/ }));
+
+    // Dashboard
+    expect(await screen.findByRole("heading", { name: "ダッシュボード" })).toBeInTheDocument();
+
+    // Roadmap
+    await clickHref(user, "/roadmap");
+    expect(await screen.findByRole("heading", { name: "研修ロードマップ" })).toBeInTheDocument();
+
+    // Products
+    await clickHref(user, "/products");
+    expect(await screen.findByRole("heading", { name: "商材ナレッジ" })).toBeInTheDocument();
+
+    // ProductDetail（最初の商材）
+    await clickFirst(user, 'a[href^="/products/"]');
+    expect(await screen.findByText("公式ページを開く")).toBeInTheDocument();
+
+    // TalkScripts
+    await clickHref(user, "/scripts");
+    expect(await screen.findByRole("heading", { name: "トークスクリプト集" })).toBeInTheDocument();
+
+    // TalkScriptDetail（最初のトーク）
+    await clickFirst(user, 'a[href^="/scripts/"]');
+    expect(await screen.findByText("このトークでロープレを始める")).toBeInTheDocument();
+
+    // Roleplay
+    await clickHref(user, "/roleplay");
+    expect(await screen.findByRole("heading", { name: "ロープレ設定" })).toBeInTheDocument();
+
+    // Certification
+    await clickHref(user, "/certification");
+    expect(await screen.findByRole("heading", { name: "クローザー認定" })).toBeInTheDocument();
+
+    // React の実行時エラー（key 警告以外の error）が出ていないこと
+    const realErrors = errorSpy.mock.calls.filter(
+      (c) => !String(c[0] ?? "").includes("not wrapped in act"),
+    );
+    expect(realErrors).toEqual([]);
+  });
+});
