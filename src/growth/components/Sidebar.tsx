@@ -1,8 +1,8 @@
 import { NavLink } from "react-router-dom";
-import { BarChart3 } from "lucide-react";
 import { NAV_ITEMS } from "@/growth/data/curriculum";
 import { useProvide } from "@/growth/context/ProvideContext";
 import { GIcon } from "@/growth/components/ui";
+import provideMark from "@/growth/assets/provide-mark.png";
 
 export function Sidebar() {
   const { openBot } = useProvide();
@@ -10,8 +10,8 @@ export function Sidebar() {
     <aside className="hidden w-64 shrink-0 flex-col bg-gradient-to-b from-[#16305a] to-[#0a1830] lg:flex">
       {/* ロゴ */}
       <div className="flex items-center gap-3 px-5 py-5">
-        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg shadow-blue-900/40">
-          <BarChart3 size={20} strokeWidth={2.5} className="text-white" />
+        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-lg shadow-blue-900/40">
+          <img src={provideMark} alt="" className="h-8 w-8" />
         </span>
         <div className="leading-tight">
           <div className="text-[11px] font-medium uppercase tracking-widest text-blue-300/80">

@@ -1,7 +1,8 @@
-import { BarChart3, Bell, LogOut } from "lucide-react";
+import { Bell, LogOut } from "lucide-react";
 import { useProvide } from "@/growth/context/ProvideContext";
 import { stepOfLesson } from "@/growth/data/curriculum";
 import { ProgressRing } from "@/growth/components/ui";
+import provideMark from "@/growth/assets/provide-mark.png";
 
 export function Header() {
   const { user, overallProgress, currentLesson } = useProvide();
@@ -12,8 +13,8 @@ export function Header() {
     <header className="sticky top-0 z-20 border-b border-slate-100 bg-white/85 px-5 py-3.5 backdrop-blur md:px-7">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-md shadow-blue-200 lg:hidden">
-            <BarChart3 size={20} strokeWidth={2.5} className="text-white" />
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-md shadow-blue-200 ring-1 ring-slate-100 lg:hidden">
+            <img src={provideMark} alt="" className="h-8 w-8" />
           </span>
           <h1 className="font-display text-xl font-bold tracking-tight text-slate-800 md:text-2xl">
             Provide Growth Academy
