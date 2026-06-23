@@ -1,6 +1,7 @@
 {
   "name": "ドコモ販売ヘルパー育成アカデミー",
   "short_name": "Sales Academy",
+  "id": "./",
   "description": "未経験からクローザーへ育成する実践型トレーニングシステム",
   "lang": "ja",
   "start_url": "./",

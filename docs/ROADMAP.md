@@ -17,7 +17,7 @@
 | 3     | クイズエンジン（採点純粋関数＋境界値テスト）                    | frontend+qa       | ✅ Done（demo完結 / backend統合待ち） |
 | 4     | ロープレ会話＋AI評価（Edge Function・アダプタ）                 | ai-edge+frontend  | ✅ Done（demo完結 / backend統合待ち） |
 | 5     | SV ダッシュボード・認定フロー                                   | supabase+frontend | ✅ Done（demo完結 / backend統合待ち） |
-| 6     | 仕上げ（PWA・性能・E2E・配信）                                  | qa+全レビュー     | 🚧 In progress（実機リンク配信）      |
+| 6     | 仕上げ（PWA・性能・E2E・配信）                                  | qa+全レビュー     | 🚧 In progress（実機リンク開通）      |
 
 ---
 
