@@ -11,6 +11,9 @@ import {
   Lightbulb,
   X,
   Check,
+  MessageCircle,
+  AlertTriangle,
+  Target,
 } from "lucide-react";
 import { lessonById, stepOfLesson, ALL_LESSONS } from "@/growth/data/curriculum";
 import { useProvide } from "@/growth/context/ProvideContext";
@@ -144,6 +147,104 @@ export function LessonDetail() {
             </p>
           </Card>
         </div>
+      )}
+
+      {/* 会話で学ぶ（トーク台本） */}
+      {lesson.talkScript && lesson.talkScript.length > 0 && (
+        <Card className="p-6">
+          <div className="mb-4 flex items-center gap-2">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+              <MessageCircle size={16} strokeWidth={2} />
+            </span>
+            <h2 className="text-sm font-bold text-slate-800">会話で学ぶ</h2>
+          </div>
+          <div className="space-y-3">
+            {lesson.talkScript.map((line, i) => {
+              const isStaff = line.role === "staff";
+              return (
+                <div key={i} className={`flex flex-col ${isStaff ? "items-end" : "items-start"}`}>
+                  <div className="flex max-w-[88%] flex-col">
+                    <span
+                      className={`mb-1 text-[11px] font-semibold ${
+                        isStaff ? "text-right text-blue-600" : "text-slate-400"
+                      }`}
+                    >
+                      {isStaff ? "あなた（スタッフ）" : "お客様"}
+                    </span>
+                    <p
+                      className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                        isStaff
+                          ? "rounded-tr-sm bg-blue-600 text-white"
+                          : "rounded-tl-sm bg-slate-100 text-slate-700"
+                      }`}
+                    >
+                      {line.text}
+                    </p>
+                    {line.note && (
+                      <span
+                        className={`mt-1 flex items-start gap-1 text-[11px] leading-relaxed text-slate-500 ${
+                          isStaff ? "justify-end text-right" : ""
+                        }`}
+                      >
+                        <Lightbulb
+                          size={11}
+                          strokeWidth={2}
+                          className="mt-0.5 shrink-0 text-amber-500"
+                        />
+                        {line.note}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      )}
+
+      {/* よくある失敗とリカバリー */}
+      {lesson.mistakes && lesson.mistakes.length > 0 && (
+        <Card className="p-6">
+          <div className="mb-4 flex items-center gap-2">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-orange-50 text-orange-600">
+              <AlertTriangle size={16} strokeWidth={2} />
+            </span>
+            <h2 className="text-sm font-bold text-slate-800">よくある失敗とリカバリー</h2>
+          </div>
+          <ul className="space-y-3">
+            {lesson.mistakes.map((m, i) => (
+              <li key={i} className="rounded-xl border border-slate-100 p-4">
+                <div className="flex items-start gap-2">
+                  <X size={15} strokeWidth={2.5} className="mt-0.5 shrink-0 text-orange-500" />
+                  <p className="text-sm font-semibold text-slate-700">{m.mistake}</p>
+                </div>
+                <div className="mt-2 flex items-start gap-2 pl-[1.45rem]">
+                  <ArrowRight
+                    size={14}
+                    strokeWidth={2.5}
+                    className="mt-1 shrink-0 text-emerald-500"
+                  />
+                  <p className="text-sm leading-relaxed text-slate-600">{m.fix}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+
+      {/* この回の実践課題 */}
+      {lesson.practice && (
+        <Card className="flex items-start gap-3 border-l-4 border-l-teal-400 p-5">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-teal-600">
+            <Target size={18} strokeWidth={2} />
+          </span>
+          <div>
+            <div className="text-xs font-bold uppercase tracking-wide text-teal-600">
+              この回の実践課題
+            </div>
+            <p className="mt-1 text-sm leading-relaxed text-slate-700">{lesson.practice}</p>
+          </div>
+        </Card>
       )}
 
       {/* 商材ナレッジ（正典値） */}
