@@ -6,9 +6,10 @@ import { ExternalLink, AlertTriangle, ChevronRight } from "lucide-react";
 import type { ProductCategory } from "@/lib/types";
 
 const ORDER: ProductCategory[] = [
-  "dカード",
   "料金プラン",
+  "dカード",
   "ドコモ光",
+  "ホームルーター",
   "ドコモでんき",
   "ドコモガス",
   "他社比較",
