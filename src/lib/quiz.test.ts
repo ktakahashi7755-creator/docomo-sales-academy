@@ -38,6 +38,10 @@ describe("isAnswerCorrect", () => {
     expect(isAnswerCorrect(q("a", [0, 2]), [0])).toBe(false);
     expect(isAnswerCorrect(q("a", [0, 2]), [0, 1])).toBe(false);
   });
+  it("正解なし設問(correct:[])：未解答は不正解、何か選べば不正解", () => {
+    expect(isAnswerCorrect(q("a", []), [])).toBe(false);
+    expect(isAnswerCorrect(q("a", []), [0])).toBe(false);
+  });
 });
 
 describe("gradeQuiz", () => {
@@ -77,5 +81,8 @@ describe("allAnswered", () => {
     expect(allAnswered(qs, { q0: [0], q1: [1], q2: [2] })).toBe(true);
     expect(allAnswered(qs, { q0: [0], q1: [], q2: [2] })).toBe(false);
     expect(allAnswered(qs, { q0: [0] })).toBe(false);
+  });
+  it("設問が空なら vacuously true（呼び出し側は別途 length>0 を確認する）", () => {
+    expect(allAnswered([], {})).toBe(true);
   });
 });

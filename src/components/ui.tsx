@@ -113,7 +113,7 @@ export function Card({
 }: {
   children: ReactNode;
   className?: string;
-  as?: "div" | "section" | "article" | "fieldset";
+  as?: "div" | "section" | "article";
 }) {
   return (
     <As className={`rounded-xl2 bg-paper border border-paper-line shadow-card ${className}`}>

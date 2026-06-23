@@ -121,3 +121,15 @@
 - [x] **H-4** 設問 `data/quiz.ts`（p1m4/p1m5/p2m1/p3m1/p6m2/p8m1 各5問）は正典準拠（GOLD18,600/PLATINUM18,700・本人入力・プラン要確認運用）。
 - [ ] **H-5 🟡** `quiz_attempts` への保存は backend 接続時に実装（受験履歴・回数）。現状は best score を progress に反映するのみ。
 - [ ] **H-6 🟢** 設問は6モジュールのみ。残りモジュールへの設問拡充はコンテンツ追補で対応。
+
+### Phase 3 レビューゲート（2026-06-23）— design / code / data-integrity
+
+- [x] **H-R1🔴(design)** `<legend>` × flex `<fieldset>` カードが iOS/小画面で崩れうる → 設問を `role="group"`＋`aria-labelledby` の div に変更（legend 撤去）。
+- [x] **H-R2🔴(code)** `module!` 非null → `handleSubmit` 内で `if (!module) return` ガードに置換。
+- [x] **H-R3🔴(code/design)** 採点バナーの `role="status"` がインタラクティブ要素を内包 → 常設の `role="status" aria-live` 領域（sr-only）に分離。バナーは視覚表示のみ。
+- [x] **H-R4(code)** error を2分岐（モジュール無し=見つからない／設問無し=準備中）。
+- [x] **H-R5(code)** `quizForModule` を事前計算マップ化（毎レンダリングの filter 回避）。
+- [x] **H-R6(code)** 複数選択問題を1問追加（checkbox パスを実データで踏む）＋ `allAnswered([])`・`correct:[]` の境界テスト追加。
+- [x] **H-R7(code)** UI 結合の100点境界：p1m4（合格点100）を全問正解で合格になる smoke を追加（unit 82件）。
+- [x] **H-R8(code/design)** 採点後に結果へフォーカス＆スクロール、best score 保持の意図をコメント明記。
+- [ ] **H-Q1 🟡(data)** `data/quiz.ts` 解説内の数値（mini 880円・ポイ活MAX 2,948円）が seed と単一ソース化されていない。seed の値更新時に quiz 解説も追従更新する（チェックリスト化）。2026-06-23 時点は正典一致・🔴なし。

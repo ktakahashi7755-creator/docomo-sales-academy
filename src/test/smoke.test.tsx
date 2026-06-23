@@ -137,4 +137,22 @@ describe("smoke: デモモードで全9画面が落ちずに描画・遷移で�
     const link = document.querySelector('a[href="/quiz/p3m1"]');
     expect(link?.textContent).toContain("復習");
   });
+
+  it("コンプラ（合格点100）を全問正解すると合格になる", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: /研修生として入る/ }));
+    await screen.findByRole("heading", { name: "ダッシュボード" });
+    await clickHref(user, "/roadmap");
+    await screen.findByRole("heading", { name: "研修ロードマップ" });
+    await user.click(document.querySelector('a[href="/quiz/p1m4"]') as HTMLElement);
+
+    const qs = quizForModule("p1m4");
+    for (const q of qs) {
+      const inputs = document.querySelectorAll(`input[name="${q.id}"]`);
+      await user.click(inputs[q.correct[0]] as HTMLElement);
+    }
+    await user.click(screen.getByRole("button", { name: /採点する/ }));
+    expect(await screen.findByText("合格しました")).toBeInTheDocument();
+  });
 });

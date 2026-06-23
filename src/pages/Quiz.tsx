@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { PHASES } from "@/data/seed";
 import { quizForModule } from "@/data/quiz";
-import { Card, ErrorState, PageLoading, PageTitle, ProgressBar } from "@/components/ui";
+import { ErrorState, PageLoading, PageTitle, ProgressBar } from "@/components/ui";
 import { flattenModules, isPassed } from "@/lib/progress";
 import { gradeQuiz, allAnswered, type AnswerMap, type QuizResult } from "@/lib/quiz";
 import { ArrowLeft, Check, X, RotateCw, ChevronRight } from "lucide-react";
@@ -15,17 +15,43 @@ export function Quiz() {
   const { profile, setModuleScore } = useAuth();
   const [answers, setAnswers] = useState<AnswerMap>({});
   const [result, setResult] = useState<QuizResult | null>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
+
+  // 採点後は結果へフォーカス＆スクロールし、結果が主役になるようにする。
+  useEffect(() => {
+    if (result) {
+      resultRef.current?.focus();
+      resultRef.current?.scrollIntoView?.({ behavior: "smooth", block: "start" });
+    }
+  }, [result]);
 
   if (!profile) return <PageLoading />;
 
   const module = ALL_MODULES.find((m) => m.id === moduleId);
   const questions = moduleId ? quizForModule(moduleId) : [];
 
-  if (!module || questions.length === 0) {
+  if (!module) {
+    return (
+      <ErrorState
+        title="モジュールが見つかりませんでした"
+        description="URL が変わったか、削除された可能性があります。ロードマップから選び直してください。"
+        action={
+          <Link
+            to="/roadmap"
+            className="inline-flex items-center gap-1 rounded-lg bg-ink px-3 py-2 text-sm font-medium text-paper"
+          >
+            <ArrowLeft size={16} /> ロードマップへ
+          </Link>
+        }
+      />
+    );
+  }
+
+  if (questions.length === 0) {
     return (
       <ErrorState
         title="このモジュールのテストは準備中です"
-        description="ロードマップから受験できるモジュールを選んでください。"
+        description="設問が用意でき次第、ここで受験できます。別のモジュールを選んでください。"
         action={
           <Link
             to="/roadmap"
@@ -56,10 +82,12 @@ export function Quiz() {
   }
 
   function handleSubmit() {
+    if (!module) return; // 型ナローイング＋安全側
     const graded = gradeQuiz(questions, answers);
     setResult(graded);
-    // 進捗に記録（best score を保持）。合格なら b-first バッジは進捗から自動導出。
-    setModuleScore(module!.id, graded.score);
+    // 進捗に記録。setModuleScore は best score を保持するため、再受験で低スコアでも巻き戻らない。
+    // 合格なら b-first バッジは進捗から自動導出（ADR-0006）。
+    setModuleScore(module.id, graded.score);
   }
 
   function retake() {
@@ -69,6 +97,11 @@ export function Quiz() {
 
   return (
     <div className="space-y-6">
+      {/* 常設のライブリージョン（採点結果をスクリーンリーダーへ確実に通知） */}
+      <div role="status" aria-live="polite" className="sr-only">
+        {result ? `${passed ? "合格" : "不合格"}。${result.score}点。合格点${passing}点。` : ""}
+      </div>
+
       <Link
         to="/roadmap"
         className="-ml-2 inline-flex min-h-[44px] items-center gap-1 rounded-lg px-2 text-sm text-ink-soft hover:text-ink"
@@ -83,8 +116,12 @@ export function Quiz() {
       />
 
       {result && (
-        <Card className={`p-5 ${passed ? "bg-pass-soft" : "bg-caution-soft"}`} as="section">
-          <div role="status" className="flex items-center justify-between gap-3">
+        <section
+          ref={resultRef}
+          tabIndex={-1}
+          className={`rounded-xl2 border border-paper-line p-5 shadow-card ${passed ? "bg-pass-soft" : "bg-caution-soft"}`}
+        >
+          <div className="flex items-center justify-between gap-3">
             <div>
               <div
                 className={`text-sm font-semibold ${passed ? "text-pass-deep" : "text-caution-deep"}`}
@@ -124,7 +161,7 @@ export function Quiz() {
               結果はロードマップとダッシュボードに反映されます。
             </span>
           </div>
-        </Card>
+        </section>
       )}
 
       <ol className="space-y-4">
@@ -134,14 +171,21 @@ export function Quiz() {
           const isCorrect = result?.results.find((r) => r.id === q.id)?.correct ?? false;
           return (
             <li key={q.id}>
-              <Card className="p-5" as="fieldset">
-                <legend className="mb-3 flex items-start gap-2 text-sm font-semibold text-ink">
+              <div
+                role="group"
+                aria-labelledby={`${q.id}-label`}
+                className="rounded-xl2 border border-paper-line bg-paper p-5 shadow-card"
+              >
+                <div
+                  id={`${q.id}-label`}
+                  className="mb-3 flex items-start gap-2 text-sm font-semibold text-ink"
+                >
                   <span className="font-num text-ink-muted">Q{qi + 1}.</span>
                   <span>
                     {q.prompt}
                     {multi && <span className="ml-1 text-xs text-ink-muted">（複数選択）</span>}
                   </span>
-                </legend>
+                </div>
                 <div className="space-y-2">
                   {q.choices.map((choice, ci) => {
                     const checked = selected.includes(ci);
@@ -189,7 +233,7 @@ export function Quiz() {
                     <span className="text-ink-soft">{q.explanation}</span>
                   </div>
                 )}
-              </Card>
+              </div>
             </li>
           );
         })}

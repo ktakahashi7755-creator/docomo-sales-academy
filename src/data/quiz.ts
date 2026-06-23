@@ -406,12 +406,27 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     correct: [1],
     explanation: "新規追加ではなく既存支払いの置き換えとして説明し、管理の手間懸念を解消します。",
   },
+  {
+    id: "q-p6m2-6",
+    moduleId: "p6m2",
+    prompt: "ヒアリングで早めに確認しておきたい「つまずきやすい点」をすべて選んでください。",
+    choices: ["本人確認書類の有無", "未納の有無", "家族への相談が必要か", "好きなスマホの色"],
+    correct: [0, 1, 2],
+    explanation:
+      "書類・未納・家族相談は失敗の典型。雑談の中で早期に把握し手戻りを防ぎます。色は必須確認ではありません。",
+  },
 ];
+
+// モジュールキー → 設問の対応表（毎レンダリングの filter を避ける）。
+const QUIZ_BY_MODULE: Record<string, QuizQuestion[]> = {};
+for (const q of QUIZ_QUESTIONS) {
+  (QUIZ_BY_MODULE[q.moduleId] ??= []).push(q);
+}
 
 /** モジュールキーに対応する設問を返す。 */
 export function quizForModule(moduleId: string): QuizQuestion[] {
-  return QUIZ_QUESTIONS.filter((q) => q.moduleId === moduleId);
+  return QUIZ_BY_MODULE[moduleId] ?? [];
 }
 
 /** クイズが用意されているモジュールキーの集合。 */
-export const QUIZ_MODULE_IDS: ReadonlySet<string> = new Set(QUIZ_QUESTIONS.map((q) => q.moduleId));
+export const QUIZ_MODULE_IDS: ReadonlySet<string> = new Set(Object.keys(QUIZ_BY_MODULE));
