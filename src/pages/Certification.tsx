@@ -3,6 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import { CERT_CONDITIONS, BADGES, PHASES } from "@/data/seed";
 import { Card, PageLoading, PageTitle, ProgressBar } from "@/components/ui";
 import { evaluateCertConditions, flattenModules, isBadgeEarned } from "@/lib/progress";
+import { certificationReadiness } from "@/lib/certification";
 import { CheckCircle2, Circle, Award, Lock, ChevronRight } from "lucide-react";
 
 // PHASES は定数なので一度だけ平坦化する。
@@ -29,7 +30,11 @@ export function Certification() {
 
   const ctx = { modules: ALL_MODULES, progress, level: profile.level };
   const { conditions, doneCount, total, rate } = evaluateCertConditions(CERT_CONDITIONS, ctx);
+  const { eligible, approved } = certificationReadiness(CERT_CONDITIONS, ctx);
   const earnedBadges = BADGES.filter((b) => isBadgeEarned(b.id, ctx));
+
+  // c10（SV承認）の現在地：承認可能になったら「SV承認待ち」を出す。
+  const c10Badge = approved ? null : eligible ? "SV承認待ち" : null;
 
   return (
     <div className="space-y-6">
@@ -75,6 +80,11 @@ export function Certification() {
                 )}
                 <span className={`flex-1 text-sm ${c.done ? "text-ink" : "text-ink-soft"}`}>
                   {c.label}
+                  {c.id === "c10" && c10Badge && (
+                    <span className="ml-2 rounded bg-caution-soft px-1.5 py-0.5 text-[11px] font-semibold text-caution-deep">
+                      {c10Badge}
+                    </span>
+                  )}
                 </span>
                 {link && (
                   <Link

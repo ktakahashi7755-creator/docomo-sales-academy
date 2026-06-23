@@ -8,6 +8,7 @@ import {
   Award,
   LogOut,
   Shield,
+  UserCheck,
   ChevronRight,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
@@ -56,6 +57,14 @@ export function Layout() {
           ))}
         </nav>
         <div className="border-t border-paper-line p-3">
+          {(profile.role === "sv" || profile.role === "admin") && (
+            <Link
+              to="/sv"
+              className="mb-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-ink-soft hover:bg-paper-soft"
+            >
+              <UserCheck size={16} strokeWidth={1.75} /> SVダッシュボード
+            </Link>
+          )}
           {profile.role === "admin" && (
             <Link
               to="/admin"
@@ -89,6 +98,17 @@ export function Layout() {
           <div className="bg-caution-soft px-4 py-2 text-center text-xs text-caution-deep">
             デモモード：Supabase未接続のためローカルseedで動作中（進捗は保存されません）
           </div>
+        )}
+        {(profile.role === "sv" || profile.role === "admin") && (
+          <Link
+            to="/sv"
+            className="flex items-center justify-between gap-2 border-b border-paper-line bg-paper px-4 py-2 text-sm font-medium text-ink md:hidden"
+          >
+            <span className="inline-flex items-center gap-2">
+              <UserCheck size={16} strokeWidth={1.75} /> SVダッシュボードを開く
+            </span>
+            <ChevronRight size={16} className="text-ink-muted" />
+          </Link>
         )}
         {profile.role === "admin" && (
           <Link

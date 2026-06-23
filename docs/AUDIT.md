@@ -158,3 +158,27 @@
 - [x] **I-R10🟢(code)** `feedback` の key をインデックス→内容に。`FEEDBACK_TIPS` に `clarity` を追加。`evaluateRoleplay` の未使用 `scenario/difficulty` の保持意図をコメント明記。
 - [x] **I-R11🟢(design)** 会話バブルの話者ラベルを `opacity-70`→トークン色（helper=`text-paper`／customer=`text-ink-muted`）。
 - [x] **security 🔴0** キーのフロント露出なし・`service_role` 不使用・anon invoke のみ・「認証コード/パスワードはお客様ご自身が入力」維持・評価は事実非捏造。🟡（CORS/入力検証/JWT/結果永続化）は I-5/I-6 に集約。
+
+## J. Phase 5（SVダッシュボード・認定フロー）
+
+- [x] **J-1** 純粋ロジック `lib/certification.ts`（`certificationReadiness`/`canApprove`/`isAutoTracked`/`isPendingEvaluation`、必須=c1/c3）＋境界テスト8件（99/100・必須欠落）。
+- [x] **J-2** SV名簿デモ `data/sv.ts`・`CertificationContext`（承認＝Lv.10化、ref で安定化、loading 受け皿）。
+- [x] **J-3** `SvDashboard`/`SvTraineeDetail`（4状態・承認の確認ステップ＋告知・`LevelLadder` 主役）・`RequireSv`・`Layout` 導線・`Certification` に「SV承認待ち」。
+- [x] **J-4** 承認 RPC `approve_certification`（migration 0005・SECURITY DEFINER・`is_sv_or_admin()`・`(user_id,certification_type)` 一意で冪等 upsert・level=10・監査）＋RLS テスト。
+- [ ] **J-5 ⚠️** backend 未接続（env なし）。`CertificationContext` を profiles/progress/certifications（SV用 RLS）へ接続し、承認を RPC に置換。migration 0005 とRLS テストの実DB実行（高橋／CIテストDB）で確認。
+- [ ] **J-6 🟡(data)** SV名簿は研修進捗のデモデータ（料金等の事実値ではない）。backend 接続で実データに差し替え。
+- [ ] **J-7 🟡** SV の担当範囲（店舗/チーム）でのスコープ絞り込みは未実装（現状は全員表示）。RLS の `is_sv_or_admin()` は全SVに開く設計のため、チーム単位の制限が必要なら方針判断（→ 高橋確認）。
+
+### Phase 5 レビューゲート（2026-06-23）— security / design / code
+
+- [x] **J-R1🔴(security)** `approve_certification` が非冪等（複数行 UPDATE／重複 INSERT・user一意欠如）→ `(user_id,certification_type)` UNIQUE 追加＋`on conflict do update` の単一冪等文に。`search_path` に `pg_temp`。
+- [x] **J-R2🔴(design)** 状態 pill／「SV承認待ち」バッジが和文に `font-num`（字形劣化）→ 除去（数字のみ `font-num`）。
+- [x] **J-R3🔴(design)** 名簿行リンクのアクセシブルネーム不明瞭 → `aria-label`（氏名・状態・進捗）を付与。
+- [x] **J-R4🔴(code)** 4状態の loading 欠落 → `CertificationContext` に `loading`、両ページに `PageLoading` 受け皿。
+- [x] **J-R5🔴(code)** `AuditAction`/`targetType` に `certification.approve`/`certification` 未追加 → 型へ追加（AdminAudit のアイコンも）。
+- [x] **J-R6🟡(design)** 「承認可能」が pass(緑＝達成済み) で誤読 → caution（SVアクション待ち）へ。0件は中立トーン。
+- [x] **J-R7🟡(design)** 承認の確認パネルでフォーカス移送＋`role=status` 告知を追加（取り消し不可に近い操作）。
+- [x] **J-R8🟡(code)** `AUTO_TRACKED_CONDITION_IDS` から c10 を除外（人手のため）。UI バッジは `isPendingEvaluation` に統一。
+- [x] **J-R9🟡(code)** `sv.ts` の level と達成フェーズの不整合（t-3）を是正。境界テスト（c1 必須欠落）・二重承認防止 smoke・StatCard/アイコンの aria を追加。
+- [x] **J-R10🟡(security)** RLS テストの例外捕捉を `forbidden`(P0001) に限定し、拒否時の副作用なし（level据置・行なし）を検証。
+- [x] **security/design/code 🔴0（再）** 上記解消後、二層防御・トークン準拠・型安全・4状態を満たす。

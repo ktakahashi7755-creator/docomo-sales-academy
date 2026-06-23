@@ -16,7 +16,7 @@
 | 2     | 管理画面 CRUD（product_versions 履歴・90日鮮度・audit_logs）    | frontend+supabase | ✅ Done（demo完結 / backend統合待ち） |
 | 3     | クイズエンジン（採点純粋関数＋境界値テスト）                    | frontend+qa       | ✅ Done（demo完結 / backend統合待ち） |
 | 4     | ロープレ会話＋AI評価（Edge Function・アダプタ）                 | ai-edge+frontend  | ✅ Done（demo完結 / backend統合待ち） |
-| 5     | SV ダッシュボード・認定フロー                                   | supabase+frontend | ⏳ Planned                            |
+| 5     | SV ダッシュボード・認定フロー                                   | supabase+frontend | ✅ Done（demo完結 / backend統合待ち） |
 | 6     | 仕上げ（PWA・性能・E2E・Lighthouse 90+）                        | qa+全レビュー     | ⏳ Planned                            |
 
 ---
@@ -92,3 +92,12 @@
 - **レビューゲート:** security 🔴0（キーのフロント露出なし・anon invoke のみ・コンプラ文言維持・事実非捏造）／design 🔴2→解消（D ランク chip の deep 化で AA・結果遷移のフォーカス告知）＋🟡（評価中の入力ロック・凡例の単一正典化・ラベル不透明度）対応／code-reviewer 実行。
 - **DoD:** テキストロープレ開始→送信→評価まで一気通貫（smoke 緑）。typecheck0/lint0/prettier/**unit 98件**/build。音声は backend+AI 接続後に有効化（UI は disabled で明示）。
 - **⚠️ backend 有効化前の必須対応（AUDIT 追跡）:** Edge Function の CORS 限定・入力バリデーション/レート制御・JWT 必須のデプロイ担保・評価結果の `roleplay_sessions` 永続化はサーバー/RLS 準拠で実装。
+
+### Phase 5 — キックオフ／クローズ（2026-06-23）
+
+- **目的:** SV ダッシュボードで担当メンバーの進捗・認定状況を確認し、`CERT_CONDITIONS` の自動判定を材料に SV 承認で Lv.10 認定を確定する。
+- **実装:** `lib/certification.ts`（純粋：`certificationReadiness`/`canApprove`/`isAutoTracked`/`isPendingEvaluation`、必須=c1/c3）＋テスト8件・`data/sv.ts`（名簿デモ）・`context/CertificationContext.tsx`（承認＝Lv.10化）・`pages/sv/SvDashboard.tsx`＋`SvTraineeDetail.tsx`（承認は確認ステップ＋告知、`LevelLadder` を主役に、4状態）・`router.tsx` `RequireSv`・`Layout` 導線・`Certification` に「SV承認待ち」表示・migration `0005_certifications`（承認 RPC＋一意制約）・RLS テスト・smoke（承認一巡／二重承認防止／非SVブロック）。
+- **判断:** ADR-0014（自動判定は意思決定の材料・最終ゲートは SV承認、承認はサーバー側 RPC で profiles.level=10＋認定記録＋監査を冪等に、二層防御）。
+- **レビューゲート:** security 初回🔴1（RPC 非冪等／user一意欠如）→ 解消（`on conflict` upsert＋`(user_id,certification_type)` UNIQUE＋`pg_temp`、異常系テスト追加）／design 初回🔴2（和文への `font-num`／行リンク aria）→ 解消＋🟡（承認可能の色を caution・loading・確認フォーカス/告知）対応／code 初回🔴2（4状態 loading 欠落／`AuditAction` 型未追加）→ 解消＋🟡（境界テスト・level整合・二重承認 smoke・aria）対応。
+- **DoD:** SV が承認可能な研修生をクローザー認定→状態反映、認定済みは承認不可、非SVは `/sv` 不可（UI＋RLS）。typecheck0/lint0/prettier/**unit 110件**/build（gzip ~101KB）。
+- **⚠️ backend 統合待ち:** `CertificationContext` を profiles/progress/certifications（SV用 RLS）に接続し、承認を RPC `approve_certification` に置換（AUDIT J 追跡）。

@@ -150,6 +150,20 @@ export interface CertCondition {
   label: string;
 }
 
+// ===== SV ダッシュボード・認定 =====
+export interface SvTrainee {
+  id: string;
+  display_name: string;
+  store_name: string;
+  team_name?: string;
+  level: number; // 0..10（10=認定クローザー）
+  /** モジュールキー -> スコア（各研修生の進捗）。 */
+  progress: Record<string, number>;
+  /** 認定済みのとき、承認日時と承認者（表示名）。 */
+  certifiedAt?: string;
+  certifiedBy?: string;
+}
+
 // ===== クイズ（理解度テスト） =====
 export interface QuizQuestion {
   id: string;
@@ -200,13 +214,14 @@ export type AuditAction =
   | "announcement.update"
   | "announcement.delete"
   | "user.role"
-  | "user.active";
+  | "user.active"
+  | "certification.approve";
 
 export interface AuditEntry {
   id: string;
   actor: string; // display_name
   action: AuditAction;
-  targetType: "product" | "announcement" | "user";
+  targetType: "product" | "announcement" | "user" | "certification";
   targetId: string;
   summary: string;
   createdAt: string; // YYYY-MM-DD HH:mm

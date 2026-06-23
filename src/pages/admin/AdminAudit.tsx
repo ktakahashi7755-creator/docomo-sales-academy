@@ -1,7 +1,7 @@
 import { useContent } from "@/context/ContentContext";
 import { Card, EmptyState, PageTitle } from "@/components/ui";
 import type { AuditAction } from "@/lib/types";
-import { ScrollText, Package, Megaphone, Users } from "lucide-react";
+import { ScrollText, Package, Megaphone, Users, Award } from "lucide-react";
 
 const ICON: Record<AuditAction, typeof Package> = {
   "product.update": Package,
@@ -10,6 +10,7 @@ const ICON: Record<AuditAction, typeof Package> = {
   "announcement.delete": Megaphone,
   "user.role": Users,
   "user.active": Users,
+  "certification.approve": Award,
 };
 
 export function AdminAudit() {

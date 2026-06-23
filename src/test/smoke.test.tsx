@@ -165,6 +165,55 @@ describe("smoke: デモモードで全9画面が落ちずに描画・遷移で�
     expect(screen.getByText("総合評価")).toBeInTheDocument();
   });
 
+  it("SVは承認可能な研修生をクローザー認定でき、状態が反映される", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: /SVとして入る/ }));
+    await screen.findByRole("heading", { name: "ダッシュボード" });
+
+    // SVダッシュボードへ → メンバー一覧
+    await clickHref(user, "/sv");
+    await screen.findByRole("heading", { name: "SVダッシュボード" });
+
+    // 承認可能な研修生（t-1 田中 太郎）の詳細へ
+    await clickHref(user, "/sv/t-1");
+    await screen.findByRole("heading", { name: "田中 太郎" });
+
+    // 承認 → 確認 → 実行
+    await user.click(screen.getByRole("button", { name: /クローザーとして承認/ }));
+    await user.click(screen.getByRole("button", { name: "承認する" }));
+
+    // 認定済み状態が表示される
+    expect(await screen.findByText(/認定クローザー（Lv.10）/)).toBeInTheDocument();
+  });
+
+  it("認定済みの研修生には承認ボタンが出ない（二重承認防止）", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: /SVとして入る/ }));
+    await screen.findByRole("heading", { name: "ダッシュボード" });
+
+    await clickHref(user, "/sv");
+    await screen.findByRole("heading", { name: "SVダッシュボード" });
+    // t-4（山本 結衣）は認定済み（Lv.10）
+    await clickHref(user, "/sv/t-4");
+    await screen.findByRole("heading", { name: "山本 結衣" });
+    expect(await screen.findByText(/認定クローザー（Lv.10）/)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /クローザーとして承認/ })).toBeNull();
+  });
+
+  it("研修生は /sv に入れずダッシュボードへ戻される", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: /研修生として入る/ }));
+    await screen.findByRole("heading", { name: "ダッシュボード" });
+    // 研修生に SV リンクは出ない
+    expect(document.querySelector('a[href="/sv"]')).toBeNull();
+    // 直接遷移しても弾かれて学習側に戻る
+    window.history.pushState({}, "", "/sv");
+    expect(await screen.findByRole("heading", { name: "ダッシュボード" })).toBeInTheDocument();
+  });
+
   it("コンプラ（合格点100）を全問正解すると合格になる", async () => {
     const user = userEvent.setup();
     render(<App />);

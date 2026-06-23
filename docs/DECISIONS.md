@@ -93,6 +93,17 @@
   - ランク閾値は `lib/progress.ts` の `GRADE_THRESHOLDS` に単一化し、`gradeOf` と表示凡例 `GRADE_LEGEND` を同一の正から導出（旧 D-N14 解消）。
 - **Consequences:** デモでテキストロープレ→評価まで DoD を実検証可能（smoke）。キーはサーバー側のみ。評価は事実を捏造しない。音声と本番 AI は backend 接続後に有効化。Edge Function の CORS 限定・入力検証・レート制御・JWT 必須・結果永続化（`roleplay_sessions`）は有効化前に対応（AUDIT 追跡）。
 
+## ADR-0014: 認定は自動判定を材料に SV 承認で確定、承認はサーバー側 RPC で冪等に
+
+- **日付:** 2026-06-23（Phase 5）
+- **Context:** クローザー認定（Lv.10）を、推測で達成にせず（ADR-0006）、かつ越権なく確定させる必要。ロープレ評価系の条件（c2,c4–c9）は評価の蓄積が前提でまだ自動追跡できない。
+- **Decision:**
+  - 認定条件は **進捗から客観導出できるもの（c1 全必須合格・c3 コンプラ100）を自動判定**し、SV 承認の前提（`REQUIRED_AUTO_CONDITION_IDS`）とする。ロープレ系は `isPendingEvaluation` で「評価蓄積待ち・SV判断」と明示し、自動で達成にしない。最終的な Lv.10 は **SV 承認（人手）** で確定（c10）。
+  - 判定は `lib/certification.ts` の純粋関数（`certificationReadiness`/`canApprove`）に集約し、UI（SvDashboard/SvTraineeDetail/Certification）は結果を表示するだけにする。境界（99/100・必須欠落）を Vitest 検証。
+  - SV 承認は UI ガード（`RequireSv`：sv/admin 以外は `/`）＋サーバー側の二層防御。承認はサーバー側 RPC `approve_certification`（migration 0005・SECURITY DEFINER・`is_sv_or_admin()` 検査）で、(1) certifications を `(user_id, certification_type)` 一意制約で **冪等に upsert**、(2) profiles.level=10、(3) audit_logs 記録、を1トランザクションで行う。SV は profiles を直接更新できず（admin only ポリシー）、この経路に限り level を確定する。`search_path=public, pg_temp` 固定・`auth.*` はスキーマ修飾・public revoke / authenticated grant。
+  - デモは `CertificationContext`（メモリ・承認で Lv.10化）で完結し DoD を検証。backend 接続時は同インターフェースで profiles/progress/certifications（SV用 RLS）と RPC に置換。
+- **Consequences:** 二重承認は純粋関数（`canApprove`）・Context（level<10 ガード）・DB（一意制約）の三層で防止。承認は監査に残る。評価永続化（Phase 4/backend）後に c2/c4–c9 を自動判定へ拡張できる。
+
 ## ADR-0004: 検証は「実機ビルド＋ビジュアル」で担保
 
 - **日付:** 2026-06-23

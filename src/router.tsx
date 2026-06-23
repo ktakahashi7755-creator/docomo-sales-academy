@@ -13,6 +13,8 @@ import { TalkScriptDetail } from "@/pages/TalkScriptDetail";
 import { Roleplay } from "@/pages/Roleplay";
 import { Certification } from "@/pages/Certification";
 import { Quiz } from "@/pages/Quiz";
+import { SvDashboard } from "@/pages/sv/SvDashboard";
+import { SvTraineeDetail } from "@/pages/sv/SvTraineeDetail";
 import { AdminLayout } from "@/pages/admin/AdminLayout";
 import { AdminOverview } from "@/pages/admin/AdminOverview";
 import { AdminProducts } from "@/pages/admin/AdminProducts";
@@ -37,6 +39,22 @@ function AuthGate({ children }: { children: ReactNode }) {
 function RequireAuth({ children }: { children: ReactNode }) {
   const { profile } = useAuth();
   return <AuthGate>{!profile ? <Navigate to="/login" replace /> : <>{children}</>}</AuthGate>;
+}
+
+/** SV ガード：sv / admin 以外はダッシュボードへ戻す（UI 側の防御。読取/承認は RLS でも遮断）。 */
+function RequireSv({ children }: { children: ReactNode }) {
+  const { profile } = useAuth();
+  return (
+    <AuthGate>
+      {!profile ? (
+        <Navigate to="/login" replace />
+      ) : profile.role !== "sv" && profile.role !== "admin" ? (
+        <Navigate to="/" replace />
+      ) : (
+        <>{children}</>
+      )}
+    </AuthGate>
+  );
 }
 
 /** 管理画面ガード：admin 以外はダッシュボードへ戻す（UI 側の防御。書込は RLS でも遮断）。 */
@@ -75,6 +93,22 @@ export function AppRoutes() {
         <Route path="scripts/:id" element={<TalkScriptDetail />} />
         <Route path="roleplay" element={<Roleplay />} />
         <Route path="certification" element={<Certification />} />
+        <Route
+          path="sv"
+          element={
+            <RequireSv>
+              <SvDashboard />
+            </RequireSv>
+          }
+        />
+        <Route
+          path="sv/:traineeId"
+          element={
+            <RequireSv>
+              <SvTraineeDetail />
+            </RequireSv>
+          }
+        />
       </Route>
       <Route
         path="/admin"
