@@ -4,6 +4,7 @@ import type {
   CertCondition,
   DifficultyDef,
   EvalItem,
+  ManagedUser,
   ObjectionHandler,
   Phase,
   Product,
@@ -860,6 +861,15 @@ export const CERT_CONDITIONS: readonly CertCondition[] = [
   { id: "c9", label: "クロージングロープレ合格" },
   { id: "c10", label: "SV承認" },
 ] as const;
+
+// ===== 管理画面のデモ用ユーザー名簿 =====
+export const DEMO_USERS: ManagedUser[] = [
+  { id: "u-1", display_name: "田中 太郎", role: "trainee", store_name: "府中店", is_active: true },
+  { id: "u-2", display_name: "鈴木 花子", role: "helper", store_name: "新宿店", is_active: true },
+  { id: "u-3", display_name: "佐藤 健", role: "closer", store_name: "渋谷店", is_active: true },
+  { id: "u-4", display_name: "渡辺 美咲", role: "sv", store_name: "本部", is_active: true },
+  { id: "u-5", display_name: "中村 一郎", role: "admin", store_name: "本部", is_active: true },
+];
 
 // ===== お知らせ（管理画面で編集。学習者ダッシュボードに表示） =====
 export const ANNOUNCEMENTS: Announcement[] = [

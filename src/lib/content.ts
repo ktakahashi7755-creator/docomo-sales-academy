@@ -84,6 +84,7 @@ export interface EditContext {
 export interface ProductEditResult {
   product: Product;
   version: ProductVersion;
+  fields: EditableProductField[];
 }
 
 /**
@@ -113,7 +114,7 @@ export function applyProductEdit(
     reason: ctx.reason,
     createdAt: ctx.now,
   };
-  return { product, version: pv };
+  return { product, version: pv, fields: diff.fields };
 }
 
 /** お知らせの追加/更新（id 一致で置換、無ければ先頭に追加）。非破壊。 */

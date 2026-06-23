@@ -48,9 +48,9 @@ export function Dashboard() {
             strokeWidth={1.75}
             className={`mt-0.5 shrink-0 ${notice.severity === "caution" ? "text-caution-deep" : "text-ink-soft"}`}
           />
-          <div>
+          <div className="min-w-0">
             <div className="text-sm font-semibold text-ink">{notice.title}</div>
-            <p className="mt-0.5 text-sm text-ink-soft">{notice.body}</p>
+            <p className="mt-0.5 line-clamp-3 text-sm text-ink-soft">{notice.body}</p>
           </div>
         </Card>
       )}

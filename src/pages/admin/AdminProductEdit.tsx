@@ -33,7 +33,9 @@ export function AdminProductEdit() {
   const product = id ? getProduct(id) : undefined;
   const [draft, setDraft] = useState<Product | null>(product ? { ...product } : null);
   const [reason, setReason] = useState("");
-  const [saved, setSaved] = useState<null | "changed" | "nochange">(null);
+  const [saved, setSaved] = useState<{ version: number; checkedAt: string } | "nochange" | null>(
+    null,
+  );
 
   if (!product || !draft) {
     return (
@@ -60,12 +62,21 @@ export function AdminProductEdit() {
     setSaved(null);
   }
 
+  // 配列フィールド（メリット等）の更新。すべて string[] なので as 不要。
+  function updateList(field: "benefits" | "warnings" | "hearing" | "pitch", value: string[]) {
+    update(field, value);
+  }
+
   function handleSave(e: FormEvent) {
     e.preventDefault();
     if (!draft) return;
     const res = editProduct(product!.id, draft, reason.trim() || "内容を更新", actor);
-    setSaved(res.changed ? "changed" : "nochange");
-    if (res.changed) setReason("");
+    if (res.changed && res.version != null && res.checkedAt != null) {
+      setSaved({ version: res.version, checkedAt: res.checkedAt });
+      setReason("");
+    } else {
+      setSaved("nochange");
+    }
   }
 
   return (
@@ -82,12 +93,12 @@ export function AdminProductEdit() {
         description={`現在 v${product.version}・最終確認日 ${product.officialCheckedAt}`}
       />
 
-      {saved === "changed" && (
+      {saved && saved !== "nochange" && (
         <div
           role="status"
           className="flex items-center gap-2 rounded-lg border border-pass/30 bg-pass-soft px-3 py-2 text-sm text-pass-deep"
         >
-          <Check size={16} /> 保存しました（v{product.version}・確認日 {product.officialCheckedAt}
+          <Check size={16} /> 保存しました（v{saved.version}・確認日 {saved.checkedAt}
           ）。学習画面に反映されます。
         </div>
       )}
@@ -143,13 +154,13 @@ export function AdminProductEdit() {
         </Card>
 
         <Card className="grid gap-4 p-5 sm:grid-cols-2">
-          {(["benefits", "warnings", "hearing", "pitch"] as EditableProductField[]).map((f) => (
+          {(["benefits", "warnings", "hearing", "pitch"] as const).map((f) => (
             <Field key={f} label={`${FIELD_LABELS[f]}（1行に1つ）`}>
               <textarea
                 rows={4}
                 className={`${inputClass} resize-y`}
-                value={linesToText((draft[f] as string[]) ?? [])}
-                onChange={(e) => update(f as keyof Product, textToLines(e.target.value) as never)}
+                value={linesToText(draft[f] ?? [])}
+                onChange={(e) => updateList(f, textToLines(e.target.value))}
               />
             </Field>
           ))}

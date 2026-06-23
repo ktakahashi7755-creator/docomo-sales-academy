@@ -1,17 +1,25 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
-import { PRODUCTS, ANNOUNCEMENTS } from "@/data/seed";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+import { PRODUCTS, ANNOUNCEMENTS, DEMO_USERS } from "@/data/seed";
 import type {
   Product,
   Announcement,
   ProductVersion,
   AuditEntry,
   AuditAction,
+  ManagedUser,
   Role,
 } from "@/lib/types";
 import {
   applyProductEdit,
   summarizeChange,
-  diffProduct,
   upsertAnnouncement as upsertAnn,
   removeAnnouncement as removeAnn,
 } from "@/lib/content";
@@ -22,22 +30,6 @@ import {
  * Supabase 接続時は同じインターフェースで products/product_versions/announcements と
  * サーバー側の監査 RPC（migration 0004）に置き換える（AUDIT に追跡）。
  */
-
-export interface ManagedUser {
-  id: string;
-  display_name: string;
-  role: Role;
-  store_name?: string;
-  is_active: boolean;
-}
-
-const INITIAL_USERS: ManagedUser[] = [
-  { id: "u-1", display_name: "田中 太郎", role: "trainee", store_name: "府中店", is_active: true },
-  { id: "u-2", display_name: "鈴木 花子", role: "helper", store_name: "新宿店", is_active: true },
-  { id: "u-3", display_name: "佐藤 健", role: "closer", store_name: "渋谷店", is_active: true },
-  { id: "u-4", display_name: "渡辺 美咲", role: "sv", store_name: "本部", is_active: true },
-  { id: "u-5", display_name: "中村 一郎", role: "admin", store_name: "本部", is_active: true },
-];
 
 function stamp(): string {
   const d = new Date();
@@ -57,8 +49,13 @@ interface ContentState {
   announcements: Announcement[];
   users: ManagedUser[];
   audit: AuditEntry[];
-  /** 商材を編集。差分が無ければ changed=false（版・監査を作らない）。 */
-  editProduct: (id: string, after: Product, reason: string, actor: string) => { changed: boolean };
+  /** 商材を編集。差分が無ければ changed=false（版・監査を作らない）。changed 時は新版番号と確認日を返す。 */
+  editProduct: (
+    id: string,
+    after: Product,
+    reason: string,
+    actor: string,
+  ) => { changed: boolean; version?: number; checkedAt?: string };
   saveAnnouncement: (item: Announcement, actor: string) => void;
   deleteAnnouncement: (id: string, actor: string) => void;
   setUserRole: (id: string, role: Role, actor: string) => void;
@@ -73,8 +70,16 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   const [announcements, setAnnouncements] = useState<Announcement[]>(() =>
     ANNOUNCEMENTS.map((a) => ({ ...a })),
   );
-  const [users, setUsers] = useState<ManagedUser[]>(() => INITIAL_USERS.map((u) => ({ ...u })));
+  const [users, setUsers] = useState<ManagedUser[]>(() => DEMO_USERS.map((u) => ({ ...u })));
   const [audit, setAudit] = useState<AuditEntry[]>([]);
+
+  // 最新値を同期的に参照するための ref（コールバックの依存配列を安定させ、連打時の陳腐化を防ぐ）。
+  const productsRef = useRef(products);
+  productsRef.current = products;
+  const announcementsRef = useRef(announcements);
+  announcementsRef.current = announcements;
+  const usersRef = useRef(users);
+  usersRef.current = users;
 
   const addAudit = useCallback(
     (
@@ -104,7 +109,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
 
   const editProduct = useCallback(
     (id: string, after: Product, reason: string, actor: string) => {
-      const before = products.find((p) => p.id === id);
+      const before = productsRef.current.find((p) => p.id === id);
       if (!before) return { changed: false };
       const result = applyProductEdit(before, after, {
         changedBy: actor,
@@ -115,22 +120,25 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       if (!result) return { changed: false };
       setProducts((prev) => prev.map((p) => (p.id === id ? result.product : p)));
       setProductVersions((prev) => [result.version, ...prev]);
-      const fields = diffProduct(before, after).fields;
       addAudit(
         actor,
         "product.update",
         "product",
         id,
-        `${result.product.name}：${summarizeChange(fields)} を更新（v${result.product.version}）`,
+        `${result.product.name}：${summarizeChange(result.fields)} を更新（v${result.product.version}）`,
       );
-      return { changed: true };
+      return {
+        changed: true,
+        version: result.product.version,
+        checkedAt: result.product.officialCheckedAt,
+      };
     },
-    [products, addAudit],
+    [addAudit],
   );
 
   const saveAnnouncement = useCallback(
     (item: Announcement, actor: string) => {
-      const isNew = !announcements.some((a) => a.id === item.id);
+      const isNew = !announcementsRef.current.some((a) => a.id === item.id);
       const next: Announcement = { ...item, updatedAt: stamp().slice(0, 10) };
       setAnnouncements((prev) => upsertAnn(prev, next));
       addAudit(
@@ -141,12 +149,12 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         `お知らせ「${next.title}」を${isNew ? "作成" : "更新"}`,
       );
     },
-    [announcements, addAudit],
+    [addAudit],
   );
 
   const deleteAnnouncement = useCallback(
     (id: string, actor: string) => {
-      const target = announcements.find((a) => a.id === id);
+      const target = announcementsRef.current.find((a) => a.id === id);
       setAnnouncements((prev) => removeAnn(prev, id));
       addAudit(
         actor,
@@ -156,22 +164,22 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         `お知らせ「${target?.title ?? id}」を削除`,
       );
     },
-    [announcements, addAudit],
+    [addAudit],
   );
 
   const setUserRole = useCallback(
     (id: string, role: Role, actor: string) => {
-      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, role } : u)));
-      const u = users.find((x) => x.id === id);
+      const u = usersRef.current.find((x) => x.id === id);
+      setUsers((prev) => prev.map((x) => (x.id === id ? { ...x, role } : x)));
       addAudit(actor, "user.role", "user", id, `${u?.display_name ?? id} の権限を ${role} に変更`);
     },
-    [users, addAudit],
+    [addAudit],
   );
 
   const setUserActive = useCallback(
     (id: string, isActive: boolean, actor: string) => {
-      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, is_active: isActive } : u)));
-      const u = users.find((x) => x.id === id);
+      const u = usersRef.current.find((x) => x.id === id);
+      setUsers((prev) => prev.map((x) => (x.id === id ? { ...x, is_active: isActive } : x)));
       addAudit(
         actor,
         "user.active",
@@ -180,7 +188,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         `${u?.display_name ?? id} を${isActive ? "有効化" : "無効化"}`,
       );
     },
-    [users, addAudit],
+    [addAudit],
   );
 
   const value = useMemo<ContentState>(

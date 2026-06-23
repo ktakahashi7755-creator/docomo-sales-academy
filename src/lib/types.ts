@@ -149,6 +149,15 @@ export interface CertCondition {
   label: string;
 }
 
+// ===== 管理：ユーザー =====
+export interface ManagedUser {
+  id: string;
+  display_name: string;
+  role: Role;
+  store_name?: string;
+  is_active: boolean;
+}
+
 // ===== お知らせ =====
 export type AnnouncementSeverity = "info" | "caution";
 

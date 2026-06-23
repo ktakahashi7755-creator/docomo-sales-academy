@@ -109,4 +109,9 @@ describe("announcements helpers", () => {
     expect(activeAnnouncement([{ ...a1, isActive: false }])).toBeNull();
     expect(activeAnnouncement([a1])).toEqual(a1);
   });
+  it("activeAnnouncement: 複数有効でも先頭の1件のみ返す", () => {
+    const a2: Announcement = { ...a1, id: "a2", title: "T2" };
+    expect(activeAnnouncement([a1, a2])).toEqual(a1);
+    expect(activeAnnouncement([{ ...a1, isActive: false }, a2])).toEqual(a2);
+  });
 });

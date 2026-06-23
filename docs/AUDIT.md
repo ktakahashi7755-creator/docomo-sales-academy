@@ -86,6 +86,20 @@
 - [ ] **G-6 ⚠️** バックエンド（Supabase）への接続は env が無いため未実施。`ContentContext` を `products`/`product_versions`/`announcements` と `log_audit` に接続する統合が必要。**DB の `products` 列はフロント `Product` 型と形が異なるため写像が必要**（progress と同じギャップ。F-4 と合わせ Phase 2 統合で対応）。
 - [ ] **G-7** お知らせ／ユーザー操作も `log_audit` 経由でサーバー側記録に統一（backend 接続時）。
 
+### Phase 2 レビューゲート（2026-06-23）— security / data-integrity / code / design
+
+- [x] **G-R🔴(code)** Content 編集 callback が変動 state を依存に持ちクロージャ陳腐化 → ref（productsRef/announcementsRef/usersRef）で最新参照＋依存を `[addAudit]` に安定化。
+- [x] **G-R🔴(design)** お知らせ削除に確認が無い（即削除）→ 行内2段階確認（削除しますか？→削除する/やめる）＋`role="status"` の結果通知。
+- [x] **G-R1(code/design)** 保存成功バナーの版番号 → `editProduct` が新版番号・確認日を返し表示（レンダリング順依存を排除）。
+- [x] **G-R2(code)** `as never` を排除（配列フィールド専用 `updateList`）／`applyProductEdit` が `fields` を返し `diffProduct` 二重呼び出しを解消／`INITIAL_USERS` を seed の `DEMO_USERS` へ移動／`ManagedUser` を types へ。
+- [x] **G-R3(design/code)** AdminProducts/AdminUsers に empty 状態、AdminUsers/AdminAnnouncements に aria-live 通知、ボタン間隔・checkbox 整列、select の可視ラベル、Dashboard お知らせ本文 `line-clamp-3`。
+- [x] **G-R4(code)** smoke の input 順依存を `getByLabelText` に、`activeAnnouncement` 複数有効ケースのテスト追加（unit 65件）。
+- [ ] **G-8 🟡(data)** 商材編集は管理者入力をそのまま保存し、内訳（割引/ポイント）と合計（約18,600円相当）の整合チェックはしない（「推測で直さない」正典に沿う設計）。不整合入力を検知できないため、保存前の整合バリデーションか「要確認」表示を入れるか方針判断要。（→ 高橋確認）
+- [ ] **G-9 🟢(data)** G-8 の方針決定後、整合バリデーションの境界テストを追加。
+- [ ] **G-10 🟡(security)** backend 化時、`setUserRole`/`setUserActive` はフロント直書きにせず SECURITY DEFINER RPC/Edge Function 経由に（admin 再検査・自己権限の admin 剥奪防止・最後の admin 保護）。
+- [ ] **G-11 🟡(code)** admin 各画面（Overview/Products/Users）に loading スケルトンの受け皿（backend の非同期取得時に必要）。
+- [ ] **G-12 🟢(data)** 「URL のみ修正でも確認日が進む」点（編集＝確認の既定）が鮮度管理の意図とズレないか確認。（→ 高橋確認）
+
 ## E. 性能・PWA（Phase 6）
 
 - [ ] **E-P1** 初回 JS 予算 ~180KB gzip 目標、Lighthouse 90+ を計測し記録。現状ベースライン: JS 約220KB / gzip 約73KB（2026-06-23 build）。

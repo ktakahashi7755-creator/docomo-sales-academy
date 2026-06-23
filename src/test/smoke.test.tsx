@@ -95,10 +95,8 @@ describe("smoke: デモモードで全9画面が落ちずに描画・遷移で�
     await screen.findByRole("heading", { name: "商材の管理" });
     await user.click(document.querySelector('a[href^="/admin/products/"]') as HTMLElement);
 
-    // 「ひとこと説明」（2番目の text input）を書き換えて保存
-    await screen.findByText("変更履歴");
-    const inputs = Array.from(document.querySelectorAll("input")) as HTMLInputElement[];
-    const oneLiner = inputs[1];
+    // 「ひとこと説明」をラベルで特定して書き換えて保存
+    const oneLiner = await screen.findByLabelText("ひとこと説明");
     await user.clear(oneLiner);
     await user.type(oneLiner, "スモークテスト用の説明");
     await user.click(screen.getByRole("button", { name: /保存する/ }));

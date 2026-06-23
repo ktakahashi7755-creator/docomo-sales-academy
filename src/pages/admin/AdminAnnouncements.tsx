@@ -24,16 +24,26 @@ export function AdminAnnouncements() {
   const { announcements, saveAnnouncement, deleteAnnouncement } = useContent();
   const actor = profile?.display_name ?? "管理者";
   const [draft, setDraft] = useState<Announcement | null>(null);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
 
   function startNew() {
     setDraft(emptyDraft());
+    setStatus(null);
   }
 
   function handleSave(e: FormEvent) {
     e.preventDefault();
     if (!draft || draft.title.trim() === "") return;
     saveAnnouncement(draft, actor);
+    setStatus(`お知らせ「${draft.title}」を保存しました。`);
     setDraft(null);
+  }
+
+  function handleDelete(id: string, title: string) {
+    deleteAnnouncement(id, actor);
+    setConfirmId(null);
+    setStatus(`お知らせ「${title}」を削除しました。`);
   }
 
   return (
@@ -52,6 +62,16 @@ export function AdminAnnouncements() {
           ) : undefined
         }
       />
+
+      {status && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="rounded-lg border border-pass/30 bg-pass-soft px-3 py-2 text-sm text-pass-deep"
+        >
+          {status}
+        </div>
+      )}
 
       {draft && (
         <Card className="space-y-4 p-5">
@@ -75,7 +95,7 @@ export function AdminAnnouncements() {
                 onChange={(e) => setDraft({ ...draft, body: e.target.value })}
               />
             </label>
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap items-end gap-4">
               <label className="block">
                 <span className="mb-1 block text-sm font-medium text-ink-soft">種別</span>
                 <select
@@ -89,7 +109,7 @@ export function AdminAnnouncements() {
                   <option value="caution">注意</option>
                 </select>
               </label>
-              <label className="mt-5 inline-flex items-center gap-2 text-sm text-ink">
+              <label className="inline-flex min-h-[44px] items-center gap-2 text-sm text-ink">
                 <input
                   type="checkbox"
                   className="h-4 w-4 accent-ink"
@@ -153,22 +173,43 @@ export function AdminAnnouncements() {
                   <p className="mt-0.5 truncate text-sm text-ink-soft">{a.body}</p>
                   <p className="text-xs text-ink-muted">更新 {a.updatedAt}</p>
                 </div>
-                <div className="flex shrink-0 items-center gap-1">
-                  <button
-                    onClick={() => setDraft({ ...a })}
-                    aria-label={`${a.title} を編集`}
-                    className="inline-flex min-h-[44px] items-center gap-1 rounded-lg border border-paper-line px-3 text-sm text-ink hover:bg-paper-soft"
-                  >
-                    <Pencil size={14} /> 編集
-                  </button>
-                  <button
-                    onClick={() => deleteAnnouncement(a.id, actor)}
-                    aria-label={`${a.title} を削除`}
-                    className="inline-flex min-h-[44px] items-center gap-1 rounded-lg px-3 text-sm text-fail-deep hover:bg-fail-soft"
-                  >
-                    <Trash2 size={14} /> 削除
-                  </button>
-                </div>
+                {confirmId === a.id ? (
+                  <div className="flex shrink-0 items-center gap-2">
+                    <span className="text-sm text-ink-soft">削除しますか？</span>
+                    <button
+                      onClick={() => handleDelete(a.id, a.title)}
+                      className="inline-flex min-h-[44px] items-center gap-1 rounded-lg bg-fail px-3 text-sm font-medium text-paper"
+                    >
+                      <Trash2 size={14} /> 削除する
+                    </button>
+                    <button
+                      onClick={() => setConfirmId(null)}
+                      className="inline-flex min-h-[44px] items-center px-2 text-sm text-ink-soft hover:text-ink"
+                    >
+                      やめる
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex shrink-0 items-center gap-2">
+                    <button
+                      onClick={() => {
+                        setDraft({ ...a });
+                        setStatus(null);
+                      }}
+                      aria-label={`${a.title} を編集`}
+                      className="inline-flex min-h-[44px] items-center gap-1 rounded-lg border border-paper-line px-3 text-sm text-ink hover:bg-paper-soft"
+                    >
+                      <Pencil size={14} /> 編集
+                    </button>
+                    <button
+                      onClick={() => setConfirmId(a.id)}
+                      aria-label={`${a.title} を削除`}
+                      className="inline-flex min-h-[44px] items-center gap-1 rounded-lg px-3 text-sm text-fail-deep hover:bg-fail-soft"
+                    >
+                      <Trash2 size={14} /> 削除
+                    </button>
+                  </div>
+                )}
               </li>
             ))}
           </ul>

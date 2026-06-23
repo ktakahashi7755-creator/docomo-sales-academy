@@ -1,11 +1,27 @@
 import { Link } from "react-router-dom";
 import { useContent } from "@/context/ContentContext";
-import { Card, PageTitle, TierBadge } from "@/components/ui";
+import { Card, EmptyState, PageTitle, TierBadge } from "@/components/ui";
 import { isStale } from "@/lib/progress";
-import { AlertTriangle, Pencil } from "lucide-react";
+import { AlertTriangle, Pencil, Package } from "lucide-react";
 
 export function AdminProducts() {
   const { products } = useContent();
+
+  if (products.length === 0) {
+    return (
+      <div className="space-y-6">
+        <PageTitle
+          title="商材の管理"
+          description="料金・還元・補償は公式ページを正として更新し、確認日を記録します。"
+        />
+        <EmptyState
+          icon={<Package size={28} strokeWidth={1.5} />}
+          title="商材がまだありません"
+          description="商材を登録すると、ここで編集と履歴管理ができます。"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
