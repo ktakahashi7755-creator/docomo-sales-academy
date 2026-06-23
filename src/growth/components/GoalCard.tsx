@@ -22,7 +22,7 @@ export function GoalCard() {
           </span>
         }
         action={
-          <span className="font-display text-xs font-semibold text-slate-400 tabular-nums">
+          <span className="font-display text-xs font-semibold text-slate-600 tabular-nums">
             {doneCount} / {step.checklist.length}
           </span>
         }

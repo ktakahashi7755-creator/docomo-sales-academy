@@ -26,19 +26,27 @@ export function Help() {
                   type="button"
                   onClick={() => setOpen(isOpen ? null : i)}
                   aria-expanded={isOpen}
+                  aria-controls={`faq-panel-${i}`}
                   className="flex w-full items-center gap-3 px-5 py-4 text-left transition hover:bg-slate-50"
                 >
-                  <span className="font-display flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-xs font-bold text-blue-600">
+                  <span
+                    aria-hidden="true"
+                    className="font-display flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-xs font-bold text-blue-600"
+                  >
                     Q
                   </span>
                   <span className="flex-1 text-sm font-semibold text-slate-800">{item.q}</span>
                   <ChevronDown
                     size={18}
+                    aria-hidden="true"
                     className={`shrink-0 text-slate-400 transition ${isOpen ? "rotate-180" : ""}`}
                   />
                 </button>
                 {isOpen && (
-                  <div className="px-5 pb-4 pl-[3.75rem] text-sm leading-relaxed text-slate-600">
+                  <div
+                    id={`faq-panel-${i}`}
+                    className="px-5 pb-4 pl-[3.75rem] text-sm leading-relaxed text-slate-600"
+                  >
                     {item.a}
                   </div>
                 )}
@@ -73,14 +81,14 @@ export function Help() {
         <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20">
           <Bot size={24} />
         </span>
-        <h2 className="text-base font-bold">解決しませんでしたか？</h2>
-        <p className="max-w-md text-sm text-blue-100">
-          AIサポートBotが、学習やお客様対応の困りごとにいつでもお答えします。
+        <h2 className="text-base font-bold">AIサポートBotに相談する</h2>
+        <p className="max-w-md text-sm text-blue-50">
+          学習やお客様対応の困りごとに、AIサポートBotがいつでもお答えします。
         </p>
         <button
           type="button"
           onClick={openBot}
-          className="mt-1 inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
+          className="mt-1 inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-blue-700 transition hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600"
         >
           <Bot size={16} /> AIサポートBotに相談する
         </button>

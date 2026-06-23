@@ -67,7 +67,7 @@ export function LessonDetail() {
       </Link>
 
       <PageHeader
-        eyebrow={`STEP ${step?.no} ・ ${step?.title}`}
+        eyebrow={`STEP ${step?.no} ・ ${step?.title}${step ? `（${lesson.no}/${step.lessons.length}）` : ""}`}
         title={lesson.title}
         description={lesson.summary}
         action={
@@ -127,15 +127,15 @@ export function LessonDetail() {
       {/* NG / Good トーク例 */}
       {lesson.examples && (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <Card className="border-orange-100 p-4">
+          <Card className="border-orange-200 p-4">
             <div className="flex items-center gap-1.5 text-xs font-bold text-orange-600">
-              <X size={14} strokeWidth={2.5} /> NG例
+              <X size={14} strokeWidth={2} /> NG例
             </div>
             <p className="mt-2 text-sm leading-relaxed text-slate-700">「{lesson.examples.ng}」</p>
           </Card>
-          <Card className="border-emerald-100 p-4">
+          <Card className="border-emerald-200 p-4">
             <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-600">
-              <Check size={14} strokeWidth={2.5} /> Good例
+              <Check size={14} strokeWidth={2} /> Good例
             </div>
             <p className="mt-2 text-sm leading-relaxed text-slate-700">
               「{lesson.examples.good}」
@@ -222,7 +222,11 @@ export function LessonDetail() {
       {/* 完了・前後移動 */}
       <Card className="flex flex-col items-center gap-3 p-6 text-center">
         {status === "completed" ? (
-          <div className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600">
+          <div
+            role="status"
+            aria-live="polite"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600"
+          >
             <CheckCircle2 size={18} /> このレッスンは完了しています
           </div>
         ) : (
@@ -234,7 +238,7 @@ export function LessonDetail() {
           {prev ? (
             <Link
               to={`/content/${prev.id}`}
-              className="inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-slate-700"
+              className="inline-flex min-h-[44px] items-center gap-1 text-sm font-medium text-slate-500 hover:text-slate-700"
             >
               <ArrowLeft size={16} /> 前へ
             </Link>
@@ -244,7 +248,7 @@ export function LessonDetail() {
           {next ? (
             <Link
               to={`/content/${next.id}`}
-              className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
+              className="inline-flex min-h-[44px] items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
             >
               次へ <ArrowRight size={16} />
             </Link>

@@ -75,7 +75,7 @@ export function Curriculum() {
                       className="group flex items-center gap-3 px-5 py-3 transition hover:bg-slate-50"
                     >
                       {st === "completed" ? (
-                        <Check size={18} className="shrink-0 text-emerald-500" strokeWidth={2.5} />
+                        <Check size={18} className="shrink-0 text-emerald-500" strokeWidth={2} />
                       ) : st === "in-progress" ? (
                         <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-blue-500" />
                       ) : (
@@ -92,7 +92,7 @@ export function Curriculum() {
                           テストあり
                         </span>
                       )}
-                      <span className="hidden w-12 text-right text-xs text-slate-400 sm:inline">
+                      <span className="hidden w-12 text-right text-xs text-slate-500 sm:inline">
                         {lesson.minutes}分
                       </span>
                       <ChevronRight
@@ -106,7 +106,7 @@ export function Curriculum() {
             </ul>
 
             <div className="border-t border-slate-100 bg-slate-50/60 px-5 py-4">
-              <div className="text-[11px] font-bold uppercase tracking-wide text-slate-400">
+              <div className="text-[11px] font-bold uppercase tracking-wide text-slate-500">
                 章末まとめ
               </div>
               <p className="mt-1 text-sm leading-relaxed text-slate-600">{step.recap}</p>
