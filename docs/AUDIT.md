@@ -54,6 +54,14 @@
 - [ ] **D-N02 🟢** `isStale` の「90日ちょうど」判定が DST/タイムゾーンでズレうる。Phase 3 で日本時間基準にする際に再確認。
 - [ ] **D-N14 🟢** Roleplay の評価ランク閾値（S/A/B/C/D）が表示文字列にハードコード。Phase 4 で `gradeOf` から導出して単一正典化。
 
+## F. Phase 1（Supabase 接続・本認証）
+
+- [x] **F-1** メール OTP 認証（`lib/auth.ts`）＋ progress 永続化（`module_progress` / migration 0003）＋ デュアルモード（demo/backend）実装。
+- [x] **F-2** RLS テスト `supabase/tests/rls_module_progress.sql`（本人のみ・越権不可）。
+- [ ] **F-3 ⚠️** 本環境に Supabase プロジェクト（env）が無いため、**実ログイン→進捗表示／RLS の実通過は未検証**。Supabase 設定済み環境（高橋）または CI のテストDBで `migrations 0001→0003` 適用後、実ログインと `rls_module_progress.sql` を実行して確認すること。
+- [ ] **F-4 🟡** `module_progress`(text key) と既存 `progress`(uuid) の整合は Phase 2（コンテンツ DB 駆動化）で実施。
+- [ ] **F-5** Supabase Auth の OTP メールテンプレート設定（6桁コードが届くよう Email テンプレートを確認）。
+
 ## E. 性能・PWA（Phase 6）
 
 - [ ] **E-P1** 初回 JS 予算 ~180KB gzip 目標、Lighthouse 90+ を計測し記録。現状ベースライン: JS 約220KB / gzip 約73KB（2026-06-23 build）。

@@ -40,6 +40,20 @@
 - **Decision:** 型から `done` を除去し、`lib/progress.ts` の純粋関数で進捗から導出。確実に導出できる条件（必須モジュール全合格 c1 / コンプラ100 c3 / Lv.10 c10、バッジ b-first）のみ判定し、追跡できない条件は **false（未達）** とする。推測で達成にしない（data-integrity 準拠）。
 - **Consequences:** 表示が事実に一致。Phase 4/5 で評価が蓄積されたら導出条件を拡張。境界値は Vitest で固定。`CERT_CONDITIONS` は `readonly` 化。
 
+## ADR-0007: 本認証はメール OTP（6桁コード）
+
+- **日付:** 2026-06-23（Phase 1）
+- **Context:** ブリーフは「メール+OTP もしくはマジックリンク」を許容。モバイルファースト。
+- **Decision:** Supabase `signInWithOtp` ＋ `verifyOtp(type:"email")` の **OTP コード方式**。メールクライアントへ離脱せず在アプリで完結し、モバイル UX が良い。トレーニーが**自分の**メール/コードを入力するためコンプラ原則（本人入力）と矛盾しない（顧客のパスワード代理入力とは無関係）。
+- **Consequences:** `lib/auth.ts` に集約。env 設定時のみ有効、未設定はデモモード継続。マジックリンクが必要なら同アダプタで切替可能。
+
+## ADR-0008: 進捗は追加テーブル module_progress（テキストキー）に永続化
+
+- **日付:** 2026-06-23（Phase 1）
+- **Context:** 既存 `progress` 表は `module_id uuid`（modules FK＝DB駆動コンテンツ用、Phase 2）。一方フロントのコンテンツは `src/data/seed.ts` のテキストキー（例 `p1m1`）で、両者は未整合。
+- **Decision:** 既存 `progress` を変更せず、`module_progress(user_id, module_key text, score)` を**追加**（migration 0003）。RLS は本人読み書き＋SV/admin 閲覧。フロントの ScoreMap をそのまま保存。
+- **Consequences:** Phase 1 で進捗永続化が成立。Phase 2 でコンテンツを DB 駆動化する際に `progress`(uuid) と整合・移行する（AUDIT に記録）。RLS は `supabase/tests/rls_module_progress.sql` で検証（サービスロール実行）。
+
 ## ADR-0004: 検証は「実機ビルド＋ビジュアル」で担保
 
 - **日付:** 2026-06-23

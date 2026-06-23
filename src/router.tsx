@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { PageLoading } from "@/components/ui";
 import { Layout } from "@/components/Layout";
 import { Login } from "@/pages/Login";
 import { Dashboard } from "@/pages/Dashboard";
@@ -13,7 +14,15 @@ import { Roleplay } from "@/pages/Roleplay";
 import { Certification } from "@/pages/Certification";
 
 function RequireAuth({ children }: { children: ReactNode }) {
-  const { profile } = useAuth();
+  const { profile, loading } = useAuth();
+  // セッション解決中はリダイレクトせず loading を見せる（ログイン直後のバウンス防止）。
+  if (loading) {
+    return (
+      <div className="mx-auto w-full max-w-content px-4 py-6 md:px-8 md:py-8">
+        <PageLoading />
+      </div>
+    );
+  }
   if (!profile) return <Navigate to="/login" replace />;
   return <>{children}</>;
 }
