@@ -42,6 +42,10 @@ const AdminUsers = lazy(() =>
 const AdminAudit = lazy(() =>
   import("@/pages/admin/AdminAudit").then((m) => ({ default: m.AdminAudit })),
 );
+// Provide Growth Academy（別ブランドの独立ダッシュボード・/growth で単独表示）。
+const GrowthDashboard = lazy(() =>
+  import("@/growth/GrowthDashboard").then((m) => ({ default: m.GrowthDashboard })),
+);
 
 /** 遅延ページの Suspense 受け皿。 */
 function Lazy({ children }: { children: ReactNode }) {
@@ -102,6 +106,14 @@ export function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route
+        path="/growth"
+        element={
+          <Lazy>
+            <GrowthDashboard />
+          </Lazy>
+        }
+      />
       <Route
         element={
           <RequireAuth>

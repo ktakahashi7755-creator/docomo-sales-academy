@@ -1,0 +1,38 @@
+import { Smartphone, CheckCircle2, Target } from "lucide-react";
+import { STEP_GOAL } from "@/growth/data/curriculum";
+import { Card, SectionTitle } from "@/growth/components/ui";
+
+export function GoalCard() {
+  const g = STEP_GOAL;
+  return (
+    <Card className="p-6" hover>
+      <SectionTitle
+        title="このステップのゴール"
+        icon={
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-50 text-teal-600">
+            <Target size={16} strokeWidth={2} />
+          </span>
+        }
+      />
+
+      <div className="flex items-start gap-3 rounded-2xl bg-gradient-to-br from-blue-50 to-sky-50 p-4">
+        <div className="min-w-0 flex-1">
+          <h3 className="text-base font-bold leading-snug text-slate-800">{g.heading}</h3>
+          <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{g.description}</p>
+        </div>
+        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-400 to-blue-500 text-white shadow-md shadow-blue-200">
+          <Smartphone size={26} strokeWidth={1.75} />
+        </span>
+      </div>
+
+      <ul className="mt-4 space-y-2.5">
+        {g.checklist.map((item) => (
+          <li key={item} className="flex items-start gap-2.5">
+            <CheckCircle2 size={18} strokeWidth={2} className="mt-0.5 shrink-0 text-emerald-500" />
+            <span className="text-sm text-slate-700">{item}</span>
+          </li>
+        ))}
+      </ul>
+    </Card>
+  );
+}

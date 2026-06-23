@@ -24,6 +24,23 @@ npm run dev
 
 ログイン画面で役割（研修生／ヘルパー／クローザー／SV／管理者）を選ぶと、デモプロフィールで入れます。
 
+### Provide Growth Academy ダッシュボード（`/growth`）
+
+販売育成カリキュラム向けの高品質 SaaS ダッシュボード（別ブランド面）を `/growth` で単独表示できます。
+未経験者・学生・新人でも直感的に使える1画面完結のデザインで、サイドバー＋ヘッダー＋5ステップナビ＋
+現在のカリキュラム＋学習ステップ＋ゴール＋パフォーマンス＋スケジュール＋学習サポート＋おすすめコンテンツ＋
+成功事例を含みます。
+
+```bash
+npm run dev                         # → http://localhost:5173/growth
+npm run build && npm run preview    # 本番ビルドの確認 → http://localhost:4173/growth
+```
+
+- ダミーデータは `src/growth/data/curriculum.ts`（配列管理・「初期設定カリキュラム」を後から追加しやすい構造）。
+- 画面は `src/growth/components/` にコンポーネント分割（Sidebar / Header / StepNavigation / CurrentCurriculumCard / LearningStepTable / GoalCard / PerformanceCards / ScheduleCard / SupportCards / RecommendedContents / SuccessCaseCard）。
+- 配色は Tailwind 標準パレット（青・水色・ティール・緑・オレンジのグラデーション）＋ソフトな影（`shadow-card` / `shadow-lift`）。後から Supabase・認証を足しやすい構成です。
+- 公開デモ（GitHub Pages）では `…/docomo-sales-academy/growth` で開けます。
+
 ## ビルド / 検証（品質ゲート）
 
 ```bash
