@@ -30,6 +30,8 @@ import {
 export function LessonDetail() {
   const { lessonId } = useParams<{ lessonId: string }>();
   const { lessonStatus, startLesson, completeLesson } = useProvide();
+  // デモモードではレッスンは同期取得（seed）のため loading 状態は発生しない。
+  // Supabase で非同期取得に切り替える際に loading スケルトンを追加する（Phase1）。
   const lesson = lessonId ? lessonById(lessonId) : undefined;
 
   useEffect(() => {
@@ -86,7 +88,7 @@ export function LessonDetail() {
       <Card className="p-6 sm:p-8">
         <div className="space-y-4">
           {lesson.body.map((p, i) => (
-            <p key={i} className="text-[15px] leading-loose text-slate-700">
+            <p key={`${lesson.id}-body-${i}`} className="text-[15px] leading-loose text-slate-700">
               {p}
             </p>
           ))}
@@ -162,7 +164,10 @@ export function LessonDetail() {
             {lesson.talkScript.map((line, i) => {
               const isStaff = line.role === "staff";
               return (
-                <div key={i} className={`flex flex-col ${isStaff ? "items-end" : "items-start"}`}>
+                <div
+                  key={`${line.role}-${i}`}
+                  className={`flex flex-col ${isStaff ? "items-end" : "items-start"}`}
+                >
                   <div className="flex max-w-[88%] flex-col">
                     <span
                       className={`mb-1 text-[11px] font-semibold ${
@@ -208,8 +213,8 @@ export function LessonDetail() {
             <h2 className="text-sm font-bold text-slate-800">よくある失敗とリカバリー</h2>
           </div>
           <ul className="space-y-3">
-            {lesson.mistakes.map((m, i) => (
-              <li key={i} className="rounded-xl border border-slate-100 p-4">
+            {lesson.mistakes.map((m) => (
+              <li key={m.mistake} className="rounded-xl border border-slate-100 p-4">
                 <div className="flex items-start gap-2">
                   <X size={15} strokeWidth={2} className="mt-0.5 shrink-0 text-orange-600" />
                   <p className="text-sm font-semibold text-slate-700">{m.mistake}</p>

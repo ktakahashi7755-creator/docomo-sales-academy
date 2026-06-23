@@ -14,7 +14,7 @@ export function Header() {
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-md shadow-blue-200 ring-1 ring-slate-100 lg:hidden">
-            <img src={provideMark} alt="" className="h-8 w-8" />
+            <img src={provideMark} alt="" aria-hidden="true" className="h-8 w-8" />
           </span>
           <h1 className="font-display text-xl font-bold tracking-tight text-slate-800 md:text-2xl">
             Provide Growth Academy

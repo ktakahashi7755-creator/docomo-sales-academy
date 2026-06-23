@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "@/App";
 import { quizForModule } from "@/data/quiz";
+import { botReply } from "@/growth/lib/bot";
 
 // Provide Growth Academy：デモ（フロント完結）で全タブ・主要フローが
 // 実行時エラーなく動くことを担保するスモークテスト。
@@ -40,6 +41,10 @@ describe("Provide Growth Academy スモーク", () => {
     expect(
       await screen.findByRole("heading", { name: "ヒアリングの型と深掘り" }),
     ).toBeInTheDocument();
+    // 濃密化セクション（会話台本・失敗リカバリー・実践課題）が描画される
+    expect(screen.getByRole("heading", { name: "会話で学ぶ" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "よくある失敗とリカバリー" })).toBeInTheDocument();
+    expect(screen.getByText("この回の実践課題")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: /完了にする/ }));
     expect(await screen.findByText(/完了しています/)).toBeInTheDocument();
 
@@ -91,5 +96,21 @@ describe("Provide Growth Academy スモーク", () => {
     await user.type(screen.getByLabelText("AIサポートBotへの質問"), "dカードの提案のコツは？");
     await user.click(screen.getByRole("button", { name: "送信" }));
     expect(await screen.findByText(/dカードは/, {}, { timeout: 2000 })).toBeInTheDocument();
+  });
+});
+
+describe("AIサポートBot 応答ルール", () => {
+  it("「実践課題」はロープレ応答に横取りされず、実践課題の案内を返す", () => {
+    const reply = botReply("この回の実践課題のやり方は？");
+    expect(reply).toMatch(/実践課題/);
+  });
+  it("「ロープレ」はロープレの案内を返す", () => {
+    expect(botReply("ロープレってどう始める？")).toMatch(/ロープレ/);
+  });
+  it("「dカード」はdカードの案内を返す", () => {
+    expect(botReply("dカードの提案のコツは？")).toMatch(/dカードは/);
+  });
+  it("「他社・楽天」は経済圏の切り返しを案内する", () => {
+    expect(botReply("楽天で十分と言われたら？")).toMatch(/否定せず/);
   });
 });

@@ -11,7 +11,7 @@ export function Sidebar() {
       {/* ロゴ */}
       <div className="flex items-center gap-3 px-5 py-5">
         <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-lg shadow-blue-900/40">
-          <img src={provideMark} alt="" className="h-8 w-8" />
+          <img src={provideMark} alt="" aria-hidden="true" className="h-8 w-8" />
         </span>
         <div className="leading-tight">
           <div className="text-[11px] font-medium uppercase tracking-widest text-blue-300/80">
