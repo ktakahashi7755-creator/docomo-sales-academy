@@ -1,25 +1,38 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Clock, GraduationCap, ClipboardCheck } from "lucide-react";
-import { stepOfLesson, CURRICULUM } from "@/growth/data/curriculum";
+import { stepOfLesson, CURRICULUM, quizModuleMeta } from "@/growth/data/curriculum";
 import { useProvide } from "@/growth/context/ProvideContext";
+import { isPassed } from "@/lib/progress";
 import { Card, ProgressRing, SectionTitle, PrimaryButton, GIcon } from "@/growth/components/ui";
 
 export function CurrentCurriculumCard() {
   const navigate = useNavigate();
-  const { currentLesson, stepProgress } = useProvide();
+  const { currentLesson, stepProgress, lessonStatus, quizScores } = useProvide();
   const step = currentLesson ? stepOfLesson(currentLesson.id) : CURRICULUM[CURRICULUM.length - 1];
   if (!step) return null;
 
   const pct = stepProgress(step.id);
-  const tests = step.lessons.filter((l) => l.quizModuleId).length;
+  const doneLessons = step.lessons.filter((l) => lessonStatus(l.id) === "completed").length;
+  // このステップの確認テスト（同一モジュールを参照する複数レッスンは1つに集約）と、その合格数。
+  const testModules = [
+    ...new Set(step.lessons.map((l) => l.quizModuleId).filter((id): id is string => Boolean(id))),
+  ];
+  const passedTests = testModules.filter((id) =>
+    isPassed(quizScores[id], quizModuleMeta(id)?.passing ?? 80),
+  ).length;
+
   const tiles = [
     { icon: <Clock size={15} strokeWidth={2} />, label: "期間の目安", value: step.duration },
     {
       icon: <GraduationCap size={15} strokeWidth={2} />,
       label: "学習コンテンツ",
-      value: `${step.lessons.length}項目`,
+      value: `${doneLessons} / ${step.lessons.length} 項目`,
     },
-    { icon: <ClipboardCheck size={15} strokeWidth={2} />, label: "テスト", value: `${tests}回` },
+    {
+      icon: <ClipboardCheck size={15} strokeWidth={2} />,
+      label: "確認テスト",
+      value: `${passedTests} / ${testModules.length} 合格`,
+    },
   ];
 
   return (

@@ -1758,8 +1758,8 @@ export const QUIZ_MODULES: QuizModuleMeta[] = [
   },
   {
     moduleId: "p6m2",
-    title: "ヒアリング",
-    description: "不満・乗り換え意欲の引き出し",
+    title: "接客・ヒアリング",
+    description: "第一印象・声かけ・ヒアリング・共感",
     passing: 80,
     accent: "blue",
     icon: "ear",
