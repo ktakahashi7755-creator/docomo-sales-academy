@@ -194,6 +194,7 @@ export const CURRICULUM: CurriculumStep[] = [
         no: 2,
         title: "店内・イベント・外販の動き方",
         summary: "場面ごとの立ち回りと、声をかけるタイミングを掴む",
+        quizModuleId: "p1m5",
         minutes: 15,
         body: [
           "店内・イベント・外販では、お客様の状態も最適な声かけも変わります。通行中の方には受け取りやすいフックから、来店された方には用件の確認から——場面に合わせて入口を変えます。",
@@ -272,6 +273,7 @@ export const CURRICULUM: CurriculumStep[] = [
         no: 3,
         title: "受付から提案までの流れ",
         summary: "ゴールまでの全体像を1本の線でつかむ",
+        quizModuleId: "p1m5",
         minutes: 12,
         body: [
           "接客は「興味づけ → ヒアリング → 提案 → 着座・合意 → お見送り」の5ステップで進みます。今どのステップにいるかを意識すると、迷わず次の一手を選べます。",
@@ -404,6 +406,7 @@ export const CURRICULUM: CurriculumStep[] = [
         no: 1,
         title: "第一印象と基本マナー",
         summary: "挨拶・身だしなみ・声のトーンで警戒を解く",
+        quizModuleId: "p6m2",
         minutes: 10,
         body: [
           "人は数秒で第一印象を決めます。清潔感のある身だしなみ、目線を合わせた挨拶、明るく落ち着いた声のトーン——この3つで「話してもいい人」だと感じてもらえます。",
@@ -448,6 +451,7 @@ export const CURRICULUM: CurriculumStep[] = [
         no: 2,
         title: "お客様への声かけ",
         summary: "自然なアプローチと会話の始め方",
+        quizModuleId: "p6m2",
         minutes: 14,
         body: [
           "いきなり料金やキャンペーンの話から入ると警戒されます。「スマホの操作でお困りのことありませんか」のような、売り込みでない一言から入ると足を止めてもらいやすくなります。",
@@ -585,6 +589,7 @@ export const CURRICULUM: CurriculumStep[] = [
         no: 4,
         title: "ニーズ整理と共感トーク",
         summary: "聞いた内容を整理し、安心感を与える",
+        quizModuleId: "p6m2",
         minutes: 12,
         body: [
           "聞き出した情報は、その場で整理して言葉で返します。「つまり、動作の重さと月末のギガ不足が気になっているということですね」と要約すると、お客様は「分かってもらえた」と感じます。",
@@ -775,6 +780,7 @@ export const CURRICULUM: CurriculumStep[] = [
         no: 3,
         title: "固定回線と生活商材",
         summary: "ドコモ光・home 5G・でんき/ガスを用途で出し分け",
+        quizModuleId: "p4m3",
         minutes: 15,
         body: [
           "自宅のネットは、光の工事ができる家庭なら光（速度重視なら10ギガ）、工事が難しい・急ぎなら home 5G を提案します。家族台数が多いほどセット割の効果が大きくなります。",
@@ -835,6 +841,7 @@ export const CURRICULUM: CurriculumStep[] = [
         no: 4,
         title: "3価値連動の提案設計",
         summary: "端末・料金・自宅ネットを1つの未来として束ねる",
+        quizModuleId: "p7m1",
         minutes: 14,
         body: [
           "単品の安さで勝負せず、端末スペック・料金最適化・自宅ネットの3つを連動させ、「乗り換え後の明るい毎日」として見せます。",
@@ -883,6 +890,7 @@ export const CURRICULUM: CurriculumStep[] = [
         no: 5,
         title: "家族まとめとMNP",
         summary: "世帯でまとめる価値と、乗り換えの不安を解く",
+        quizModuleId: "p7m1",
         minutes: 14,
         body: [
           "提案は1人ではなく世帯で考えると効果が大きくなります。家族の台数が増えるほどセット割やまとめの効果が効き、トータルの月額で見せられます。",
@@ -1016,6 +1024,7 @@ export const CURRICULUM: CurriculumStep[] = [
         no: 2,
         title: "クロージングの型",
         summary: "選択肢・損失回避・今やる理由",
+        quizModuleId: "p9m1",
         minutes: 14,
         body: [
           "クロージングは「どちらにしますか」の選択式や、「今なら〜の期間です」という今やる理由で背中を押します。押し売りではなく、お客様にとっての損失（このままの料金を払い続けること）を避ける提案として伝えます。",
@@ -1065,6 +1074,7 @@ export const CURRICULUM: CurriculumStep[] = [
         no: 3,
         title: "申込誘導と最後の一押し",
         summary: "手続きをこちらが伴走して進める",
+        quizModuleId: "p9m1",
         minutes: 12,
         body: [
           "「番号もそのまま、難しいところは一緒に進めます」と伝え、やることはほぼ確認だけだと示すと、手続きのハードルが下がります。",
@@ -1204,6 +1214,7 @@ export const CURRICULUM: CurriculumStep[] = [
         no: 1,
         title: "総合ロープレ",
         summary: "通しで接客を実践し、AI評価で振り返る",
+        quizModuleId: "p10m1",
         minutes: 25,
         body: [
           "これまで学んだ流れを通しで実践します。ヒアリングで現状と不満を引き出し、3価値を束ねて提案し、反論を受け止めてクロージングまで運びます。",
@@ -1760,6 +1771,30 @@ export const QUIZ_MODULES: QuizModuleMeta[] = [
     passing: 80,
     accent: "green",
     icon: "handshake",
+  },
+  {
+    moduleId: "p4m3",
+    title: "固定回線・生活商材",
+    description: "光 / home 5G / でんき・ガスの選び方",
+    passing: 80,
+    accent: "teal",
+    icon: "book",
+  },
+  {
+    moduleId: "p7m1",
+    title: "提案設計・家族まとめ",
+    description: "3価値連動と MNP・世帯提案",
+    passing: 80,
+    accent: "blue",
+    icon: "lightbulb",
+  },
+  {
+    moduleId: "p9m1",
+    title: "クロージング・申込",
+    description: "選択式・今やる理由・申込前確認",
+    passing: 80,
+    accent: "green",
+    icon: "target",
   },
   {
     moduleId: "p10m1",
