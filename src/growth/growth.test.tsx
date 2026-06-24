@@ -48,6 +48,12 @@ describe("Provide Growth Academy スモーク", () => {
     await user.click(screen.getByRole("button", { name: /完了にする/ }));
     expect(await screen.findByText(/完了しています/)).toBeInTheDocument();
 
+    // 現場ガイド → タブ切替が動く
+    await clickHref(user, "/field-guide");
+    expect(await screen.findByRole("heading", { name: "現場ガイド" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "反論処理" }));
+    expect(await screen.findByText("反論処理の基本型")).toBeInTheDocument();
+
     // クイズ・テスト → p1m5 を全問正解で合格
     await clickHref(user, "/quiz");
     expect(await screen.findByRole("heading", { name: "クイズ・テスト" })).toBeInTheDocument();

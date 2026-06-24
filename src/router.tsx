@@ -4,6 +4,7 @@ import { Dashboard } from "@/growth/pages/Dashboard";
 import { Curriculum } from "@/growth/pages/Curriculum";
 import { Content } from "@/growth/pages/Content";
 import { LessonDetail } from "@/growth/pages/LessonDetail";
+import { FieldGuide } from "@/growth/pages/FieldGuide";
 import { Quiz } from "@/growth/pages/Quiz";
 import { QuizTake } from "@/growth/pages/QuizTake";
 import { Roleplay } from "@/growth/pages/Roleplay";
@@ -20,6 +21,7 @@ export function AppRoutes() {
         <Route path="curriculum" element={<Curriculum />} />
         <Route path="content" element={<Content />} />
         <Route path="content/:lessonId" element={<LessonDetail />} />
+        <Route path="field-guide" element={<FieldGuide />} />
         <Route path="quiz" element={<Quiz />} />
         <Route path="quiz/:moduleId" element={<QuizTake />} />
         <Route path="roleplay" element={<Roleplay />} />
