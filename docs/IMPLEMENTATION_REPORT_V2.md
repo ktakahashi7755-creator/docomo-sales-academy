@@ -68,4 +68,3 @@ Provide Growth Academy を「商品説明アプリ」から「現場の意思決
 - quiz/seed の事実値の単一ソース化（H-Q1）
 - SVダッシュボード（実データ）・Supabase 連携（進捗の永続化・本認証）
 - AIロープレの自動採点を rubric.ts の12観点に明示マッピング
-  </content>
