@@ -5,6 +5,7 @@ import { SALES_PROCESS } from "@/growth/data/salesProcess";
 import { SCENES } from "@/growth/data/scenes";
 import { HEARING_ITEMS } from "@/growth/data/hearingItems";
 import { OBJECTIONS, OBJECTION_BASIC_FLOW } from "@/growth/data/objections";
+import { EVALUATION_RUBRIC, GROWTH_STAGES } from "@/growth/data/rubric";
 import { Card, PageHeader } from "@/growth/components/ui";
 
 const TABS = [
@@ -12,6 +13,7 @@ const TABS = [
   { id: "scenes", label: "場面別トーク" },
   { id: "hearing", label: "ヒアリング" },
   { id: "objections", label: "反論処理" },
+  { id: "rubric", label: "評価・育成" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -49,6 +51,61 @@ export function FieldGuide() {
       {tab === "scenes" && <ScenesView />}
       {tab === "hearing" && <HearingView />}
       {tab === "objections" && <ObjectionsView />}
+      {tab === "rubric" && <RubricView />}
+    </div>
+  );
+}
+
+function RubricView() {
+  return (
+    <div className="space-y-6">
+      <div>
+        <h3 className="mb-1 text-base font-bold text-slate-800">ロープレ評価ルーブリック</h3>
+        <p className="mb-3 text-sm text-slate-500">
+          AIロープレと現場ロープレで見る12観点。加点と赤信号で、SVが同じ基準で振り返れます。
+        </p>
+        <div className="space-y-2.5">
+          {EVALUATION_RUBRIC.map((r) => (
+            <Card key={r.criterion} className="p-4">
+              <h4 className="text-sm font-bold text-slate-800">{r.criterion}</h4>
+              <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <p className="flex items-start gap-1.5 rounded-lg bg-emerald-50 p-2.5 text-xs leading-relaxed text-emerald-800">
+                  <Check size={13} strokeWidth={2.5} className="mt-0.5 shrink-0 text-emerald-600" />
+                  {r.lookFor}
+                </p>
+                <p className="flex items-start gap-1.5 rounded-lg bg-orange-50 p-2.5 text-xs leading-relaxed text-orange-800">
+                  <X size={13} strokeWidth={2.5} className="mt-0.5 shrink-0 text-orange-600" />
+                  {r.redFlag}
+                </p>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h3 className="mb-1 text-base font-bold text-slate-800">育成ロードマップ</h3>
+        <p className="mb-3 text-sm text-slate-500">
+          入社初日から認定クローザーまで。SVは各段階の合格条件で現場投入可否を判断します。
+        </p>
+        <div className="space-y-2.5">
+          {GROWTH_STAGES.map((g, i) => (
+            <Card key={g.stage} className="flex items-start gap-3 p-4">
+              <span className="font-display flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-xs font-bold text-white tabular-nums">
+                {i + 1}
+              </span>
+              <div className="min-w-0 flex-1">
+                <h4 className="text-sm font-bold text-slate-800">{g.stage}</h4>
+                <p className="mt-0.5 text-xs text-slate-500">学ぶ：{g.learn}</p>
+                <p className="text-xs text-slate-600">できる：{g.canDo}</p>
+                <p className="mt-1 inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
+                  合格条件：{g.passCondition}
+                </p>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

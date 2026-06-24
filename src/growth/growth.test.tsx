@@ -66,6 +66,8 @@ describe("Provide Growth Academy スモーク", () => {
     expect(await screen.findByText(/質問は量でなく順番/)).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "反論処理" }));
     expect(await screen.findByText("反論処理の基本型")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "評価・育成" }));
+    expect(await screen.findByText("ロープレ評価ルーブリック")).toBeInTheDocument();
 
     // クイズ・テスト → p1m5 を全問正解で合格
     await clickHref(user, "/quiz");

@@ -3,6 +3,7 @@ import { SALES_PROCESS } from "@/growth/data/salesProcess";
 import { SCENES } from "@/growth/data/scenes";
 import { HEARING_ITEMS } from "@/growth/data/hearingItems";
 import { OBJECTIONS } from "@/growth/data/objections";
+import { EVALUATION_RUBRIC, GROWTH_STAGES } from "@/growth/data/rubric";
 
 function unique<T>(arr: T[]): boolean {
   return new Set(arr).size === arr.length;
@@ -25,6 +26,20 @@ describe("現場ガイドのデータ整合", () => {
     expect(SCENES).toHaveLength(15);
     expect(HEARING_ITEMS).toHaveLength(19);
     expect(OBJECTIONS).toHaveLength(17);
+    expect(EVALUATION_RUBRIC).toHaveLength(12);
+    expect(GROWTH_STAGES).toHaveLength(10);
+  });
+
+  it("ルーブリック・育成段階の必須フィールドが空でない", () => {
+    EVALUATION_RUBRIC.forEach((r) => {
+      expect(r.criterion).not.toBe("");
+      expect(r.lookFor).not.toBe("");
+      expect(r.redFlag).not.toBe("");
+    });
+    GROWTH_STAGES.forEach((g) => {
+      expect(g.stage).not.toBe("");
+      expect(g.passCondition).not.toBe("");
+    });
   });
 
   it("必須フィールドが空でない", () => {
