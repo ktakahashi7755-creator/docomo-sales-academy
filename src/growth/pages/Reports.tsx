@@ -1,4 +1,5 @@
-import { Clock, Target, BookOpen, MessagesSquare, Check } from "lucide-react";
+import { Clock, Target, BookOpen, MessagesSquare, Check, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { CURRICULUM, ALL_LESSONS, QUIZ_MODULES } from "@/growth/data/curriculum";
 import { useProvide } from "@/growth/context/ProvideContext";
 import { isPassed } from "@/lib/progress";
@@ -176,6 +177,22 @@ export function Reports() {
           </ul>
         )}
       </Card>
+
+      {/* 育成ロードマップ・評価基準への導線 */}
+      <Link to="/field-guide?tab=rubric">
+        <Card className="flex items-center gap-3 p-5" hover>
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-slate-600 to-slate-700 text-white">
+            <Target size={20} strokeWidth={2} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-bold text-slate-800">育成ロードマップと評価基準</div>
+            <div className="text-xs text-slate-500">
+              現場投入の判断基準と、ロープレ評価の12観点を確認できます
+            </div>
+          </div>
+          <ArrowRight size={18} className="shrink-0 text-slate-300" />
+        </Card>
+      </Link>
     </div>
   );
 }
