@@ -55,6 +55,8 @@ describe("Provide Growth Academy スモーク", () => {
       await screen.findByRole("heading", { name: "個人情報とコンプライアンス" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "コンプライアンス注意" })).toBeInTheDocument();
+    // 現場ガイドへの導線（STEP1→販売プロセス）が貼られている
+    expect(document.querySelector('a[href="/field-guide?tab=process"]')).not.toBeNull();
 
     // 現場ガイド → 4タブの切替が動く
     await clickHref(user, "/field-guide");

@@ -17,7 +17,17 @@ import {
   MapPin,
   ShieldAlert,
   Info,
+  Compass,
 } from "lucide-react";
+
+/** STEP ごとに最も関連する現場ガイドのタブ。 */
+const GUIDE_BY_STEP: Record<string, { tab: string; label: string; desc: string }> = {
+  "step-1": { tab: "process", label: "販売プロセスを見る", desc: "15工程で現在地を掴む" },
+  "step-2": { tab: "hearing", label: "ヒアリング項目を見る", desc: "聞き方・深掘り・NG" },
+  "step-3": { tab: "scenes", label: "場面別トークを見る", desc: "実戦の会話例" },
+  "step-4": { tab: "objections", label: "反論処理集を見る", desc: "17パターンの切り返し" },
+  "step-5": { tab: "rubric", label: "評価ルーブリックを見る", desc: "12観点と育成段階" },
+};
 import { lessonById, stepOfLesson, ALL_LESSONS } from "@/growth/data/curriculum";
 import { useProvide } from "@/growth/context/ProvideContext";
 import { PRODUCTS } from "@/data/seed";
@@ -405,6 +415,24 @@ export function LessonDetail() {
             </Link>
           )}
         </div>
+      )}
+
+      {/* 現場ガイドで深める */}
+      {step && GUIDE_BY_STEP[step.id] && (
+        <Link to={`/field-guide?tab=${GUIDE_BY_STEP[step.id].tab}`}>
+          <Card className="flex items-center gap-3 p-4" hover>
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-slate-600 to-slate-700 text-white">
+              <Compass size={18} strokeWidth={2} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="text-sm font-bold text-slate-800">
+                現場ガイドで深める：{GUIDE_BY_STEP[step.id].label}
+              </div>
+              <div className="text-xs text-slate-500">{GUIDE_BY_STEP[step.id].desc}</div>
+            </div>
+            <ArrowRight size={18} className="shrink-0 text-slate-300" />
+          </Card>
+        </Link>
       )}
 
       {/* 完了・前後移動 */}

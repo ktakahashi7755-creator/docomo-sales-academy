@@ -1,4 +1,5 @@
-import { useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Check, X, ArrowRight, Lightbulb, MessageCircle } from "lucide-react";
 import type { TalkLine } from "@/growth/data/curriculum";
 import { SALES_PROCESS } from "@/growth/data/salesProcess";
@@ -18,8 +19,16 @@ const TABS = [
 
 type TabId = (typeof TABS)[number]["id"];
 
+const TAB_IDS = TABS.map((t) => t.id);
+function isTabId(value: string | null): value is TabId {
+  return value !== null && (TAB_IDS as readonly string[]).includes(value);
+}
+
 export function FieldGuide() {
-  const [tab, setTab] = useState<TabId>("process");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const param = searchParams.get("tab");
+  const tab: TabId = isTabId(param) ? param : "process";
+  const setTab = (id: TabId) => setSearchParams({ tab: id }, { replace: true });
 
   return (
     <div className="space-y-6">
