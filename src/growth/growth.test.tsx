@@ -48,9 +48,14 @@ describe("Provide Growth Academy スモーク", () => {
     await user.click(screen.getByRole("button", { name: /完了にする/ }));
     expect(await screen.findByText(/完了しています/)).toBeInTheDocument();
 
-    // 現場ガイド → タブ切替が動く
+    // 現場ガイド → 4タブの切替が動く
     await clickHref(user, "/field-guide");
     expect(await screen.findByRole("heading", { name: "現場ガイド" })).toBeInTheDocument();
+    expect(await screen.findByText("ファーストキャッチ")).toBeInTheDocument(); // 販売プロセス（初期）
+    await user.click(screen.getByRole("button", { name: "場面別トーク" }));
+    expect(await screen.findByText(/展示端末を見ている/)).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "ヒアリング" }));
+    expect(await screen.findByText(/質問は量でなく順番/)).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "反論処理" }));
     expect(await screen.findByText("反論処理の基本型")).toBeInTheDocument();
 

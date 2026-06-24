@@ -34,10 +34,10 @@ export function FieldGuide() {
             type="button"
             onClick={() => setTab(t.id)}
             aria-pressed={tab === t.id}
-            className={`min-h-[40px] rounded-full px-4 text-sm font-semibold transition ${
+            className={`min-h-[40px] rounded-full px-4 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 ${
               tab === t.id
-                ? "bg-blue-600 text-white shadow-sm"
-                : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                ? "bg-blue-600 font-bold text-white shadow-sm"
+                : "border border-slate-200 bg-white font-medium text-slate-600 hover:bg-slate-50"
             }`}
           >
             {t.label}
@@ -82,32 +82,38 @@ function ProcessView() {
               <p className="mt-0.5 text-sm text-slate-600">{s.purpose}</p>
               <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="rounded-xl bg-slate-50 p-3">
-                  <div className="text-[11px] font-bold text-slate-400">お客様心理</div>
+                  <div className="text-[11px] font-bold text-slate-500">お客様心理</div>
                   <p className="mt-0.5 text-sm text-slate-700">{s.customerMindset}</p>
                 </div>
                 <div className="rounded-xl bg-slate-50 p-3">
-                  <div className="text-[11px] font-bold text-slate-400">スタッフの動き</div>
+                  <div className="text-[11px] font-bold text-slate-500">スタッフの動き</div>
                   <p className="mt-0.5 text-sm text-slate-700">{s.staffAction}</p>
                 </div>
               </div>
               <ul className="mt-3 space-y-1.5">
-                {s.talkExamples.map((t) => (
-                  <li key={t} className="flex items-start gap-2 text-sm text-slate-700">
+                {s.talkExamples.map((t, i) => (
+                  <li
+                    key={`${s.no}-talk-${i}`}
+                    className="flex items-start gap-2 text-sm text-slate-700"
+                  >
                     <Check size={15} strokeWidth={2} className="mt-0.5 shrink-0 text-emerald-600" />
                     「{t}」
                   </li>
                 ))}
-                {s.ngExamples.map((t) => (
-                  <li key={t} className="flex items-start gap-2 text-sm text-slate-500">
+                {s.ngExamples.map((t, i) => (
+                  <li
+                    key={`${s.no}-ng-${i}`}
+                    className="flex items-start gap-2 text-sm text-slate-600"
+                  >
                     <X size={15} strokeWidth={2} className="mt-0.5 shrink-0 text-orange-600" />「{t}
                     」
                   </li>
                 ))}
               </ul>
               <div className="mt-3 flex flex-wrap items-center gap-1.5">
-                <span className="text-[11px] font-bold text-slate-400">SV評価:</span>
-                {s.svEvaluationPoints.map((p) => (
-                  <Chip key={p} tone="info">
+                <span className="text-[11px] font-bold text-slate-500">SV評価:</span>
+                {s.svEvaluationPoints.map((p, i) => (
+                  <Chip key={`${s.no}-sv-${i}`} tone="info">
                     {p}
                   </Chip>
                 ))}

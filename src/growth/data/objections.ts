@@ -29,7 +29,7 @@ export interface ObjectionCard {
 
 export const OBJECTIONS: ObjectionCard[] = [
   {
-    id: "obj-expensive",
+    id: "fg-obj-expensive",
     objection: "高い",
     customerRealIntent: "価格そのものより、納得が不足している",
     acceptancePhrase: "高く感じますよね",
@@ -40,7 +40,7 @@ export const OBJECTIONS: ObjectionCard[] = [
     closeConnection: "総額比較へ進む",
   },
   {
-    id: "obj-troublesome",
+    id: "fg-obj-troublesome",
     objection: "面倒くさい",
     customerRealIntent: "手続きの負担が怖い",
     acceptancePhrase: "手続きが面倒そうに感じますよね",
@@ -50,7 +50,7 @@ export const OBJECTIONS: ObjectionCard[] = [
     closeConnection: "工程を分解して見せる",
   },
   {
-    id: "obj-notime",
+    id: "fg-obj-notime",
     objection: "時間がない",
     customerRealIntent: "今この場で止まりたくない",
     acceptancePhrase: "お時間ないですよね",
@@ -60,7 +60,7 @@ export const OBJECTIONS: ObjectionCard[] = [
     closeConnection: "3分相談へ",
   },
   {
-    id: "obj-family",
+    id: "fg-obj-family",
     objection: "家族に相談したい",
     customerRealIntent: "単独で決められない",
     acceptancePhrase: "ご家族に確認したいですよね",
@@ -70,7 +70,7 @@ export const OBJECTIONS: ObjectionCard[] = [
     closeConnection: "比較表の作成へ",
   },
   {
-    id: "obj-nottoday",
+    id: "fg-obj-nottoday",
     objection: "今はいい",
     customerRealIntent: "優先順位が低い",
     acceptancePhrase: "今は困っていないなら自然です",
@@ -80,7 +80,7 @@ export const OBJECTIONS: ObjectionCard[] = [
     closeConnection: "将来条件の確認へ",
   },
   {
-    id: "obj-docomo-expensive",
+    id: "fg-obj-docomo-expensive",
     objection: "ドコモは高いイメージ",
     customerRealIntent: "過去の認識が強い",
     acceptancePhrase: "その印象、よく分かります",
@@ -90,7 +90,7 @@ export const OBJECTIONS: ObjectionCard[] = [
     closeConnection: "総額試算へ",
   },
   {
-    id: "obj-otherpoint",
+    id: "fg-obj-otherpoint",
     objection: "他社ポイントを貯めている",
     customerRealIntent: "今の経済圏を崩したくない",
     acceptancePhrase: "その経済圏、便利ですよね",
@@ -100,7 +100,7 @@ export const OBJECTIONS: ObjectionCard[] = [
     closeConnection: "否定しない比較へ",
   },
   {
-    id: "obj-card",
+    id: "fg-obj-card",
     objection: "クレジットカードは増やしたくない",
     customerRealIntent: "管理が嫌",
     acceptancePhrase: "増やしたくない感覚、自然です",
@@ -110,7 +110,7 @@ export const OBJECTIONS: ObjectionCard[] = [
     closeConnection: "支払い方法の確認へ",
   },
   {
-    id: "obj-net-asis",
+    id: "fg-obj-net-asis",
     objection: "ネットは今のままでいい",
     customerRealIntent: "優先度が低い",
     acceptancePhrase: "今の回線に満足なら、無理に変える必要はありません",
@@ -120,7 +120,7 @@ export const OBJECTIONS: ObjectionCard[] = [
     closeConnection: "固定回線の比較へ",
   },
   {
-    id: "obj-zandebt",
+    id: "fg-obj-zandebt",
     objection: "端末残債がある",
     customerRealIntent: "二重払いが怖い",
     acceptancePhrase: "残債があると、時期の判断が大事ですよね",
@@ -130,7 +130,7 @@ export const OBJECTIONS: ObjectionCard[] = [
     closeConnection: "タイミング提案へ",
   },
   {
-    id: "obj-switch-anxiety",
+    id: "fg-obj-switch-anxiety",
     objection: "乗り換えが不安",
     customerRealIntent: "手続き全体が見えない",
     acceptancePhrase: "初めてだと不安ですよね",
@@ -140,7 +140,7 @@ export const OBJECTIONS: ObjectionCard[] = [
     closeConnection: "不安の分解へ",
   },
   {
-    id: "obj-datamove",
+    id: "fg-obj-datamove",
     objection: "データ移行が不安",
     customerRealIntent: "生活情報を失いたくない",
     acceptancePhrase: "大事なデータ、心配ですよね",
@@ -150,7 +150,7 @@ export const OBJECTIONS: ObjectionCard[] = [
     closeConnection: "サポート内容の説明へ",
   },
   {
-    id: "obj-procedure",
+    id: "fg-obj-procedure",
     objection: "手続きが面倒",
     customerRealIntent: "考えることが多くて負担",
     acceptancePhrase: "一度に考えると面倒ですよね",
@@ -160,7 +160,7 @@ export const OBJECTIONS: ObjectionCard[] = [
     closeConnection: "工程の見える化へ",
   },
   {
-    id: "obj-cancelfee",
+    id: "fg-obj-cancelfee",
     objection: "解約金が不安",
     customerRealIntent: "想定外の費用が怖い",
     acceptancePhrase: "費用は気になりますよね",
@@ -170,7 +170,7 @@ export const OBJECTIONS: ObjectionCard[] = [
     closeConnection: "要確認を前提に着座へ",
   },
   {
-    id: "obj-cashback",
+    id: "fg-obj-cashback",
     objection: "キャッシュバックだけ知りたい",
     customerRealIntent: "短期の損得で比較したい",
     acceptancePhrase: "施策、気になりますよね",
@@ -180,7 +180,7 @@ export const OBJECTIONS: ObjectionCard[] = [
     closeConnection: "キャンペーンと恒常制度の分離へ",
   },
   {
-    id: "obj-suspicious",
+    id: "fg-obj-suspicious",
     objection: "怪しい、営業されたくない",
     customerRealIntent: "警戒している",
     acceptancePhrase: "そう見えますよね",
@@ -190,7 +190,7 @@ export const OBJECTIONS: ObjectionCard[] = [
     closeConnection: "小さな同意へ",
   },
   {
-    id: "obj-badexperience",
+    id: "fg-obj-badexperience",
     objection: "前に嫌な思いをした",
     customerRealIntent: "不信感がある",
     acceptancePhrase: "それは嫌でしたね",
