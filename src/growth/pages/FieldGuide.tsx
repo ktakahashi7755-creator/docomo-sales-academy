@@ -347,6 +347,16 @@ function ObjectionsView() {
             <ArrowRight size={13} className="shrink-0 text-blue-500" />
             {o.closeConnection}
           </p>
+          <div className="mt-3 space-y-1.5 border-t border-slate-100 pt-3">
+            <p className="text-xs leading-relaxed text-slate-600">
+              <span className="font-bold text-slate-500">新人向け：</span>
+              {o.rookieExplanation}
+            </p>
+            <p className="text-xs leading-relaxed text-slate-600">
+              <span className="font-bold text-slate-500">上級者の工夫：</span>
+              {o.advancedExplanation}
+            </p>
+          </div>
         </Card>
       ))}
     </div>
