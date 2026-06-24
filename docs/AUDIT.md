@@ -213,3 +213,9 @@
 - [x] **K-R4🟡(code)** SW 登録を `document.readyState` 分岐で load 後実行でも確実に。
 - [x] **K-R5🟡(code)** E2E のシナリオ選択ロケータを `button[aria-pressed="false"]` に限定（誤クリック回避）。
 - [x] **security 🔴0** 鍵非露出・SW はトークン/越境応答を残さない・公開配信は seed のみ（個人情報なし）。
+
+### V2 Phase A 商材マスター（2026-06-24）— data-integrity
+
+- [x] **A-D9 🟡(data)** home5g の oneLiner/pitch が「実質無料」を条件併記なしで使い、自らの prohibitedClaims に近接 → oneLiner/pitch に「（条件あり）」を併記して解消。
+- [ ] **A-D10 🟡(data)** 新商材 ahamo / eximo-irumo / kaedoki / kaedoki-plus の数値は研究レポート由来で `freshnessStatus=needs_review`・「（要確認）」運用。公式ライブ照合は 403 で未実施（A-D4 と同状況）。顧客提示前に各 officialUrl で再確認し、確定後に verified へ・officialCheckedAt を更新。
+- [ ] **A-D11 🟢(data)** dcard-platinum/dcard-regular/hikari-1g/denki/gas の officialCheckedAt=2024-06-01 は90日超＝鮮度警告対象。freshnessOf の日付判定で UI は要確認表示される（dcard-gold は明示 needs_review 付与済み）。公式再確認後に確認日と値を更新。
