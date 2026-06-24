@@ -49,7 +49,11 @@ export type ProductCategory =
   | "ホームルーター"
   | "ドコモでんき"
   | "ドコモガス"
+  | "端末購入プログラム"
   | "他社比較";
+
+/** 公式情報の鮮度。needs_review は90日超または未照合で、提案前に要再確認。 */
+export type FreshnessStatus = "verified" | "needs_review";
 
 export interface Product {
   id: string;
@@ -68,6 +72,14 @@ export interface Product {
   officialUrl: string;
   officialCheckedAt: string; // YYYY-MM-DD
   version: number;
+  /** 公式情報の鮮度。未指定は officialCheckedAt から判定（90日超で要確認）。 */
+  freshnessStatus?: FreshnessStatus;
+  /** キャンペーン（期間・条件付き施策）か。true は恒常制度と分けて扱う。 */
+  isCampaign?: boolean;
+  /** この商材で言ってはいけない断定・誤認表現（教育・コンプラ用）。 */
+  prohibitedClaims?: string[];
+  /** この商材を扱う際のコンプラ注意（本人入力・条件省略禁止など）。 */
+  complianceNotes?: string[];
 }
 
 // ===== トークスクリプト =====

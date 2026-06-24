@@ -18,6 +18,7 @@ import {
 import { lessonById, stepOfLesson, ALL_LESSONS } from "@/growth/data/curriculum";
 import { useProvide } from "@/growth/context/ProvideContext";
 import { PRODUCTS } from "@/data/seed";
+import { needsReview } from "@/lib/product";
 import {
   Card,
   PageHeader,
@@ -61,6 +62,7 @@ export function LessonDetail() {
   const products = (lesson.productIds ?? [])
     .map((id) => PRODUCTS.find((p) => p.id === id))
     .filter((p): p is (typeof PRODUCTS)[number] => Boolean(p));
+  const today = new Date().toISOString().slice(0, 10);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
@@ -256,35 +258,64 @@ export function LessonDetail() {
             料金・還元・補償は公式情報と最終確認日を正とします。提案前に必ず確認してください。
           </p>
           <div className="space-y-3">
-            {products.map((p) => (
-              <div key={p.id} className="rounded-xl border border-slate-100 p-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-slate-800">{p.name}</span>
-                  {p.tier && (
-                    <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold uppercase text-slate-500">
-                      {p.tier}
-                    </span>
+            {products.map((p) => {
+              const review = needsReview(p, today);
+              return (
+                <div key={p.id} className="rounded-xl border border-slate-100 p-4">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-bold text-slate-800">{p.name}</span>
+                    {p.tier && (
+                      <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold uppercase text-slate-500">
+                        {p.tier}
+                      </span>
+                    )}
+                    {p.isCampaign && (
+                      <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold text-blue-600">
+                        キャンペーン
+                      </span>
+                    )}
+                    {review && (
+                      <span className="inline-flex items-center gap-1 rounded bg-orange-50 px-1.5 py-0.5 text-[10px] font-bold text-orange-600">
+                        <AlertTriangle size={10} strokeWidth={2.5} /> 要確認
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1 text-xs text-slate-500">{p.oneLiner}</p>
+                  <ul className="mt-2 space-y-1">
+                    {p.benefits.slice(0, 2).map((b, i) => (
+                      <li key={i} className="flex gap-1.5 text-xs text-slate-600">
+                        <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-blue-500" />
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                  {p.prohibitedClaims && p.prohibitedClaims.length > 0 && (
+                    <div className="mt-2 rounded-lg bg-orange-50 p-2.5">
+                      <div className="flex items-center gap-1 text-[11px] font-bold text-orange-700">
+                        <AlertTriangle size={11} strokeWidth={2.5} /> 言ってはいけない表現
+                      </div>
+                      <ul className="mt-1 space-y-0.5">
+                        {p.prohibitedClaims.map((c) => (
+                          <li key={c} className="text-[11px] leading-relaxed text-orange-700/90">
+                            ・{c}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   )}
+                  <a
+                    href={p.officialUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`mt-2 inline-flex items-center gap-1 text-xs font-medium hover:underline ${
+                      review ? "text-orange-600" : "text-blue-600"
+                    }`}
+                  >
+                    公式情報を見る（確認日 {p.officialCheckedAt}） <ExternalLink size={12} />
+                  </a>
                 </div>
-                <p className="mt-1 text-xs text-slate-500">{p.oneLiner}</p>
-                <ul className="mt-2 space-y-1">
-                  {p.benefits.slice(0, 2).map((b, i) => (
-                    <li key={i} className="flex gap-1.5 text-xs text-slate-600">
-                      <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-blue-500" />
-                      {b}
-                    </li>
-                  ))}
-                </ul>
-                <a
-                  href={p.officialUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:underline"
-                >
-                  公式情報を見る（確認日 {p.officialCheckedAt}） <ExternalLink size={12} />
-                </a>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </Card>
       )}
