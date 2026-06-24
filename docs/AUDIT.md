@@ -219,3 +219,8 @@
 - [x] **A-D9 🟡(data)** home5g の oneLiner/pitch が「実質無料」を条件併記なしで使い、自らの prohibitedClaims に近接 → oneLiner/pitch に「（条件あり）」を併記して解消。
 - [ ] **A-D10 🟡(data)** 新商材 ahamo / eximo-irumo / kaedoki / kaedoki-plus の数値は研究レポート由来で `freshnessStatus=needs_review`・「（要確認）」運用。公式ライブ照合は 403 で未実施（A-D4 と同状況）。顧客提示前に各 officialUrl で再確認し、確定後に verified へ・officialCheckedAt を更新。
 - [ ] **A-D11 🟢(data)** dcard-platinum/dcard-regular/hikari-1g/denki/gas の officialCheckedAt=2024-06-01 は90日超＝鮮度警告対象。freshnessOf の日付判定で UI は要確認表示される（dcard-gold は明示 needs_review 付与済み）。公式再確認後に確認日と値を更新。
+
+### V2 Phase D/E（2026-06-24）— data-integrity
+
+- [x] **A-D12** Phase D/E（git diff 1415bfb..dcaaae8）の追加クイズ6問（q-p1m4-6 / q-p2m1-6 / q-p3m1-6 / q-p6m2-7 / q-p8m1-6 / q-p10m1-7）と growth/data/rubric.ts を検証。🔴/🟡ゼロ。NG/Good設計が正典と一致：ポイ活MAX 実質2,948円＝条件付き（無条件断定をNG選択肢化）・GOLD約18,600円相当／PLATINUM実質18,700円／年会費11,000円 不変・「必ず安くなる/誰でも対象」をNG・本人入力維持・詳細個人情報の早期取得をNG。rubric.ts は料金数値を含まず技法/基準のみ。
+- [ ] **A-D13 🟡(継続/H-Q1)** quiz.ts の数値（880/2,948/18,600/11,000/18,700円）は seed と単一ソース化されておらず文字列複製。今回も正典一致だが、seed 更新時の追従漏れリスクは残存。単一ソース化は将来Phaseで検討。
