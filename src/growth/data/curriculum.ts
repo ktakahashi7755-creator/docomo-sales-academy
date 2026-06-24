@@ -56,6 +56,12 @@ export interface LessonMistake {
   fix: string;
 }
 
+/** 販売チャネル（店内・イベント・外販・軒先）ごとの違い。 */
+export interface ChannelDifference {
+  channel: "店内" | "イベント" | "外販" | "軒先";
+  point: string;
+}
+
 export interface Lesson {
   id: string;
   stepId: string;
@@ -67,12 +73,18 @@ export interface Lesson {
   keyPoints: string[];
   /** 現場のひとこと（コーチングの一言）。 */
   tip?: string;
+  /** この回が現場のどの場面に効くか（前提）。 */
+  fieldContext?: string;
   /** NG/Good のトーク例。 */
   examples?: LessonExample;
   /** 会話で学ぶ（リアルなトーク台本・注釈つき）。 */
   talkScript?: TalkLine[];
+  /** チャネル別の違い（店内・イベント・外販・軒先）。 */
+  channelDifferences?: ChannelDifference[];
   /** よくある失敗とリカバリー。 */
   mistakes?: LessonMistake[];
+  /** コンプライアンス注意（本人入力・条件省略禁止など、この回で特に守る点）。 */
+  complianceNotes?: string[];
   /** この回の実践課題（現場・OJTでやってみる宿題）。 */
   practice?: string;
   /** data/quiz の moduleId（確認テスト）。 */
@@ -229,6 +241,30 @@ export const CURRICULUM: CurriculumStep[] = [
         ],
         practice:
           "通行中の方への最初のひと声を3パターン用意し、声に出して練習しましょう。それぞれ「相手の得」が15秒以内で伝わるかを確認します。",
+        fieldContext:
+          "同じ「声かけ」でも、お客様が来店している店内と、買うつもりのないイベント・外販・軒先では入り方が変わります。場面に合わせて入口を選びます。",
+        channelDifferences: [
+          {
+            channel: "店内",
+            point:
+              "来店動機がある前提。まず一歩引いて「ご自由にご覧ください」、視線が止まった商品にだけ声をかける。",
+          },
+          {
+            channel: "イベント",
+            point:
+              "買うつもりがない状態。成約でなく『足を止める→相談理由を1つ作る→座ってもらう』を狙い、参加ハードルの低い診断・話題で入る。",
+          },
+          {
+            channel: "外販",
+            point:
+              "拒否が出やすい。許可取りを先に、「10秒だけ」と所要を区切り、続けるかはお客様に委ねる。",
+          },
+          {
+            channel: "軒先",
+            point:
+              "急いでいる人が多い。追わずに離脱の余地を先に渡し、再接点（後日用の比較）として印象だけ残す。",
+          },
+        ],
       },
       {
         id: "l1-3",
@@ -332,6 +368,12 @@ export const CURRICULUM: CurriculumStep[] = [
         ],
         practice:
           "「パスワードを代わりに入力してほしい」と言われた場面を想定し、断らずに原則を守る言い回しを声に出して練習しましょう。理由＋伴走の2点を必ず入れます。",
+        complianceNotes: [
+          "パスワード・認証コードは必ずお客様ご自身が入力する。代理入力の導線・説明を作らない",
+          "本人確認情報・不要な個人情報は、必要になってから最小限だけ扱う",
+          "料金・還元・補償・キャンペーン条件は断定せず、公式情報と最終確認日で照合する",
+          "高齢者・外国籍のお客様には、理解確認を増やす",
+        ],
         quizModuleId: "p1m4",
       },
     ],
@@ -453,6 +495,27 @@ export const CURRICULUM: CurriculumStep[] = [
         ],
         practice:
           "「気づかい」から入る声かけを3つ書き出し、それぞれに「相手の得」を1つずつ足してみましょう。声に出して、15秒以内で言えるかを確認します。",
+        channelDifferences: [
+          {
+            channel: "店内",
+            point:
+              "「お困りごとありませんか」と相談整理から。売り込みでなく不安の翻訳者として入る。",
+          },
+          {
+            channel: "イベント",
+            point:
+              "「スマホ代か家のネット、どちらか気になりませんか」と、買う前のテーマで一瞬の選択をしてもらう。",
+          },
+          {
+            channel: "外販",
+            point: "許可取り＋低負荷テーマ。「料金の見直し相談だけ10秒いいですか」で警戒を下げる。",
+          },
+          {
+            channel: "軒先",
+            point:
+              "止めない前提で。「高いなと思うことがあれば後日用に比較だけ」と離脱許可を添える。",
+          },
+        ],
         scenarioId: "sc11",
       },
       {
@@ -635,6 +698,11 @@ export const CURRICULUM: CurriculumStep[] = [
         ],
         practice:
           "MAX / ポイ活MAX / mini それぞれが「どんな使い方の人に合うか」を一言で言えるよう、3つの説明文を作って声に出してみましょう。金額は入れず、使い方で表現します。",
+        complianceNotes: [
+          "「誰でも最安」「必ず安くなる」と断定しない。料金は使い方と条件で変わる",
+          "ポイ活MAXの『実質』額は対象決済・ポイント充当・割引が前提。条件を必ず添える",
+          "月額・割引条件は公式ページと最終確認日で照合する（要確認の数値は断定しない）",
+        ],
         quizModuleId: "p2m1",
         productIds: ["plan-max", "plan-poikatsu-max", "plan-mini"],
       },
@@ -692,6 +760,11 @@ export const CURRICULUM: CurriculumStep[] = [
         ],
         practice:
           "「年会費が高い」と言われた場面を想定し、受け止め→置き換えの説明→割引とポイントの合計（公式確認つき）の順で、30秒のトークを組み立ててみましょう。",
+        complianceNotes: [
+          "「必ず元が取れる」「誰でもお得」と断定しない。回収は利用額しだい",
+          "カードの審査・条件を断定しない（作れる前提で話さない）",
+          "還元率・補償条件は変更されうるため公式と最終確認日で照合する。PLATINUMは万人向けにしない",
+        ],
         quizModuleId: "p3m1",
         scenarioId: "sc6",
         productIds: ["dcard-regular", "dcard-gold", "dcard-platinum"],
@@ -749,6 +822,11 @@ export const CURRICULUM: CurriculumStep[] = [
         ],
         practice:
           "「工事できる家庭」「工事が難しい家庭」のそれぞれに、どの自宅ネットをどんな理由で提案するかを書き出してみましょう。確認すべき項目（エリア・工事可否）も添えます。",
+        complianceNotes: [
+          "home 5G は登録した設置場所住所でのみ利用可。「どこでも使える」「持ち運べる」と言わない",
+          "ドコモ光10ギガやワンコイン等のキャンペーンは期間・条件付き。恒常料金と混同しない",
+          "提供エリア・工事可否・解約金は必ず確認。でんき・ガスはエリア・名義の確認が必要",
+        ],
         productIds: ["hikari-1g", "hikari-10g", "home5g", "denki", "gas"],
       },
       {
@@ -1034,6 +1112,11 @@ export const CURRICULUM: CurriculumStep[] = [
         ],
         practice:
           "申込前に伝える「所要時間・持ち物・やること」の3点セットを、自分の言葉で30秒にまとめてみましょう。未成約時に渡す宿題も1つ用意します。",
+        complianceNotes: [
+          "申込前に割引条件・適用タイミング・必要書類・後工程を確認する。重要な条件を飛ばさない",
+          "パスワード・認証コードはお客様ご自身が入力。スタッフは手順案内のみ",
+          "端末購入プログラムは残価・返却条件・早期利用料を省略しない。「実質0円」と言い切らない",
+        ],
         scenarioId: "sc10",
       },
       {
@@ -1163,6 +1246,24 @@ export const CURRICULUM: CurriculumStep[] = [
         ],
         practice:
           "ロープレを1本通しでやり切り、AI評価で最もスコアの低い項目を1つ特定しましょう。その項目だけを意識して、もう一度通しで練習します。",
+        channelDifferences: [
+          {
+            channel: "店内",
+            point: "来店動機を起点に、相談整理→着座→料金診断まで一気通貫で運ぶ練習。",
+          },
+          {
+            channel: "イベント",
+            point: "足止め→相談理由→着座の前半に重点。買う前提でない相手をどう座らせるか。",
+          },
+          {
+            channel: "外販",
+            point: "許可取りと離脱許可を保ちつつ、短時間で要点を引き出す前半勝負の練習。",
+          },
+          {
+            channel: "軒先",
+            point: "1回で決めず、再接点を残す『引く技術』とお見送りの質を磨く。",
+          },
+        ],
         scenarioId: "sc7",
       },
       {

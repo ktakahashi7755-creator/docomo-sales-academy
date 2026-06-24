@@ -14,6 +14,8 @@ import {
   MessageCircle,
   AlertTriangle,
   Target,
+  MapPin,
+  ShieldAlert,
 } from "lucide-react";
 import { lessonById, stepOfLesson, ALL_LESSONS } from "@/growth/data/curriculum";
 import { useProvide } from "@/growth/context/ProvideContext";
@@ -86,6 +88,16 @@ export function LessonDetail() {
         }
       />
 
+      {/* 現場の前提 */}
+      {lesson.fieldContext && (
+        <Card className="flex items-start gap-3 bg-slate-50/80 p-4">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-slate-500">
+            <MapPin size={16} strokeWidth={2} />
+          </span>
+          <p className="text-sm leading-relaxed text-slate-600">{lesson.fieldContext}</p>
+        </Card>
+      )}
+
       {/* 本文 */}
       <Card className="p-6 sm:p-8">
         <div className="space-y-4">
@@ -117,6 +129,46 @@ export function LessonDetail() {
           </div>
         )}
       </Card>
+
+      {/* チャネル別の違い */}
+      {lesson.channelDifferences && lesson.channelDifferences.length > 0 && (
+        <Card className="p-6">
+          <div className="mb-4 flex items-center gap-2">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-50 text-teal-600">
+              <MapPin size={16} strokeWidth={2} />
+            </span>
+            <h2 className="text-sm font-bold text-slate-800">チャネル別の違い</h2>
+          </div>
+          <ul className="space-y-2.5">
+            {lesson.channelDifferences.map((c) => (
+              <li key={c.channel} className="flex items-start gap-3">
+                <span className="mt-0.5 inline-flex w-16 shrink-0 justify-center rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-600">
+                  {c.channel}
+                </span>
+                <span className="text-sm leading-relaxed text-slate-700">{c.point}</span>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+
+      {/* コンプライアンス注意 */}
+      {lesson.complianceNotes && lesson.complianceNotes.length > 0 && (
+        <Card className="border-l-4 border-l-orange-400 p-5">
+          <div className="flex items-center gap-2 text-orange-700">
+            <ShieldAlert size={18} strokeWidth={2} />
+            <h2 className="text-sm font-bold">コンプライアンス注意</h2>
+          </div>
+          <ul className="mt-2 space-y-1.5">
+            {lesson.complianceNotes.map((n) => (
+              <li key={n} className="flex items-start gap-2 text-sm leading-relaxed text-slate-700">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-orange-400" />
+                {n}
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
 
       {/* 現場のひとこと */}
       {lesson.tip && (
