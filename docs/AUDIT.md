@@ -224,3 +224,7 @@
 
 - [x] **A-D12** Phase D/E（git diff 1415bfb..dcaaae8）の追加クイズ6問（q-p1m4-6 / q-p2m1-6 / q-p3m1-6 / q-p6m2-7 / q-p8m1-6 / q-p10m1-7）と growth/data/rubric.ts を検証。🔴/🟡ゼロ。NG/Good設計が正典と一致：ポイ活MAX 実質2,948円＝条件付き（無条件断定をNG選択肢化）・GOLD約18,600円相当／PLATINUM実質18,700円／年会費11,000円 不変・「必ず安くなる/誰でも対象」をNG・本人入力維持・詳細個人情報の早期取得をNG。rubric.ts は料金数値を含まず技法/基準のみ。
 - [ ] **A-D13 🟡(継続/H-Q1)** quiz.ts の数値（880/2,948/18,600/11,000/18,700円）は seed と単一ソース化されておらず文字列複製。今回も正典一致だが、seed 更新時の追従漏れリスクは残存。単一ソース化は将来Phaseで検討。
+
+### 商材 公式数値の検証（2026-06-24）
+
+- [ ] **A-D14** needs_review 商材10件（dcard-gold/platinum/regular・hikari-1g・denki・gas・ahamo・eximo-irumo・kaedoki・kaedoki-plus）の公式数値の確認が必要。エージェント環境では docomo/ahamo/dcard が 403 で取得不可（サイト側ボット遮断、proxy relay失敗ではない）。`docs/PRODUCT_VERIFICATION_CHECKLIST.md` を用意。高橋または現場が公式値を記入し次第、seed/curriculum/quiz を更新して verified 化する。捏造はしない。
