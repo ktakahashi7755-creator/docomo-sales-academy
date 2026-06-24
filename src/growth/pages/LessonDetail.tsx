@@ -16,6 +16,7 @@ import {
   Target,
   MapPin,
   ShieldAlert,
+  Info,
 } from "lucide-react";
 import { lessonById, stepOfLesson, ALL_LESSONS } from "@/growth/data/curriculum";
 import { useProvide } from "@/growth/context/ProvideContext";
@@ -88,14 +89,14 @@ export function LessonDetail() {
         }
       />
 
-      {/* 現場の前提 */}
+      {/* 現場の前提（補助情報・フラット表示） */}
       {lesson.fieldContext && (
-        <Card className="flex items-start gap-3 bg-slate-50/80 p-4">
+        <div className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-slate-500">
-            <MapPin size={16} strokeWidth={2} />
+            <Info size={16} strokeWidth={2} />
           </span>
           <p className="text-sm leading-relaxed text-slate-600">{lesson.fieldContext}</p>
-        </Card>
+        </div>
       )}
 
       {/* 本文 */}
@@ -130,9 +131,9 @@ export function LessonDetail() {
         )}
       </Card>
 
-      {/* チャネル別の違い */}
+      {/* チャネル別の違い（補助情報・フラット表示） */}
       {lesson.channelDifferences && lesson.channelDifferences.length > 0 && (
-        <Card className="p-6">
+        <div className="rounded-2xl border border-slate-100 bg-slate-50 p-6">
           <div className="mb-4 flex items-center gap-2">
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-50 text-teal-600">
               <MapPin size={16} strokeWidth={2} />
@@ -142,14 +143,14 @@ export function LessonDetail() {
           <ul className="space-y-2.5">
             {lesson.channelDifferences.map((c) => (
               <li key={c.channel} className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex w-16 shrink-0 justify-center rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-600">
+                <span className="mt-0.5 inline-flex w-16 shrink-0 justify-center whitespace-nowrap rounded-full bg-white px-2 py-0.5 text-[11px] font-bold text-slate-600">
                   {c.channel}
                 </span>
                 <span className="text-sm leading-relaxed text-slate-700">{c.point}</span>
               </li>
             ))}
           </ul>
-        </Card>
+        </div>
       )}
 
       {/* コンプライアンス注意 */}
