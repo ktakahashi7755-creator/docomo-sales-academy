@@ -228,3 +228,8 @@
 ### 商材 公式数値の検証（2026-06-24）
 
 - [ ] **A-D14** needs_review 商材10件（dcard-gold/platinum/regular・hikari-1g・denki・gas・ahamo・eximo-irumo・kaedoki・kaedoki-plus）の公式数値の確認が必要。エージェント環境では docomo/ahamo/dcard が 403 で取得不可（サイト側ボット遮断、proxy relay失敗ではない）。`docs/PRODUCT_VERIFICATION_CHECKLIST.md` を用意。高橋または現場が公式値を記入し次第、seed/curriculum/quiz を更新して verified 化する。捏造はしない。
+
+### クイズ全面改稿の事実値検証（2026-06-24）— data-integrity
+
+- [x] **A-D15** quiz.ts 全面改稿（43問：正解位置の分散 5/33/3/0→11/8/11/11・誤答を現実的 near-miss 化）を検証。🔴/🟡ゼロ。正典一致を全件確認：GOLD年会費11,000円／PLATINUM 29,700円（5,500円・無料は実在しないダミー誤答、explanationで混同防止）、GOLD合計訴求 約18,600円相当・PLATINUM切替 実質18,700円、ポイ活MAX 実質2,948円＝条件付き正答（無条件/基本料金/キャンペーン価格を誤答）、mini=4GB小容量/MAX=無制限。新規誤答に断定的事実主張・捏造数値の混入なし。コンプラ振り分け（本人入力/断定禁止/個人情報最小限）も方針どおり。
+- [ ] **A-D16 🟡(継続/A-D13)** 本改稿でも quiz.ts の数値は seed と文字列複製のまま。seed 更新時の追従漏れリスクは残存（単一ソース化は将来Phaseで検討）。
