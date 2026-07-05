@@ -1,6 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
+  // タッチ端末でhoverスタイルが「張り付く」のを防ぐ（hover対応デバイスのみ適用）
+  future: { hoverOnlyWhenSupported: true },
   theme: {
     extend: {
       colors: {

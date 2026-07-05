@@ -17,6 +17,16 @@ body {
   font-family: "Noto Sans JP", "Poppins", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* 長いURL・英語連続文字でも横はみ出しさせない保険 */
+  overflow-wrap: break-word;
+  /* iOSのタップ時ハイライトを消す（フォーカスリングは別途維持） */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* iOSで横スクロールのゴム引きが起きないよう、ルートで横方向を封じる */
+html,
+body {
+  overflow-x: hidden;
 }
 
 /* 数字・英字の見出しは Poppins を優先（料金やLevel表記の視認性向上） */

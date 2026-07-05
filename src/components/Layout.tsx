@@ -106,7 +106,7 @@ export function Layout() {
       <div className="min-w-0 flex-1 pb-24 md:pb-0">
         {!isBackendEnabled && (
           <div className="bg-caution-soft px-4 py-1.5 text-center text-xs font-medium text-caution">
-            デモモード：Supabase未接続のためローカルseedで動作中（進捗は保存されません）
+            デモモード：Supabase未接続のためローカルseedで動作中（進捗はこの端末内のみに保存）
           </div>
         )}
         <main className="mx-auto w-full max-w-content px-4 py-6 md:px-8 md:py-8">
