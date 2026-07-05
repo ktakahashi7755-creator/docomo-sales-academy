@@ -1,8 +1,20 @@
 import { useState } from "react";
-import { SCENARIOS, DIFFICULTY, EVAL_ITEMS } from "@/data/seed";
+import { Link } from "react-router-dom";
+import { SCENARIOS, DIFFICULTY, EVAL_ITEMS, TALK_SCRIPTS } from "@/data/seed";
 import { Card, DifficultyMeter, PageHeader, SectionTitle } from "@/components/ui";
 import { isBackendEnabled } from "@/lib/supabase";
+import type { Scenario } from "@/lib/types";
 import { Mic, Keyboard, Sparkles } from "lucide-react";
+
+/** シナリオの目的に合ったスクリプト練習台本を選ぶ */
+function scriptIdForScenario(s: Scenario): string {
+  if (s.goal.includes("PLATINUM")) return "ts-platinum";
+  if (s.goal.includes("dカード")) return "ts-gold";
+  if (s.goal.includes("クロージング")) return "ts-catch-seated";
+  if (s.goal.includes("料金診断") || s.goal.includes("MNP") || s.goal.includes("光") || s.goal.includes("セット"))
+    return "ts-catch-seated";
+  return "ts-catch-basic";
+}
 
 export function Roleplay() {
   const [scenarioId, setScenarioId] = useState(SCENARIOS[6].id); // 既定：PLATINUM対象
@@ -107,15 +119,21 @@ export function Roleplay() {
             </dl>
 
             <div className="mt-5 space-y-2">
-              <button className="flex w-full items-center justify-center gap-2 rounded-lg bg-ink px-4 py-2.5 text-sm font-semibold text-paper shadow-card transition-all hover:-translate-y-0.5 hover:shadow-lift">
-                <Keyboard size={16} /> テキストロープレを開始
-              </button>
+              <Link
+                to={`/roleplay/practice/${scriptIdForScenario(scenario)}`}
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-ink px-4 py-2.5 text-sm font-semibold text-paper shadow-card transition-all hover:-translate-y-0.5 hover:shadow-lift"
+              >
+                <Keyboard size={16} /> スクリプト練習を開始
+              </Link>
+              <p className="text-center text-[11px] leading-relaxed text-ink-muted">
+                台本：{TALK_SCRIPTS.find((t) => t.id === scriptIdForScenario(scenario))?.title}
+              </p>
               <button
                 disabled={!isBackendEnabled}
                 className="flex w-full items-center justify-center gap-2 rounded-lg border border-paper-line bg-paper px-4 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-paper-soft disabled:opacity-50 disabled:hover:bg-paper"
                 title={isBackendEnabled ? "" : "AI API設定後に有効化されます"}
               >
-                <Mic size={16} /> 音声ロープレを開始
+                <Mic size={16} /> 音声ロープレを開始（AI）
               </button>
             </div>
             {!isBackendEnabled && (

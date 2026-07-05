@@ -1,57 +1,16 @@
 import { Link, useParams } from "react-router-dom";
 import { TALK_SCRIPTS } from "@/data/seed";
 import { Card, DifficultyMeter, PhaseChip } from "@/components/ui";
-import type { DialogueTurn, TalkSection } from "@/lib/types";
+import { DialogueBubble } from "@/components/DialogueBubble";
+import type { TalkSection } from "@/lib/types";
 import {
   AlertCircle,
   ArrowLeft,
   CheckCircle2,
   Crosshair,
-  Lightbulb,
   Mic,
   Target,
 } from "lucide-react";
-
-/** 掛け合い1ターン（吹き出し） */
-function Bubble({ turn }: { turn: DialogueTurn }) {
-  const isStaff = turn.speaker === "staff";
-  return (
-    <div className={`flex gap-2.5 ${isStaff ? "" : "flex-row-reverse"}`}>
-      <span
-        className={`mt-0.5 flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-full text-[11px] font-bold ${
-          isStaff ? "bg-ink text-paper" : "border border-paper-line bg-paper-soft text-ink-soft"
-        }`}
-        aria-hidden
-      >
-        {isStaff ? "自分" : "客"}
-      </span>
-      <div className={`flex max-w-[calc(100%-6rem)] flex-col md:max-w-[75%] ${isStaff ? "items-start" : "items-end"}`}>
-        <span className="mb-0.5 px-1 text-[10px] font-semibold tracking-wide text-ink-muted">
-          {isStaff ? "あなた（ヘルパー）" : "お客様"}
-        </span>
-        <div
-          className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-card ${
-            isStaff
-              ? "rounded-tl-md bg-ink text-paper"
-              : "rounded-tr-md border border-paper-line bg-paper text-ink"
-          }`}
-        >
-          {turn.text}
-        </div>
-        {turn.note && (
-          <div
-            className={`mt-1.5 flex items-start gap-1.5 rounded-lg bg-gold-soft px-3 py-1.5 text-xs leading-relaxed text-gold-deep ${
-              isStaff ? "" : "text-right"
-            }`}
-          >
-            <Lightbulb size={13} className="mt-0.5 shrink-0" />
-            <span>{turn.note}</span>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 function Section({ section, index }: { section: TalkSection; index: number }) {
   return (
@@ -76,7 +35,7 @@ function Section({ section, index }: { section: TalkSection; index: number }) {
       </div>
 
       <div className="space-y-3.5 p-5">
-        {section.dialogue?.map((turn, i) => <Bubble key={i} turn={turn} />)}
+        {section.dialogue?.map((turn, i) => <DialogueBubble key={i} turn={turn} />)}
         {section.lines?.map((line, i) => (
           <p key={i} className="text-sm leading-relaxed text-ink">
             {line}
@@ -190,10 +149,10 @@ export function TalkScriptDetail() {
       )}
 
       <Link
-        to="/roleplay"
+        to={`/roleplay/practice/${s.id}`}
         className="inline-flex items-center gap-1.5 rounded-lg bg-ink px-5 py-2.5 text-sm font-semibold text-paper shadow-card transition-all hover:-translate-y-0.5 hover:shadow-lift"
       >
-        <Mic size={14} /> このトークでロープレを始める
+        <Mic size={14} /> このトークで練習を始める
       </Link>
     </div>
   );

@@ -10,6 +10,7 @@ import { ProductDetail } from "@/pages/ProductDetail";
 import { TalkScripts } from "@/pages/TalkScripts";
 import { TalkScriptDetail } from "@/pages/TalkScriptDetail";
 import { Roleplay } from "@/pages/Roleplay";
+import { RoleplayPractice } from "@/pages/RoleplayPractice";
 import { Certification } from "@/pages/Certification";
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -37,6 +38,7 @@ export function AppRoutes() {
         <Route path="scripts" element={<TalkScripts />} />
         <Route path="scripts/:id" element={<TalkScriptDetail />} />
         <Route path="roleplay" element={<Roleplay />} />
+        <Route path="roleplay/practice/:scriptId" element={<RoleplayPractice />} />
         <Route path="certification" element={<Certification />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
