@@ -38,6 +38,34 @@ function loadJson<T>(key: string, fallback: T): T {
   }
 }
 
+/** 保存データが壊れていても復元時にクラッシュしないよう形を検証する */
+function loadProfile(): Profile | null {
+  const raw = loadJson<unknown>(PROFILE_KEY, null);
+  if (
+    raw &&
+    typeof raw === "object" &&
+    typeof (raw as Profile).id === "string" &&
+    typeof (raw as Profile).display_name === "string" &&
+    typeof (raw as Profile).level === "number" &&
+    (raw as Profile).role in DEMO_PROFILE
+  ) {
+    return raw as Profile;
+  }
+  return null;
+}
+
+function loadProgress(): Record<string, number> {
+  const raw = loadJson<unknown>(PROGRESS_KEY, null);
+  if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+    const out: Record<string, number> = {};
+    for (const [k, v] of Object.entries(raw)) {
+      if (typeof v === "number" && Number.isFinite(v)) out[k] = v;
+    }
+    if (Object.keys(out).length > 0) return out;
+  }
+  return DEFAULT_PROGRESS;
+}
+
 function saveJson(key: string, value: unknown) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
@@ -47,10 +75,8 @@ function saveJson(key: string, value: unknown) {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [profile, setProfile] = useState<Profile | null>(() => loadJson<Profile | null>(PROFILE_KEY, null));
-  const [progress, setProgress] = useState<Record<string, number>>(() =>
-    loadJson<Record<string, number>>(PROGRESS_KEY, DEFAULT_PROGRESS),
-  );
+  const [profile, setProfile] = useState<Profile | null>(loadProfile);
+  const [progress, setProgress] = useState<Record<string, number>>(loadProgress);
 
   useEffect(() => {
     if (profile) saveJson(PROFILE_KEY, profile);

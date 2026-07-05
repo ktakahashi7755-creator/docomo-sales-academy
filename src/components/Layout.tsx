@@ -1,4 +1,5 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Map,
@@ -38,9 +39,29 @@ function BrandMark() {
   );
 }
 
+const APP_NAME = "ドコモ販売ヘルパー育成アカデミー";
+
+const TITLE_BY_PREFIX: [string, string][] = [
+  ["/roadmap", "研修ロードマップ"],
+  ["/catch", "キャッチ"],
+  ["/products", "商材ナレッジ"],
+  ["/scripts", "トークスクリプト"],
+  ["/roleplay/practice", "スクリプト練習"],
+  ["/roleplay", "ロープレ"],
+  ["/certification", "クローザー認定"],
+];
+
 export function Layout() {
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  // 画面ごとにブラウザタブのタイトルを更新
+  useEffect(() => {
+    const label = TITLE_BY_PREFIX.find(([p]) => pathname.startsWith(p))?.[1] ?? "ダッシュボード";
+    document.title = `${label}｜${APP_NAME}`;
+  }, [pathname]);
+
   if (!profile) return null;
 
   return (

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { ArrowRight, Award, GraduationCap, Headset, ShieldCheck, UserCog } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { ROLE_LABEL, type Role } from "@/lib/types";
@@ -14,8 +14,11 @@ const ROLES: { role: Role; icon: typeof GraduationCap; desc: string }[] = [
 const FLOW = ["興味付け", "着座", "提案", "クロージング", "引継ぎ"];
 
 export function Login() {
-  const { signInDemo } = useAuth();
+  const { profile, signInDemo } = useAuth();
   const navigate = useNavigate();
+
+  // ログイン済みならダッシュボードへ（/login直リンク対策）
+  if (profile) return <Navigate to="/" replace />;
 
   return (
     <div className="grid min-h-dvh md:grid-cols-2">

@@ -174,7 +174,7 @@ export const PRODUCTS: Product[] = [
     closing:
       "GOLDは「年会費を払うカード」ではなく、毎月の料金を下げ・ポイントを貯め・高額スマホを守る3つを付けられるカードです。今回一緒に切り替えておきましょう。",
     officialUrl: "https://dcard.docomo.ne.jp/std/member/gold/",
-    officialCheckedAt: "2024-06-01",
+    officialCheckedAt: "2026-06-23",
     version: 1,
   },
   {
@@ -212,7 +212,7 @@ export const PRODUCTS: Product[] = [
     closing:
       "年間4〜5万ポイントを狙える使い方ならPLATINUMにしない方がもったいないです。初年度は実質18,700円でお試しし、貯まり方を見て判断しましょう。",
     officialUrl: "https://dcard.docomo.ne.jp/std/member/platinum/",
-    officialCheckedAt: "2024-06-01",
+    officialCheckedAt: "2026-06-23",
     version: 1,
   },
   {
@@ -230,7 +230,7 @@ export const PRODUCTS: Product[] = [
     objections: [{ q: "カードは増やしたくない", a: "今の携帯料金の支払いをまとめるだけでポイントが貯まる入口として無料で持てます。" }],
     closing: "まずは無料のレギュラーから始めて、利用額が見えたらGOLDをご案内します。",
     officialUrl: "https://dcard.docomo.ne.jp/std/member/regular/",
-    officialCheckedAt: "2024-06-01",
+    officialCheckedAt: "2026-06-23",
     version: 1,
   },
   {
@@ -247,7 +247,7 @@ export const PRODUCTS: Product[] = [
     objections: [{ q: "光は変えたくない", a: "番号も使い方も変わらず、月額だけ下げられるケースが多いので一度試算しましょう。" }],
     closing: "家族まとめでセット割が効くので、トータルで毎月いくら下がるかを出してご案内します。",
     officialUrl: "https://www.docomo.ne.jp/hikari/",
-    officialCheckedAt: "2024-06-01",
+    officialCheckedAt: "2026-06-23",
     version: 1,
   },
   {
@@ -264,7 +264,7 @@ export const PRODUCTS: Product[] = [
     objections: [{ q: "1ギガで十分", a: "同時利用や在宅勤務が多い場合は10ギガの安定感が効きます。用途で選びましょう。" }],
     closing: "用途を伺うと10ギガが合いそうなので、エリアを確認してご案内します。",
     officialUrl: "https://www.docomo.ne.jp/hikari/",
-    officialCheckedAt: "2024-06-01",
+    officialCheckedAt: "2026-06-23",
     version: 1,
   },
   {
@@ -281,7 +281,7 @@ export const PRODUCTS: Product[] = [
     objections: [{ q: "電気はそのままでいい", a: "切替の手間はほぼなく、支払いでポイントが貯まる分だけお得になります。" }],
     closing: "検針票を拝見して、切替後にどれだけポイントが貯まるかを出してご案内します。",
     officialUrl: "https://denki.docomo.ne.jp/",
-    officialCheckedAt: "2024-06-01",
+    officialCheckedAt: "2026-06-23",
     version: 1,
   },
   {
@@ -298,7 +298,7 @@ export const PRODUCTS: Product[] = [
     objections: [{ q: "ガスまでは…", a: "電気と一緒にまとめると窓口が一本化でき、ポイントもさらに貯まります。" }],
     closing: "電気と合わせてまとめると分かりやすいので、セットでご案内します。",
     officialUrl: "https://www.docomo.ne.jp/",
-    officialCheckedAt: "2024-06-01",
+    officialCheckedAt: "2026-06-23",
     version: 1,
   },
 ];
