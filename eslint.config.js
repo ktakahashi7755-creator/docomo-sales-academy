@@ -47,6 +47,13 @@ export default tseslint.config(
     files: ["*.{js,cjs,mjs,ts}", "vite.config.ts", "vitest.config.ts", "playwright.config.ts"],
     languageOptions: { globals: { ...globals.node } },
   },
+  // ドキュメント書き出し等のスクリプト（Node実行＋page.evaluate内のブラウザコード）
+  {
+    files: ["scripts/**/*.{js,mjs}"],
+    languageOptions: {
+      globals: { ...globals.node, ...globals.browser, mermaid: "readonly" },
+    },
+  },
   // テストファイル
   {
     files: ["**/*.{test,spec}.{ts,tsx}", "tests/**/*.{ts,tsx}", "src/test/**/*.{ts,tsx}"],

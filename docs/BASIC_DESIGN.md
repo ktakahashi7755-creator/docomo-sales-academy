@@ -147,12 +147,33 @@ erDiagram
     modules ||--o{ progress : "module_id"
     modules ||--o{ quiz_attempts : "module_id"
     roleplay_scenarios ||--o{ roleplay_sessions : "scenario_id"
-    products ||--o{ product_versions : "履歴"
-    profiles { uuid id PK; text display_name; text role "admin/sv/trainee/helper/closer" }
-    progress { uuid user_id FK; text module_id; int percent }
-    quiz_attempts { uuid user_id FK; text module_id; int score }
-    roleplay_sessions { uuid user_id FK; text scenario_id; int score; text rank }
-    certifications { uuid user_id FK; text status; uuid approved_by }
+    products ||--o{ product_versions : "rekishi"
+    profiles {
+        uuid id PK
+        text display_name
+        text role "admin/sv/trainee/helper/closer"
+    }
+    progress {
+        uuid user_id FK
+        text module_id
+        int percent
+    }
+    quiz_attempts {
+        uuid user_id FK
+        text module_id
+        int score
+    }
+    roleplay_sessions {
+        uuid user_id FK
+        text scenario_id
+        int score
+        text rank
+    }
+    certifications {
+        uuid user_id FK
+        text status
+        uuid approved_by
+    }
 ```
 
 RLS方針：学習データは本人＋`is_sv_or_admin()`のみ。書込はサーバー側検証を通す。
