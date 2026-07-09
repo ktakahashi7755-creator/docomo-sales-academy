@@ -12,6 +12,11 @@ export default defineConfig({
     trace: "on-first-retry",
     // オフライン挙動は E2E の対象外。SW を無効化して遷移・資産取得を決定的にする。
     serviceWorkers: "block",
+    // ローカル/コンテナ環境で同梱 Chromium を使う場合は PW_EXECUTABLE_PATH を指定
+    // （CI は Playwright 標準のブラウザを使うため未指定のまま）。
+    ...(process.env.PW_EXECUTABLE_PATH
+      ? { launchOptions: { executablePath: process.env.PW_EXECUTABLE_PATH } }
+      : {}),
   },
   projects: [
     { name: "mobile", use: { ...devices["Pixel 7"] } },

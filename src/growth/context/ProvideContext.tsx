@@ -25,6 +25,8 @@ export interface RoleplayResult {
 
 interface ProvideState {
   user: { name: string; role: string };
+  /** 入室済みか（デモの簡易エントリー。役割選択はしない）。 */
+  entered: boolean;
   lessonProgress: Record<string, number>; // 0..100
   quizScores: Record<string, number>; // moduleId -> best score
   roleplayResults: RoleplayResult[];
@@ -32,6 +34,8 @@ interface ProvideState {
   botOpen: boolean;
 
   // actions
+  enter: (name?: string) => void;
+  logout: () => void;
   startLesson: (id: string) => void;
   completeLesson: (id: string) => void;
   recordQuiz: (moduleId: string, score: number) => void;
@@ -48,6 +52,28 @@ interface ProvideState {
 }
 
 const ProvideContext = createContext<ProvideState | null>(null);
+
+// 入室状態の永続化キー（この端末のみ。Supabase 導入時に置き換え）。
+const STORAGE_ENTERED = "provide.entered";
+const STORAGE_NAME = "provide.userName";
+const DEFAULT_NAME = "山田 花子";
+
+// localStorage はプライベートモード等で例外になりうるため安全に読む。
+function readStorage(key: string): string | null {
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+function writeStorage(key: string, value: string | null) {
+  try {
+    if (value === null) window.localStorage.removeItem(key);
+    else window.localStorage.setItem(key, value);
+  } catch {
+    // 保存できない環境ではメモリ内のみで動作（デモとして許容）
+  }
+}
 
 // デモの初期状態（参照デザインに合わせ STEP1 完了・STEP2 学習中）。
 const INITIAL_PROGRESS: Record<string, number> = {
@@ -71,11 +97,28 @@ function statusOf(pct: number | undefined): LessonStatus {
 }
 
 export function ProvideProvider({ children }: { children: ReactNode }) {
+  const [entered, setEntered] = useState<boolean>(() => readStorage(STORAGE_ENTERED) === "1");
+  const [userName, setUserName] = useState<string>(() => readStorage(STORAGE_NAME) ?? DEFAULT_NAME);
   const [lessonProgress, setLessonProgress] = useState<Record<string, number>>(INITIAL_PROGRESS);
   const [quizScores, setQuizScores] = useState<Record<string, number>>(INITIAL_QUIZ);
   const [roleplayResults, setRoleplayResults] = useState<RoleplayResult[]>([]);
   const [studyMinutes, setStudyMinutes] = useState<number>(INITIAL_STUDY_MINUTES);
   const [botOpen, setBotOpen] = useState(false);
+
+  const enter = useCallback((name?: string) => {
+    const trimmed = name?.trim();
+    const finalName = trimmed && trimmed.length > 0 ? trimmed : DEFAULT_NAME;
+    setUserName(finalName);
+    setEntered(true);
+    writeStorage(STORAGE_NAME, finalName);
+    writeStorage(STORAGE_ENTERED, "1");
+  }, []);
+
+  const logout = useCallback(() => {
+    setEntered(false);
+    setBotOpen(false);
+    writeStorage(STORAGE_ENTERED, null);
+  }, []);
 
   const startLesson = useCallback((id: string) => {
     setLessonProgress((prev) => (prev[id] ? prev : { ...prev, [id]: 10 }));
@@ -126,12 +169,15 @@ export function ProvideProvider({ children }: { children: ReactNode }) {
         : Math.round(quizValues.reduce((a, b) => a + b, 0) / quizValues.length);
 
     return {
-      user: { name: "山田 花子", role: "研修生" },
+      user: { name: userName, role: "研修生" },
+      entered,
       lessonProgress,
       quizScores,
       roleplayResults,
       studyMinutes,
       botOpen,
+      enter,
+      logout,
       startLesson,
       completeLesson,
       recordQuiz,
@@ -145,11 +191,15 @@ export function ProvideProvider({ children }: { children: ReactNode }) {
       quizAverage,
     };
   }, [
+    userName,
+    entered,
     lessonProgress,
     quizScores,
     roleplayResults,
     studyMinutes,
     botOpen,
+    enter,
+    logout,
     startLesson,
     completeLesson,
     recordQuiz,

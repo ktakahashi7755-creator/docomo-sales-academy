@@ -14,9 +14,44 @@ async function clickHref(user: ReturnType<typeof userEvent.setup>, href: string)
   await user.click(link as HTMLElement);
 }
 
+/** 入室ゲートを通過してダッシュボードへ入る。 */
+async function enterApp(user: ReturnType<typeof userEvent.setup>, name?: string) {
+  const button = await screen.findByRole("button", { name: "入室する" });
+  if (name) await user.type(screen.getByLabelText(/おなまえ/), name);
+  await user.click(button);
+}
+
 afterEach(() => {
   vi.restoreAllMocks();
+  window.localStorage.clear();
   window.history.pushState({}, "", "/");
+});
+
+describe("入室ゲート", () => {
+  it("名前を入れて入室するとヘッダーに反映され、ログアウトで入室画面へ戻る", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    // 役割選択は存在しない（シンプルな入室のみ）
+    expect(screen.queryByText(/SVとして/)).toBeNull();
+    expect(screen.queryByText(/研修生として/)).toBeNull();
+
+    await enterApp(user, "高橋 一郎");
+    expect(await screen.findByText("現在のカリキュラム")).toBeInTheDocument();
+    expect(screen.getByText("高橋 一郎 さん")).toBeInTheDocument();
+
+    // ログアウトで入室画面へ戻る
+    await user.click(screen.getByRole("button", { name: "ログアウト" }));
+    expect(await screen.findByRole("button", { name: "入室する" })).toBeInTheDocument();
+  });
+
+  it("名前が空でもデフォルト名で入室できる", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await enterApp(user);
+    expect(await screen.findByText("現在のカリキュラム")).toBeInTheDocument();
+    expect(screen.getByText("山田 花子 さん")).toBeInTheDocument();
+  });
 });
 
 describe("Provide Growth Academy スモーク", () => {
@@ -24,6 +59,7 @@ describe("Provide Growth Academy スモーク", () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     const user = userEvent.setup();
     render(<App />);
+    await enterApp(user);
 
     // ダッシュボード
     expect(screen.getAllByText("Provide Growth Academy").length).toBeGreaterThan(0);
@@ -108,6 +144,7 @@ describe("Provide Growth Academy スモーク", () => {
   it("AIサポートBotを開いて質問でき、応答が返る", async () => {
     const user = userEvent.setup();
     render(<App />);
+    await enterApp(user);
     await screen.findByText("現在のカリキュラム");
 
     // サイドバーの「相談する」でボットを開く

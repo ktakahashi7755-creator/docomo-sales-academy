@@ -5,7 +5,7 @@ import { ProgressRing } from "@/growth/components/ui";
 import provideMark from "@/growth/assets/provide-mark.png";
 
 export function Header() {
-  const { user, overallProgress, currentLesson } = useProvide();
+  const { user, overallProgress, currentLesson, logout } = useProvide();
   const step = currentLesson ? stepOfLesson(currentLesson.id) : undefined;
   const stepLabel = step ? `STEP ${String(step.no).padStart(2, "0")} 学習中` : "全カリキュラム修了";
 
@@ -59,7 +59,9 @@ export function Header() {
             <button
               type="button"
               aria-label="ログアウト"
-              className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+              title="ログアウト"
+              onClick={logout}
+              className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
             >
               <LogOut size={18} strokeWidth={2} />
             </button>
