@@ -9,7 +9,7 @@ export function StepNavigation() {
   const activeStepId = currentLesson ? stepOfLesson(currentLesson.id)?.id : undefined;
 
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
       {CURRICULUM.map((step) => {
         const a = ACCENT[step.accent];
         const status = stepStatus(step, stepProgress);
@@ -67,7 +67,7 @@ export function StepNavigation() {
             >
               {step.title}
             </div>
-            <div className="mt-1 text-xs text-slate-400">
+            <div className="mt-1 text-xs text-slate-500 tabular-nums">
               {locked ? `目安 ${step.duration}` : `${pct}% ・ 目安 ${step.duration}`}
             </div>
           </Link>

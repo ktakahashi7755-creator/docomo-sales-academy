@@ -16,7 +16,7 @@ export function Header() {
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-md shadow-blue-200 ring-1 ring-slate-100 lg:hidden">
             <img src={provideMark} alt="" aria-hidden="true" className="h-8 w-8" />
           </span>
-          <h1 className="font-display text-xl font-bold tracking-tight text-slate-800 md:text-2xl">
+          <h1 className="font-display min-w-0 text-lg font-bold leading-tight tracking-tight text-slate-800 sm:text-xl md:text-2xl">
             Provide Growth Academy
           </h1>
         </div>

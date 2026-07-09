@@ -7,8 +7,15 @@ import { Header } from "@/growth/components/Header";
 import { AIBot } from "@/growth/components/AIBot";
 import { GIcon } from "@/growth/components/ui";
 
-const MOBILE_IDS = ["dashboard", "curriculum", "content", "roleplay", "quiz"];
-const MOBILE_NAV = NAV_ITEMS.filter((n) => MOBILE_IDS.includes(n.id));
+// ボトムナビは5枠。ラベルは1行に収まる短縮形を使う（折返し防止）。
+const MOBILE_SHORT_LABELS: Record<string, string> = {
+  dashboard: "ホーム",
+  curriculum: "カリキュラム",
+  content: "コンテンツ",
+  roleplay: "ロープレ",
+  quiz: "クイズ",
+};
+const MOBILE_NAV = NAV_ITEMS.filter((n) => n.id in MOBILE_SHORT_LABELS);
 
 export function GrowthLayout() {
   const { openBot } = useProvide();
@@ -40,7 +47,9 @@ export function GrowthLayout() {
             }
           >
             <GIcon name={item.icon} size={20} strokeWidth={2} />
-            <span className="leading-none">{item.label.replace("・", "")}</span>
+            <span className="whitespace-nowrap leading-none">
+              {MOBILE_SHORT_LABELS[item.id] ?? item.label}
+            </span>
           </NavLink>
         ))}
       </nav>
