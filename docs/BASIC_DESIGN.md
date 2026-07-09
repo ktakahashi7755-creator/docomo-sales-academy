@@ -127,9 +127,9 @@ flowchart TD
 | --------------------------------- | -------------------------------------------------------------------------- | ----------------- |
 | `src/growth/data/curriculum.ts`   | 5ステップ・19レッスン（8要素）・NAV・FAQ・用語集・QUIZ_MODULES ほか        | —                 |
 | `src/data/seed.ts`                | 商材マスター14・トークスクリプト・反論・シナリオ12・EVAL_ITEMS12・認定条件 | —                 |
-| `src/data/quiz.ts`                | 確認テスト設問                                                             | 61問/10モジュール |
+| `src/data/quiz.ts`                | 確認テスト設問                                                             | 62問/10モジュール |
 | `src/growth/data/salesProcess.ts` | 標準販売プロセス                                                           | 15工程            |
-| `src/growth/data/scenes.ts`       | 場面別トーク                                                               | 15場面            |
+| `src/growth/data/scenes.ts`       | 場面別トーク                                                               | 16場面            |
 | `src/growth/data/hearingItems.ts` | ヒアリング項目                                                             | 19項目            |
 | `src/growth/data/objections.ts`   | 反論処理（新人/上級解説付き）                                              | 17件              |
 | `src/growth/data/rubric.ts`       | 評価12観点・育成10段階                                                     | —                 |

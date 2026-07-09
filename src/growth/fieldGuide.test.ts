@@ -23,7 +23,7 @@ describe("現場ガイドのデータ整合", () => {
   });
 
   it("件数が想定どおり", () => {
-    expect(SCENES).toHaveLength(15);
+    expect(SCENES).toHaveLength(16);
     expect(HEARING_ITEMS).toHaveLength(19);
     expect(OBJECTIONS).toHaveLength(17);
     expect(EVALUATION_RUBRIC).toHaveLength(12);
