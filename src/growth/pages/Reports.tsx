@@ -104,7 +104,7 @@ export function Reports() {
                 >
                   <GIcon name={step.icon} size={15} strokeWidth={2} />
                 </span>
-                <div className="w-28 shrink-0 truncate text-sm font-medium text-slate-700">
+                <div className="w-28 shrink-0 text-sm font-medium leading-tight text-slate-700">
                   {step.title}
                 </div>
                 <ProgressBar value={pct} />

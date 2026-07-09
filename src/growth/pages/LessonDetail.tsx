@@ -18,6 +18,7 @@ import {
   ShieldAlert,
   Info,
   Compass,
+  SearchX,
 } from "lucide-react";
 
 /** STEP ごとに最も関連する現場ガイドのタブ。 */
@@ -57,7 +58,15 @@ export function LessonDetail() {
       <div className="space-y-6">
         <PageHeader title="レッスンが見つかりません" />
         <Card className="p-8 text-center">
-          <p className="text-sm text-slate-500">URLが変わったか、削除された可能性があります。</p>
+          <SearchX
+            size={32}
+            strokeWidth={2}
+            className="mx-auto text-slate-300"
+            aria-hidden="true"
+          />
+          <p className="mt-3 text-sm text-slate-500">
+            URLが変わったか、削除された可能性があります。
+          </p>
           <Link to="/content" className="mt-4 inline-block">
             <GhostButton>学習コンテンツへ</GhostButton>
           </Link>

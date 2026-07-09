@@ -25,14 +25,14 @@ export function GrowthLayout() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <Header />
-        <main className="mx-auto w-full max-w-[1320px] flex-1 px-4 py-6 pb-24 md:px-7 md:py-8 lg:pb-10">
+        <main className="mx-auto w-full max-w-[1320px] flex-1 px-4 py-6 pb-36 md:px-7 md:py-8 lg:pb-10">
           <Outlet />
         </main>
       </div>
 
       {/* モバイル：ボトムナビ */}
       <nav
-        className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-slate-100 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-slate-100 bg-white pb-[env(safe-area-inset-bottom)] lg:hidden"
         aria-label="メインナビゲーション"
       >
         {MOBILE_NAV.map((item) => (
@@ -42,7 +42,7 @@ export function GrowthLayout() {
             end={item.to === "/"}
             className={({ isActive }) =>
               `flex min-h-[56px] flex-col items-center justify-center gap-1 text-[11px] font-medium ${
-                isActive ? "text-blue-600" : "text-slate-400"
+                isActive ? "text-blue-600" : "text-slate-500"
               }`
             }
           >
@@ -59,7 +59,7 @@ export function GrowthLayout() {
         type="button"
         onClick={openBot}
         aria-label="AIサポートBotを開く"
-        className="fixed bottom-20 right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lift transition hover:-translate-y-0.5 lg:hidden"
+        className="fixed bottom-20 right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lift transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0 lg:hidden"
       >
         <Bot size={24} />
       </button>

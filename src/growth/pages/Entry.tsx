@@ -28,7 +28,7 @@ export function Entry() {
           <h1 className="font-display mt-5 text-2xl font-bold tracking-tight text-white">
             Provide Growth Academy
           </h1>
-          <p className="mt-2 text-sm leading-relaxed text-blue-200/90">
+          <p className="mt-2 text-sm leading-relaxed text-blue-100">
             未経験から認定クローザーへ。
             <br />
             プロバイド株式会社の販売育成プログラム
@@ -68,7 +68,7 @@ export function Entry() {
           </p>
         </form>
 
-        <p className="mt-6 text-center text-[11px] tracking-wide text-blue-300/60">
+        <p className="mt-6 text-center text-[11px] tracking-wide text-blue-200/80">
           Provide Growth Academy — Sales Training Program
         </p>
       </main>

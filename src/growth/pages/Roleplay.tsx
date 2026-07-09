@@ -7,11 +7,11 @@ import { Card, PageHeader, SectionTitle, StatusBadge, GIcon } from "@/growth/com
 const STROKE = 1.75;
 
 // Difficulty-level badge colour mapping — lower numbers friendlier, higher numbers harder.
-function difficultyTone(level: number): "done" | "active" | "todo" | "caution" | "locked" {
+function difficultyTone(level: number): "done" | "active" | "caution" | "hard" {
   if (level <= 3) return "done";
   if (level <= 5) return "active";
   if (level <= 7) return "caution";
-  return "locked"; // 8+
+  return "hard"; // 8+
 }
 
 function difficultyLabel(level: number): string {
@@ -148,7 +148,7 @@ export function Roleplay() {
               aria-hidden="true"
             />
             <p className="text-sm font-medium text-slate-500">まだロープレ結果がありません。</p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               シナリオを選んで、最初のロープレを始めましょう。
             </p>
           </Card>

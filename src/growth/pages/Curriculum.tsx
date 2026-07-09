@@ -57,11 +57,19 @@ export function Curriculum() {
                 </p>
               </div>
               <div className="hidden w-40 shrink-0 sm:block">
-                <div className="mb-1 flex justify-between text-xs">
-                  <span className="text-slate-500">進捗</span>
-                  <span className="font-display font-bold text-blue-600 tabular-nums">{pct}%</span>
-                </div>
-                <ProgressBar value={pct} />
+                {locked ? (
+                  <div className="text-right text-xs font-medium text-slate-500">未着手</div>
+                ) : (
+                  <>
+                    <div className="mb-1 flex justify-between text-xs">
+                      <span className="text-slate-500">進捗</span>
+                      <span className="font-display font-bold text-blue-600 tabular-nums">
+                        {pct}%
+                      </span>
+                    </div>
+                    <ProgressBar value={pct} />
+                  </>
+                )}
               </div>
             </div>
 

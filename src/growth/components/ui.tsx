@@ -307,15 +307,16 @@ export function StatusBadge({
   tone,
   children,
 }: {
-  tone: "done" | "active" | "todo" | "locked" | "caution";
+  tone: "done" | "active" | "todo" | "locked" | "caution" | "hard";
   children: ReactNode;
 }) {
   const cls: Record<string, string> = {
     done: "bg-emerald-50 text-emerald-700",
     active: "bg-blue-50 text-blue-700",
     todo: "bg-slate-100 text-slate-500",
-    locked: "bg-slate-100 text-slate-400",
+    locked: "bg-slate-100 text-slate-500",
     caution: "bg-orange-50 text-orange-700",
+    hard: "bg-red-50 text-red-700",
   };
   return (
     <span

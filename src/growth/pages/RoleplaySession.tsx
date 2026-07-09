@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Send, RotateCcw, AlertCircle } from "lucide-react";
+import { ArrowLeft, Send, RotateCcw, AlertCircle, SearchX } from "lucide-react";
 import { SCENARIOS, EVAL_ITEMS } from "@/data/seed";
 import { getRoleplayProvider } from "@/lib/ai";
 import type { ChatMessage, Evaluation } from "@/lib/ai/types";
@@ -47,8 +47,9 @@ function ScenarioNotFound() {
     <div className="space-y-6">
       <PageHeader eyebrow="Role-play" title="ロープレ" />
       <Card className="p-8 text-center">
-        <p className="text-sm font-semibold text-slate-700">シナリオが見つかりません</p>
-        <p className="mt-1 text-xs text-slate-400">URLが正しいかご確認ください。</p>
+        <SearchX size={32} strokeWidth={2} className="mx-auto text-slate-300" aria-hidden="true" />
+        <p className="mt-3 text-sm font-semibold text-slate-700">シナリオが見つかりません</p>
+        <p className="mt-1 text-xs text-slate-500">URLが正しいかご確認ください。</p>
         <div className="mt-6">
           <Link
             to="/roleplay"
@@ -450,7 +451,7 @@ export function RoleplaySession() {
           </form>
 
           <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               認証コードやパスワードはお客様ご自身に入力いただきましょう。
             </p>
             <button

@@ -30,7 +30,7 @@ export function Header() {
               label={`${overallProgress}%`}
             />
             <div className="leading-tight">
-              <div className="text-[11px] text-slate-500">現在の進捗</div>
+              <div className="text-[11px] text-slate-500">全体の進捗</div>
               <div className="text-sm font-semibold text-slate-800">{stepLabel}</div>
             </div>
           </div>
@@ -51,17 +51,17 @@ export function Header() {
             <button
               type="button"
               aria-label="通知"
-              className="relative flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+              className="relative flex h-11 w-11 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
             >
               <Bell size={18} strokeWidth={2} />
-              <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-orange-500 ring-2 ring-white" />
+              <span className="absolute right-3 top-3 h-2 w-2 rounded-full bg-orange-500 ring-2 ring-white" />
             </button>
             <button
               type="button"
               aria-label="ログアウト"
               title="ログアウト"
               onClick={logout}
-              className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+              className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
             >
               <LogOut size={18} strokeWidth={2} />
             </button>

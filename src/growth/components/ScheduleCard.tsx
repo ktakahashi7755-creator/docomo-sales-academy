@@ -23,7 +23,7 @@ export function ScheduleCard() {
               <CalendarDays size={18} strokeWidth={2} />
             </span>
             <div className="min-w-0 flex-1">
-              <div className="truncate text-sm font-semibold text-slate-800">{s.title}</div>
+              <div className="text-sm font-semibold leading-snug text-slate-800">{s.title}</div>
               <div className="font-display mt-0.5 text-xs text-slate-500 tabular-nums">
                 {s.date} {s.time}
               </div>
