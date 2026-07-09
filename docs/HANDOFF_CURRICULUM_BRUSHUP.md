@@ -207,5 +207,3 @@ ChatGPTの出力（上記Markdown）を**そのままClaudeに渡してくださ
 - 商材正典・公式URL・トーク・反論集・ロープレ：`src/data/seed.ts`
 - 確認テスト設問：`src/data/quiz.ts`
 - AIサポートBotの応答ルール：`src/growth/lib/bot.ts`
-  </content>
-  </invoke>
