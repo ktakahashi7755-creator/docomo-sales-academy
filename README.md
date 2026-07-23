@@ -119,4 +119,4 @@ docs/
 - AI 連携（Edge Function 経由。プロバイダ差し替え可能なアダプタ）
 - SV ダッシュボード（研修生の進捗・評価・認定承認）
 - PWA Service Worker（オフライン対応・インストール）
-- Famil ink 流の実スクリーンショット/アセット差し込み、E2E（Playwright）
+- 実スクリーンショット/アセットの差し込み、E2E（Playwright）
