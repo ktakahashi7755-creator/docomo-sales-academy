@@ -5,6 +5,45 @@
 
 > 本リポジトリは「動く土台（雛形 + DB SQL + seed + 主要画面）」です。管理画面・クイズ受験UI・自由会話ロープレ・PWA Service Worker などは Claude Code での実装を想定したスタブ状態です（詳細は末尾「次工程」）。
 
+---
+
+## 🚀 社内メンバー向け：開発参加ガイド
+
+このリポジトリのリンクを受け取った方は、以下だけで開発を始められます。
+
+### 1. 開発に必要なもの
+- [Node.js](https://nodejs.org/)（18以上を推奨）
+- Git / GitHub アカウント（このリポジトリへの招待が必要です）
+- エディタ（VS Code 推奨）
+
+### 2. 手元で動かす（3分・Supabase不要）
+```bash
+git clone https://github.com/ktakahashi7755-creator/docomo-sales-academy.git
+cd docomo-sales-academy
+npm install
+cp .env.example .env      # 中身は空のままでOK（デモモードで動きます）
+npm run dev               # ブラウザで http://localhost:5173 を開く
+```
+ログイン画面で役割（研修生／ヘルパー／クローザー／SV／管理者）を選ぶと、ローカルの seed データで即体験できます。**Supabase を設定しなくても UI 開発は進められます。**
+
+### 3. 開発の進め方（ブランチ運用）
+`main` は常に動く安定版です。**直接 push せず**、機能ごとにブランチを切って Pull Request でレビュー・マージします。
+```bash
+git switch -c feature/やること         # 例: feature/quiz-ui
+# …実装…
+npm run build                          # 型チェック＋ビルドが通ることを確認
+git add -A && git commit -m "説明"
+git push -u origin feature/やること
+```
+GitHub 上で Pull Request を作成 → レビュー → `main` にマージ。
+
+### 4. 作業の割り振り
+末尾の「次工程」の各項目を GitHub の **Issues** に起票し、担当を割り当てて進めるのがおすすめです。
+
+> 管理者向け: メンバー追加は GitHub リポジトリの **Settings → Collaborators**（または Team）から招待します。`main` は **Settings → Branches** でブランチ保護（PR必須・レビュー1件以上）を推奨します。
+
+---
+
 ## 技術構成
 - React 18 / TypeScript / Vite
 - Tailwind CSS（デザイントークン定義済み）
