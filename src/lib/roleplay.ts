@@ -43,7 +43,7 @@ const GREETING_SIGNALS = ["こんにちは", "失礼します", "お疲れ", "�
 const TOPIC_FEE = ["月額", "料金", "いくら", "おいくら", "支払", "払って", "月々", "何円", "円くらい"];
 const TOPIC_DATA = ["ギガ", "GB", "ＧＢ", "データ", "容量", "通信量", "何ギガ"];
 const TOPIC_HOUSEHOLD = ["家族", "世帯", "何人", "何回線", "台数", "お一人", "おひとり", "誰が", "ご家族"];
-const TOPIC_PAIN = ["不満", "困り", "お困り", "気になる", "遅い", "電池", "バッテリー", "悩み", "不便"];
+const TOPIC_PAIN = ["不満", "困", "気になる", "遅い", "電池", "バッテリー", "悩", "不便", "不安", "ストレス"];
 const TOPIC_CURRENT = ["お使い", "どちら", "どこの", "キャリア", "今の", "使って", "ご利用"];
 const QUESTION_WORDS = ["どちら", "どれくらい", "どのくらい", "いくら", "おいくら", "何ギガ", "何円", "教えて"];
 
@@ -98,9 +98,12 @@ function answerQuestion(s: Scenario, t: string): string {
     return p ? `強いて言えば、${p.painPoint}くらいですかね。` : "特に困ってはいないんですよ。";
   }
   if (hasAny(t, TOPIC_CURRENT)) {
-    return p
-      ? `今は${s.carrier}を使っていて、${p.household}です。ネットは${s.internetLine}ですね。`
-      : `今は${s.carrier}で、${s.familyType}です。ネットは${s.internetLine}です。`;
+    if (!p) return `今は${s.carrier}で、${s.familyType}です。ネットは${s.internetLine}です。`;
+    // 回線名が具体的で、かつ世帯の説明にまだ出ていなければ一言添える（重複・「不明」を避ける）。
+    const line = s.internetLine;
+    const concrete = line !== "不明" && line !== "未契約";
+    const net = concrete && !p.household.includes(line) ? `自宅は${line}です。` : "";
+    return `今は${s.carrier}を使っていて、${p.household}です。${net}`;
   }
   return shareInfo(s);
 }

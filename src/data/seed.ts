@@ -1119,7 +1119,7 @@ export const SCENARIOS: Scenario[] = [
     goal: "セット提案",
     persona: {
       monthlyFee: 23000,
-      dataUsage: "家族それぞれ20GBくらいで動画もよく見る",
+      dataUsage: "家族それぞれ20GBくらい",
       household: "夫婦と子ども2人の4回線＋自宅のソフトバンク光",
       painPoint: "家族分で毎月の請求が高いこと",
       switchBarrier: "家族全員の乗り換え手続きが面倒",
@@ -1219,7 +1219,7 @@ export const SCENARIOS: Scenario[] = [
     goal: "PLATINUM提案・ポイ活MAX",
     persona: {
       monthlyFee: 16000,
-      dataUsage: "家族で大容量。動画も多い",
+      dataUsage: "家族みんなで大容量",
       household: "夫婦と子どもの3回線＋ドコモ光",
       painPoint: "すでにGOLD。もっとポイントを増やせないか気になる",
       switchBarrier: "年会費が上がるのが本当に見合うのか慎重",
@@ -1239,7 +1239,7 @@ export const SCENARIOS: Scenario[] = [
     goal: "機種変更提案",
     persona: {
       monthlyFee: 6500,
-      dataUsage: "毎月3GBもいかない。ほとんど電話とLINE",
+      dataUsage: "毎月3GBもいかないくらい",
       household: "自分ひとりの1回線",
       painPoint: "スマホの操作が不安で、電池もすぐ減ること",
       switchBarrier: "新しい機種の操作を覚えられるか心配",
@@ -1299,7 +1299,7 @@ export const SCENARIOS: Scenario[] = [
     goal: "キャッチ→ヒアリング→着座誘導",
     persona: {
       monthlyFee: 8500,
-      dataUsage: "毎月20GBくらい使う",
+      dataUsage: "毎月20GBくらい",
       household: "自分ひとりの1回線",
       painPoint: "今のままで特に困ってはいない",
       switchBarrier: "乗り換えたことがなく、手続きやトラブルが不安",

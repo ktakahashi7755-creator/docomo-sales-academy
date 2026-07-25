@@ -111,6 +111,19 @@ describe("customerReply", () => {
     expect(r).toContain("20GB");
   });
 
+  it("『困っていることは？』を現状回答と誤爆せず、不満で受ける", () => {
+    const s = scenario({
+      persona: { ...persona11, painPoint: "電池の減りが早いこと" },
+    });
+    const r = customerReply({
+      scenario: s,
+      difficulty: 5,
+      history: [],
+      message: "今お使いで困っていることはありますか？",
+    });
+    expect(r).toContain("電池");
+  });
+
   it("具体的な金額を提示されたら疑問を繰り返さず、その額に反応する", () => {
     const s = scenario({ resistance: "高い", persona: { ...persona11 } });
     const r = customerReply({
