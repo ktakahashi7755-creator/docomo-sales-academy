@@ -126,6 +126,27 @@ export type Carrier =
   | "LINEMO"
   | "ドコモ既存";
 
+/**
+ * 顧客ペルソナ（ロープレ練習用の想定設定）。
+ * ここに置く金額・データ量は「お客様が“今”払っている他社/現状の想定値」であり、
+ * ドコモの料金・還元などの事実値ではない（事実値は products 側が正典）。
+ * モックのお客様AIが、ヒアリングの質問に一貫して答えられるようにするための土台。
+ */
+export interface ScenarioPersona {
+  /** 現在おおよそ払っている月額（円）。世帯なら合計。練習用の想定値。 */
+  monthlyFee: number;
+  /** 毎月のデータ使用量のざっくりした言い回し（例「毎月20GBくらい」）。 */
+  dataUsage: string;
+  /** 世帯・回線の内訳（例「夫婦と子どもの3回線」）。 */
+  household: string;
+  /** いま感じている不満・我慢していること（無ければ「特に困っていない」旨）。 */
+  painPoint: string;
+  /** 乗り換え・契約変更をためらう最大の理由。 */
+  switchBarrier: string;
+  /** 話し方・性格の傾向（応答のトーンづくりに使う）。 */
+  personality: string;
+}
+
 export interface Scenario {
   id: string;
   no: number;
@@ -137,6 +158,8 @@ export interface Scenario {
   resistance: "低い" | "普通" | "高い";
   difficulty: number; // 1..10
   goal: string;
+  /** 顧客ペルソナ（任意）。未設定でもモックは carrier/世帯から素直な応答にフォールバックする。 */
+  persona?: ScenarioPersona;
 }
 
 export interface EvalItem {

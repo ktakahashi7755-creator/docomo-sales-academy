@@ -24,18 +24,8 @@ const clamp = (n: number, min = 0, max = 100) => Math.min(max, Math.max(min, n))
 
 // ===== 顧客（モック）=====
 
-const PRICE_SIGNALS = [
-  "円",
-  "ポイント",
-  "割引",
-  "還元",
-  "％",
-  "%",
-  "安く",
-  "お得",
-  "月額",
-  "年会費",
-];
+// 具体額を伴わない値下げ提案の匂い（例「割引で安くなります」）。
+const PRICE_SIGNALS = ["ポイント", "割引", "還元", "％", "%", "安く", "お得", "月額", "年会費"];
 const CLOSE_SIGNALS = [
   "今回",
   "お手続き",
@@ -47,26 +37,93 @@ const CLOSE_SIGNALS = [
   "決めて",
   "申し込",
 ];
-const ASK_SIGNALS = [
-  "お使い",
-  "どちら",
-  "どのくらい",
-  "毎月",
-  "いくら",
-  "ギガ",
-  "教えて",
-  "いかがですか",
-  "ありますか",
-  "どうですか",
-  "お困り",
-];
 const GREETING_SIGNALS = ["こんにちは", "失礼します", "お疲れ", "はじめまして", "よろしく"];
 
+// ---- 質問トピックの判定キーワード（ヒアリングの意図を読む）----
+const TOPIC_FEE = ["月額", "料金", "いくら", "おいくら", "支払", "払って", "月々", "何円", "円くらい"];
+const TOPIC_DATA = ["ギガ", "GB", "ＧＢ", "データ", "容量", "通信量", "何ギガ"];
+const TOPIC_HOUSEHOLD = ["家族", "世帯", "何人", "何回線", "台数", "お一人", "おひとり", "誰が", "ご家族"];
+const TOPIC_PAIN = ["不満", "困り", "お困り", "気になる", "遅い", "電池", "バッテリー", "悩み", "不便"];
+const TOPIC_CURRENT = ["お使い", "どちら", "どこの", "キャリア", "今の", "使って", "ご利用"];
+const QUESTION_WORDS = ["どちら", "どれくらい", "どのくらい", "いくら", "おいくら", "何ギガ", "何円", "教えて"];
+
+/** 3桁以上＋「円」を金額として拾う（カンマは無視）。見つからなければ null。 */
+function extractOfferedYen(text: string): number | null {
+  const m = text.replace(/,/g, "").match(/(\d{3,6})\s*円/);
+  return m ? Number(m[1]) : null;
+}
+
+/** ロケール非依存の 3 桁区切り（決定的にするため toLocaleString は使わない）。 */
+function yen(n: number): string {
+  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+/** 疑問文かどうか（「？」/「〜か」/明示的な疑問語）。「安くなります」等の平叙文は除外。 */
+function isQuestion(text: string): boolean {
+  if (text.includes("？") || text.includes("?")) return true;
+  if (/(です|ます|しょう|ありま|でき|いかが)か/.test(text)) return true;
+  return hasAny(text, QUESTION_WORDS);
+}
+
+/** 現状のざっくり共有（フォールバック）。ペルソナがあれば具体値を混ぜる。 */
 function shareInfo(s: Scenario): string {
+  const p = s.persona;
+  if (p) {
+    return (
+      `今は${s.carrier}を使っていて、${p.household}です。` +
+      `${p.dataUsage}で、正直あまり気にしたことはなかったですね。`
+    );
+  }
   return (
     `今は${s.carrier}を使っていて、${s.familyType}なんです。` +
     `ネットは${s.internetLine}で、正直あまり気にしたことはなかったですね。`
   );
+}
+
+/** ヒアリングの質問に、ペルソナの具体値で一貫して答える。 */
+function answerQuestion(s: Scenario, t: string): string {
+  const p = s.persona;
+  if (hasAny(t, TOPIC_FEE)) {
+    return p
+      ? `今は${p.household}で、だいたい月${yen(p.monthlyFee)}円くらいですね。`
+      : `今は${s.carrier}で、料金はあまり気にしたことがなかったですね。`;
+  }
+  if (hasAny(t, TOPIC_DATA)) {
+    return p ? `データは${p.dataUsage}ですね。足りないほどではないです。` : "データ量はあまり意識したことがないですね。";
+  }
+  if (hasAny(t, TOPIC_HOUSEHOLD)) {
+    return p ? `うちは${p.household}です。` : `${s.familyType}ですね。`;
+  }
+  if (hasAny(t, TOPIC_PAIN)) {
+    return p ? `強いて言えば、${p.painPoint}くらいですかね。` : "特に困ってはいないんですよ。";
+  }
+  if (hasAny(t, TOPIC_CURRENT)) {
+    return p
+      ? `今は${s.carrier}を使っていて、${p.household}です。ネットは${s.internetLine}ですね。`
+      : `今は${s.carrier}で、${s.familyType}です。ネットは${s.internetLine}です。`;
+  }
+  return shareInfo(s);
+}
+
+/** 具体的な金額提示に、今の支払い（ペルソナ）と比べて反応する。 */
+function reactToOffer(s: Scenario, difficulty: number, offered: number): string {
+  const high = s.resistance === "高い" || difficulty >= 7;
+  const p = s.persona;
+  if (p) {
+    const now = p.monthlyFee;
+    if (offered < now) {
+      return high
+        ? `${yen(offered)}円ですか…今が${yen(now)}円なので、本当にそんなに下がるなら気になりますけど、裏がないか心配ですね。`
+        : `${yen(offered)}円ですか。今より${yen(now - offered)}円くらい安くなりますね、それはいいかも。`;
+    }
+    if (offered > now) {
+      return `${yen(offered)}円ですか。今が${yen(now)}円なので、それだと高くなっちゃいますね。`;
+    }
+    return `${yen(offered)}円だと、今とあまり変わらない感じですね。`;
+  }
+  return high
+    ? `${yen(offered)}円ですか。本当にその金額で収まるんですか。`
+    : `${yen(offered)}円なら、ちょっと気になりますね。`;
 }
 
 /** 会話の最初の顧客発話（モール通行中・他社利用・乗り換え未経験を前提）。 */
@@ -96,23 +153,42 @@ export function customerReply(input: {
   const t = message;
   const high = scenario.resistance === "高い" || difficulty >= 7;
 
+  // 1) クロージングを急がれたら
   if (hasAny(t, CLOSE_SIGNALS)) {
     return high
       ? "いや、その場ですぐには決められないです。家族にも相談しないと。"
       : "そこまで言ってもらえるなら、ちょっと前向きに考えてみてもいいかな。";
   }
+
+  // 2) 質問には、現状（料金・データ・世帯・不満・キャリア）を具体的に答える
+  if (isQuestion(t)) {
+    return answerQuestion(scenario, t);
+  }
+
+  // 3) 具体的な金額を提示されたら、今の支払いと比べて反応する（同じ疑問を繰り返さない）
+  const offered = extractOfferedYen(t);
+  if (offered !== null) {
+    return reactToOffer(scenario, difficulty, offered);
+  }
+
+  // 4) 具体額のない値下げ提案は、警戒度に応じて疑う／少し気になる
   if (hasAny(t, PRICE_SIGNALS)) {
     return high
       ? "正直、今より高くなるのは嫌ですね。本当に下がるんですか。"
       : "へえ、それで今より下がるなら少し気になりますね。";
   }
-  if (t.includes("？") || t.includes("?") || hasAny(t, ASK_SIGNALS)) {
-    return shareInfo(scenario);
+
+  // 5) 困りごと・不満に触れられたら、ペルソナの痛点で受ける
+  if (scenario.persona && hasAny(t, TOPIC_PAIN)) {
+    return `そうですね、${scenario.persona.painPoint}。それが解決するなら聞いてみたいです。`;
   }
+
+  // 6) あいさつ
   if (hasAny(t, GREETING_SIGNALS) && history.length <= 1) {
     return high ? "はあ、どうも。" : "こんにちは。";
   }
-  // それ以外：警戒度と会話の進み具合で少し表情を変える
+
+  // 7) それ以外：警戒度と会話の進み具合で少し表情を変える
   if (high) {
     return history.length >= 4
       ? "うーん、言いたいことは分かるんですけど、まだ決めきれないですね。"
