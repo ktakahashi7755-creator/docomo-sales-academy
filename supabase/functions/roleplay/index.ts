@@ -126,7 +126,9 @@ async function generateCustomerTurn(
   action: string,
   payload: { scenario: unknown; difficulty: number; history?: unknown[]; message?: string },
 ): Promise<string> {
-  const system = `${SYSTEM_GUARDRAILS}\nあなたは顧客役です。1〜2文で自然に短く返答してください。`;
+  const system = `${SYSTEM_GUARDRAILS}
+あなたは顧客役です。1〜2文で自然に短く返答してください。
+payload.scenario.persona（現在の月額・データ使用量・世帯構成・不満・乗り換え障壁・性格）は「あなた自身の設定」です。ヒアリングで料金やギガ、家族構成を聞かれたら、この persona の値で一貫して具体的に答えてください（会話の途中で数字を変えない）。persona はあなたの現状であり、ドコモの料金・還元などの事実値ではありません。それら提案側の数値は断定せず、必要なら公式情報の確認を促してください。`;
   const user = JSON.stringify({ action, ...payload });
   const text = await chat(provider, apiKey, system, user);
   return text.trim();

@@ -78,6 +78,63 @@ describe("customerReply", () => {
     const args = { scenario: s, difficulty: 5, history: [], message: "こんにちは" };
     expect(customerReply(args)).toBe(customerReply(args));
   });
+
+  // ---- ペルソナに基づく一貫応答（ヒアリングのズレ対策）----
+  const persona11 = {
+    monthlyFee: 8500,
+    dataUsage: "毎月20GBくらい",
+    household: "自分ひとりの1回線",
+    painPoint: "特に困っていない",
+    switchBarrier: "乗り換えが不安",
+    personality: "警戒心が強い",
+  } as const;
+
+  it("料金を聞かれたらペルソナの今の月額で答える", () => {
+    const s = scenario({ resistance: "高い", persona: { ...persona11 } });
+    const r = customerReply({
+      scenario: s,
+      difficulty: 8,
+      history: [],
+      message: "月額はどれくらいになっていますか？",
+    });
+    expect(r).toContain("8,500");
+  });
+
+  it("データ量を聞かれたらペルソナの使用量で答える", () => {
+    const s = scenario({ persona: { ...persona11 } });
+    const r = customerReply({
+      scenario: s,
+      difficulty: 5,
+      history: [],
+      message: "毎月のギガはどれくらい使いますか？",
+    });
+    expect(r).toContain("20GB");
+  });
+
+  it("『困っていることは？』を現状回答と誤爆せず、不満で受ける", () => {
+    const s = scenario({
+      persona: { ...persona11, painPoint: "電池の減りが早いこと" },
+    });
+    const r = customerReply({
+      scenario: s,
+      difficulty: 5,
+      history: [],
+      message: "今お使いで困っていることはありますか？",
+    });
+    expect(r).toContain("電池");
+  });
+
+  it("具体的な金額を提示されたら疑問を繰り返さず、その額に反応する", () => {
+    const s = scenario({ resistance: "高い", persona: { ...persona11 } });
+    const r = customerReply({
+      scenario: s,
+      difficulty: 8,
+      history: [],
+      message: "このプランなら2970円になりますよ",
+    });
+    expect(r).toContain("2,970");
+    expect(r).not.toContain("本当に下がるんですか");
+  });
 });
 
 describe("evaluateRoleplay", () => {

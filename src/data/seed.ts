@@ -1097,6 +1097,14 @@ export const SCENARIOS: Scenario[] = [
     resistance: "普通",
     difficulty: 3,
     goal: "料金診断・MNP提案",
+    persona: {
+      monthlyFee: 3000,
+      dataUsage: "毎月15GBくらい",
+      household: "自分ひとりの1回線",
+      painPoint: "建物の中や地下で電波が入りにくいこと",
+      switchBarrier: "今より高くなるのだけは避けたい",
+      personality: "コストに敏感で、数字で納得したいタイプ",
+    },
   },
   {
     id: "sc2",
@@ -1109,6 +1117,14 @@ export const SCENARIOS: Scenario[] = [
     resistance: "高い",
     difficulty: 6,
     goal: "セット提案",
+    persona: {
+      monthlyFee: 23000,
+      dataUsage: "家族それぞれ20GBくらい",
+      household: "夫婦と子ども2人の4回線＋自宅のソフトバンク光",
+      painPoint: "家族分で毎月の請求が高いこと",
+      switchBarrier: "家族全員の乗り換え手続きが面倒",
+      personality: "慎重で、まとめ割やPayPay還元を気にする",
+    },
   },
   {
     id: "sc3",
@@ -1121,6 +1137,14 @@ export const SCENARIOS: Scenario[] = [
     resistance: "高い",
     difficulty: 7,
     goal: "dカード提案",
+    persona: {
+      monthlyFee: 14000,
+      dataUsage: "二人とも10GB前後",
+      household: "夫婦の2回線＋auひかり",
+      painPoint: "特に困ってはいないが、なんとなく高い気はする",
+      switchBarrier: "クレジットカードを新しく作るのに抵抗がある",
+      personality: "現状維持志向で、カード勧誘を警戒している",
+    },
   },
   {
     id: "sc4",
@@ -1133,6 +1157,14 @@ export const SCENARIOS: Scenario[] = [
     resistance: "普通",
     difficulty: 5,
     goal: "家族まとめ提案",
+    persona: {
+      monthlyFee: 12000,
+      dataUsage: "家族で15GBくらいずつ",
+      household: "夫婦と子どもの3回線",
+      painPoint: "店舗が少なく、困ったときに相談しづらい",
+      switchBarrier: "手続きにまた時間がかかりそう",
+      personality: "サポートの手厚さを重視する",
+    },
   },
   {
     id: "sc5",
@@ -1145,6 +1177,14 @@ export const SCENARIOS: Scenario[] = [
     resistance: "普通",
     difficulty: 4,
     goal: "ドコモ光提案",
+    persona: {
+      monthlyFee: 3600,
+      dataUsage: "毎月20GBくらい",
+      household: "自分ひとりの1回線。自宅ネットは未契約でスマホのテザリング頼り",
+      painPoint: "動画やオンライン会議で速度が不安定なこと",
+      switchBarrier: "特になし。条件が良ければ前向き",
+      personality: "品質重視で、改善提案には乗り気",
+    },
   },
   {
     id: "sc6",
@@ -1157,6 +1197,14 @@ export const SCENARIOS: Scenario[] = [
     resistance: "普通",
     difficulty: 4,
     goal: "dカード提案（GOLD）",
+    persona: {
+      monthlyFee: 8000,
+      dataUsage: "毎月20GB前後",
+      household: "自分ひとりの1回線＋ドコモ光",
+      painPoint: "ポイントをうまく活用できていないこと",
+      switchBarrier: "カードを持つほどのメリットが分からない",
+      personality: "実利で判断する。年間の相当額を数字で示すと動く",
+    },
   },
   {
     id: "sc7",
@@ -1169,6 +1217,14 @@ export const SCENARIOS: Scenario[] = [
     resistance: "高い",
     difficulty: 7,
     goal: "PLATINUM提案・ポイ活MAX",
+    persona: {
+      monthlyFee: 16000,
+      dataUsage: "家族みんなで大容量",
+      household: "夫婦と子どもの3回線＋ドコモ光",
+      painPoint: "すでにGOLD。もっとポイントを増やせないか気になる",
+      switchBarrier: "年会費が上がるのが本当に見合うのか慎重",
+      personality: "情報通で、相殺後の実質額をシビアに見る",
+    },
   },
   {
     id: "sc8",
@@ -1181,6 +1237,14 @@ export const SCENARIOS: Scenario[] = [
     resistance: "普通",
     difficulty: 5,
     goal: "機種変更提案",
+    persona: {
+      monthlyFee: 6500,
+      dataUsage: "毎月3GBもいかないくらい",
+      household: "自分ひとりの1回線",
+      painPoint: "スマホの操作が不安で、電池もすぐ減ること",
+      switchBarrier: "新しい機種の操作を覚えられるか心配",
+      personality: "ゆっくり丁寧な説明を求める。急かされると引く",
+    },
   },
   {
     id: "sc9",
@@ -1193,6 +1257,14 @@ export const SCENARIOS: Scenario[] = [
     resistance: "高い",
     difficulty: 8,
     goal: "クロージング",
+    persona: {
+      monthlyFee: 15000,
+      dataUsage: "家族で10〜20GBずつ",
+      household: "夫婦と子どもの3回線",
+      painPoint: "特に不満はない",
+      switchBarrier: "家族に相談しないと自分だけでは決められない",
+      personality: "その場では決めない。持ち帰り前提で話す",
+    },
   },
   {
     id: "sc10",
@@ -1205,6 +1277,14 @@ export const SCENARIOS: Scenario[] = [
     resistance: "高い",
     difficulty: 9,
     goal: "クロージング",
+    persona: {
+      monthlyFee: 9000,
+      dataUsage: "毎月20GBくらい",
+      household: "自分ひとりの1回線",
+      painPoint: "とにかく毎月の料金が高いのが不満",
+      switchBarrier: "本当に安くなる保証がなければ動かない",
+      personality: "疑り深く、数字の裏付けを厳しく求める",
+    },
   },
   {
     id: "sc11",
@@ -1217,6 +1297,14 @@ export const SCENARIOS: Scenario[] = [
     resistance: "高い",
     difficulty: 8,
     goal: "キャッチ→ヒアリング→着座誘導",
+    persona: {
+      monthlyFee: 8500,
+      dataUsage: "毎月20GBくらい",
+      household: "自分ひとりの1回線",
+      painPoint: "今のままで特に困ってはいない",
+      switchBarrier: "乗り換えたことがなく、手続きやトラブルが不安",
+      personality: "警戒心が強く、売り込みと感じると足を止めない",
+    },
   },
   {
     id: "sc12",
@@ -1229,6 +1317,14 @@ export const SCENARIOS: Scenario[] = [
     resistance: "高い",
     difficulty: 6,
     goal: "3価値連動の提案→着座",
+    persona: {
+      monthlyFee: 20000,
+      dataUsage: "家族で20GBくらいずつ",
+      household: "夫婦と子どもの3回線＋ソフトバンク光",
+      painPoint: "スマホの動作が重く、電池の減りが早いこと",
+      switchBarrier: "家族分をまとめて変えるのが大変そう",
+      personality: "困りごとには反応するが、手間を嫌う",
+    },
   },
 ];
 
